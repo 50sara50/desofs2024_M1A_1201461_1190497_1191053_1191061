@@ -1,0 +1,22 @@
+/plans/{planID}:
+    get:
+        security:
+            - basicAuth: []
+        tags: [Plans]
+        summary: Returns single plan by ID
+        parameters:
+            - in: path
+              name: planID
+              schema:
+                  type: string
+              required: true
+              description: The plan ID
+        responses:
+            200:
+                description: The details of the plan
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/Plan'
+            404:
+                description: The plan was not found

@@ -1,0 +1,31 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+
+skin rose
+skinparam shadowing false
+participant "Client" as CL
+participant "Gateway" as Gateway
+participant "User Service" as US
+participant "Plan Service" as PS
+CL -> Gateway: Post /user/login {userName,password}
+Gateway -> US: Post /user/login {userName}
+US --> Gateway: 200 OK
+Gateway--> CL: 200 OK
+CL -> Gateway : Get /plans {planID}
+Gateway -> PS : Get /plan{planID,headers:{username,userRole}}
+alt Plan Found
+ PS --> Gateway: 200 OK {planJSON}
+ Gateway --> CL : 200 OK {planJSON}
+else Plan Not Found
+ PS --> Gateway: 404 Not Found
+ Gateway--> CL: 404 Not Found
+
+else Bad Request (ID not Provided)
+ PS --> Gateway: 404 Bad Request {errorMessage}
+ Gateway --> CL: 404 Bad Request  {errorMessage}
+else Server Error
+ PS--> Gateway : 500 Internal Server Error
+ Gateway-->CL: 500 Internal Server Error
+end
+@enduml

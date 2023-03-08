@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentStyleType="text/css" height="457.6px" preserveAspectRatio="none" style="width:522px;height:457px;background:#FFFFFF;" version="1.1" viewBox="0 0 522 457" width="522.4px" zoomAndPan="magnify"><defs/><g><!--MD5=[f3929e065b321440b4eee273bd9781ea]
+entity p2--><g id="elem_p2"><polygon fill="none" points="438,32.8,465.2,32.8,470.8,51.6875,509.2,51.6875,509.2,79.375,438,79.375,438,32.8" style="stroke:none;stroke-width:0.8000000000000002;"/><line style="stroke:none;stroke-width:0.8000000000000002;" x1="438" x2="470.8" y1="51.6875" y2="51.6875"/></g><!--MD5=[e29493a8775effcafa538aa0485107d1]
+entity auth--><g id="elem_auth"><rect fill="#FEFECE" height="72.6625" style="stroke:#A80036;stroke-width:0.8000000000000002;" width="129.6" x="5.6" y="380.8"/><rect fill="#FEFECE" height="8" style="stroke:#A80036;stroke-width:0.8000000000000002;" width="12" x="119.2" y="384.8"/><rect fill="#FEFECE" height="1.6" style="stroke:#A80036;stroke-width:0.8000000000000002;" width="3.2" x="117.6" y="386.4"/><rect fill="#FEFECE" height="1.6" style="stroke:#A80036;stroke-width:0.8000000000000002;" width="3.2" x="117.6" y="389.6"/><text fill="#000000" font-family="sans-serif" font-size="11.2" font-style="italic" lengthAdjust="spacing" textLength="49.6" x="41.6" y="408.4266">«Service»</text><text fill="#000000" font-family="sans-serif" font-size="11.2" lengthAdjust="spacing" textLength="94.4" x="17.6" y="422.5141">UsersManagement</text><line style="stroke:#A80036;stroke-width:0.8000000000000002;" x1="6.4" x2="134.4" y1="424.975" y2="424.975"/><text fill="#000000" font-family="sans-serif" font-size="11.2" lengthAdjust="spacing" textLength="31.2" x="20.8" y="439.8016">/users</text></g><!--MD5=[10f69cb999eefd931347c92ea7924676]
+entity plan--><g id="elem_plan"><rect fill="#FEFECE" height="72.6625" style="stroke:#A80036;stroke-width:0.8000000000000002;" width="123.2" x="258.4" y="380.8"/><rect fill="#FEFECE" height="8" style="stroke:#A80036;stroke-width:0.8000000000000002;" width="12" x="365.6" y="384.8"/><rect fill="#FEFECE" height="1.6" style="stroke:#A80036;stroke-width:0.8000000000000002;" width="3.2" x="364" y="386.4"/><rect fill="#FEFECE" height="1.6" style="stroke:#A80036;stroke-width:0.8000000000000002;" width="3.2" x="364" y="389.6"/><text fill="#000000" font-family="sans-serif" font-size="11.2" font-style="italic" lengthAdjust="spacing" textLength="49.6" x="291.2" y="408.4266">«Service»</text><text fill="#000000" font-family="sans-serif" font-size="11.2" lengthAdjust="spacing" textLength="88" x="270.4" y="422.5141">PlanManagement</text><line style="stroke:#A80036;stroke-width:0.8000000000000002;" x1="259.2" x2="380.8" y1="424.975" y2="424.975"/><text fill="#000000" font-family="sans-serif" font-size="11.2" lengthAdjust="spacing" textLength="30.4" x="273.6" y="439.8016">/plans</text></g><!--MD5=[c8ca3db94178dc5d3073f7883c1e910c]
+entity subscription--><g id="elem_subscription"><rect fill="#FEFECE" height="100.8375" style="stroke:#A80036;stroke-width:0.8000000000000002;" width="163.2" x="112.8" y="5.6"/><rect fill="#FEFECE" height="8" style="stroke:#A80036;stroke-width:0.8000000000000002;" width="12" x="260" y="9.6"/><rect fill="#FEFECE" height="1.6" style="stroke:#A80036;stroke-width:0.8000000000000002;" width="3.2" x="258.4" y="11.2"/><rect fill="#FEFECE" height="1.6" style="stroke:#A80036;stroke-width:0.8000000000000002;" width="3.2" x="258.4" y="14.4"/><text fill="#000000" font-family="sans-serif" font-size="11.2" font-style="italic" lengthAdjust="spacing" textLength="49.6" x="165.6" y="33.2266">«Service»</text><text fill="#000000" font-family="sans-serif" font-size="11.2" lengthAdjust="spacing" textLength="128" x="124.8" y="47.3141">SubscriptionManagement</text><line style="stroke:#A80036;stroke-width:0.8000000000000002;" x1="113.6" x2="275.2" y1="49.775" y2="49.775"/><text fill="#000000" font-family="sans-serif" font-size="11.2" lengthAdjust="spacing" textLength="69.6" x="128" y="64.6016">/subscriptions</text><text fill="#000000" font-family="sans-serif" font-size="11.2" lengthAdjust="spacing" textLength="31.2" x="128" y="78.6891">/users</text><text fill="#000000" font-family="sans-serif" font-size="11.2" lengthAdjust="spacing" textLength="30.4" x="128" y="92.7766">/plans</text></g><!--MD5=[e2307af040e3f87d22824e7603ca28ec]
+entity api--><g id="elem_api"><rect fill="#FEFECE" height="86.75" style="stroke:#A80036;stroke-width:0.8000000000000002;" width="104.8" x="142" y="168.8"/><rect fill="#FEFECE" height="8" style="stroke:#A80036;stroke-width:0.8000000000000002;" width="12" x="230.8" y="172.8"/><rect fill="#FEFECE" height="1.6" style="stroke:#A80036;stroke-width:0.8000000000000002;" width="3.2" x="229.2" y="174.4"/><rect fill="#FEFECE" height="1.6" style="stroke:#A80036;stroke-width:0.8000000000000002;" width="3.2" x="229.2" y="177.6"/><text fill="#000000" font-family="sans-serif" font-size="11.2" lengthAdjust="spacing" textLength="67.2" x="154" y="196.4266">API_Gateway</text><line style="stroke:#A80036;stroke-width:0.8000000000000002;" x1="142.8" x2="246" y1="198.8875" y2="198.8875"/><text fill="#000000" font-family="sans-serif" font-size="11.2" lengthAdjust="spacing" textLength="31.2" x="157.2" y="213.7141">/users</text><text fill="#000000" font-family="sans-serif" font-size="11.2" lengthAdjust="spacing" textLength="30.4" x="157.2" y="227.8016">/plans</text><text fill="#000000" font-family="sans-serif" font-size="11.2" lengthAdjust="spacing" textLength="69.6" x="157.2" y="241.8891">/subscriptions</text></g><!--MD5=[82d0dcf7ce7860ff5c918fb126c5eaa1]
+entity pdb--><g id="elem_pdb"><path d="M409.6,399.6 C409.6,391.6 442.4,391.6 442.4,391.6 C442.4,391.6 475.2,391.6 475.2,399.6 L475.2,434.975 C475.2,442.975 442.4,442.975 442.4,442.975 C442.4,442.975 409.6,442.975 409.6,434.975 L409.6,399.6 " fill="#FEFECE" style="stroke:#A80036;stroke-width:0.8000000000000002;"/><path d="M409.6,399.6 C409.6,407.6 442.4,407.6 442.4,407.6 C442.4,407.6 475.2,407.6 475.2,399.6 " fill="none" style="stroke:#A80036;stroke-width:0.8000000000000002;"/><text fill="#000000" font-family="sans-serif" font-size="11.2" font-style="italic" lengthAdjust="spacing" textLength="36" x="424.4" y="422.4266">«local»</text><text fill="#000000" font-family="sans-serif" font-size="11.2" lengthAdjust="spacing" textLength="49.6" x="417.6" y="436.5141">Plans_DB</text></g><!--MD5=[b854d99f915783cfb285ed2177545325]
+entity sdb--><g id="elem_sdb"><path d="M304,38.4 C304,30.4 356.8,30.4 356.8,30.4 C356.8,30.4 409.6,30.4 409.6,38.4 L409.6,73.775 C409.6,81.775 356.8,81.775 356.8,81.775 C356.8,81.775 304,81.775 304,73.775 L304,38.4 " fill="#FEFECE" style="stroke:#A80036;stroke-width:0.8000000000000002;"/><path d="M304,38.4 C304,46.4 356.8,46.4 356.8,46.4 C356.8,46.4 409.6,46.4 409.6,38.4 " fill="none" style="stroke:#A80036;stroke-width:0.8000000000000002;"/><text fill="#000000" font-family="sans-serif" font-size="11.2" font-style="italic" lengthAdjust="spacing" textLength="36" x="338.8" y="61.2266">«local»</text><text fill="#000000" font-family="sans-serif" font-size="11.2" lengthAdjust="spacing" textLength="89.6" x="312" y="75.3141">Subscriptions_DB</text></g><!--MD5=[476ad0905052fe38113c5bcf5097ab0c]
+entity udb--><g id="elem_udb"><path d="M163.6,399.6 C163.6,391.6 196.8,391.6 196.8,391.6 C196.8,391.6 230,391.6 230,399.6 L230,434.975 C230,442.975 196.8,442.975 196.8,442.975 C196.8,442.975 163.6,442.975 163.6,434.975 L163.6,399.6 " fill="#FEFECE" style="stroke:#A80036;stroke-width:0.8000000000000002;"/><path d="M163.6,399.6 C163.6,407.6 196.8,407.6 196.8,407.6 C196.8,407.6 230,407.6 230,399.6 " fill="none" style="stroke:#A80036;stroke-width:0.8000000000000002;"/><text fill="#000000" font-family="sans-serif" font-size="11.2" font-style="italic" lengthAdjust="spacing" textLength="36" x="178.8" y="422.4266">«local»</text><text fill="#000000" font-family="sans-serif" font-size="11.2" lengthAdjust="spacing" textLength="50.4" x="171.6" y="436.5141">Users_DB</text></g><!--MD5=[6fa514fd305587f6ebeb91630b08732e]
+link subscription to auth--><g id="link_subscription_auth"><path d="M160.376,106.68 C148.76,125.496 136.552,147.512 128,168.8 C98.928,241.192 82.544,331.648 75.184,380.72 " fill="none" id="subscription-auth" style="stroke:#A80036;stroke-width:0.8000000000000002;"/><text fill="#000000" font-family="sans-serif" font-size="10.4" lengthAdjust="spacing" textLength="26.4" x="95.2" y="290.7961">http/s</text></g><!--MD5=[f8d0fc85b2c00b02b1d2482b2d68559b]
+link plan to subscription--><g id="link_plan_subscription"><path d="M313.672,380.6 C310.192,361.784 305.6,338.368 300.8,317.6 C285.368,250.88 287.4,231.904 260.8,168.8 C251.848,147.552 239.488,125.456 227.856,106.56 " fill="none" id="plan-subscription" style="stroke:#A80036;stroke-width:0.8000000000000002;"/><text fill="#000000" font-family="sans-serif" font-size="10.4" lengthAdjust="spacing" textLength="26.4" x="296" y="290.7961">http/s</text></g><!--MD5=[dcd173ae8e6a2c91b6e1fa4388899dd5]
+link api to auth--><g id="link_api_auth"><path d="M168.56,255.232 C145.984,292.296 113.584,345.488 92.28,380.48 " fill="none" id="api-auth" style="stroke:#A80036;stroke-width:0.8000000000000002;"/><text fill="#000000" font-family="sans-serif" font-size="10.4" lengthAdjust="spacing" textLength="26.4" x="131.2" y="329.1961">http/s</text></g><!--MD5=[0ff07ff7bd19215c350a6e651d1e9b21]
+link api to plan--><g id="link_api_plan"><path d="M220.576,255.232 C243.44,292.296 276.256,345.488 297.84,380.48 " fill="none" id="api-plan" style="stroke:#A80036;stroke-width:0.8000000000000002;"/><text fill="#000000" font-family="sans-serif" font-size="10.4" lengthAdjust="spacing" textLength="26.4" x="268" y="329.1961">http/s</text></g><!--MD5=[34e637097c864286bad3f12c886e050f]
+link subscription to api--><g id="link_subscription_api"><path d="M194.4,106.504 C194.4,126.512 194.4,149.36 194.4,168.6 " fill="none" id="subscription-api" style="stroke:#A80036;stroke-width:0.8000000000000002;"/><text fill="#000000" font-family="sans-serif" font-size="10.4" lengthAdjust="spacing" textLength="26.4" x="195.2" y="141.9961">http/s</text></g><!--MD5=[72aba8cc1dd158f8959453da88dc822d]
+link auth to udb--><g id="link_auth_udb"><path d="M135.328,417.2 C144.696,417.2 154.056,417.2 163.424,417.2 " fill="none" id="auth-udb" style="stroke:#A80036;stroke-width:0.8000000000000002;"/></g><!--MD5=[c623ea60767edede0f96da589afd9e01]
+link plan to pdb--><g id="link_plan_pdb"><path d="M381.68,417.2 C390.928,417.2 400.176,417.2 409.432,417.2 " fill="none" id="plan-pdb" style="stroke:#A80036;stroke-width:0.8000000000000002;"/></g><!--MD5=[da189f0826613a47641261b4e7fe3109]
+link subscription to sdb--><g id="link_subscription_sdb"><path d="M276.232,56 C285.464,56 294.696,56 303.928,56 " fill="none" id="subscription-sdb" style="stroke:#A80036;stroke-width:0.8000000000000002;"/></g><!--MD5=[a099e946dff0ca3460ba357f83ce03a2]
+@startuml
+'https://plantuml.com/component-diagram
+skin rose
+skinparam shadowing false
+'skinparam backgroundColor red
+
+'- - - - - - - - - - - - - TRANSPARÊNCIA - - - - - - - - - - - - - - - - - - -
+skinparam package<<Layout>> {
+  borderColor Transparent
+  backgroundColor Transparent
+  fontColor Transparent
+  stereotypeFontColor Transparent
+}
+
+package p2 <<Layout>> {
+}
+
+'- - - - - - - - - - - - - - - - - - Definição dos componentes - - - - - - - - - - - - - - - - - - - - - - - - - -
+component [UsersManagement \n- -\n /users] <<Service>> as auth
+component [PlanManagement \n- -\n /plans] <<Service>> as plan
+component [SubscriptionManagement \n- -\n /subscriptions\n /users\n /plans] <<Service>> as subscription
+component [API_Gateway \n- -\n /users\n /plans\n /subscriptions] as api
+
+database Plans_DB <<local>> as pdb
+database Subscriptions_DB <<local>> as sdb
+database Users_DB <<local>> as udb
+
+'- - - - - - - - - - - - - - - - - - Ligações - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+subscription - - - - auth :http/s
+subscription -u- - - plan :http/s
+
+api - - - auth :http/s
+api - - - plan :http/s
+api -u- subscription :http/s
+
+auth - udb
+plan - pdb
+subscription - sdb
+@enduml
+
+@startuml
+skin rose
+skinparam shadowing false
+
+skinparam package<<Layout>> {
+  borderColor Transparent
+  backgroundColor Transparent
+  fontColor Transparent
+  stereotypeFontColor Transparent
+}
+
+package p2 <<Layout>> {
+}
+
+component [UsersManagement \n- -\n /users] <<Service>> as auth
+component [PlanManagement \n- -\n /plans] <<Service>> as plan
+component [SubscriptionManagement \n- -\n /subscriptions\n /users\n /plans] <<Service>> as subscription
+component [API_Gateway \n- -\n /users\n /plans\n /subscriptions] as api
+
+database Plans_DB <<local>> as pdb
+database Subscriptions_DB <<local>> as sdb
+database Users_DB <<local>> as udb
+
+subscription - - - - auth :http/s
+subscription -u- - - plan :http/s
+
+api - - - auth :http/s
+api - - - plan :http/s
+api -u- subscription :http/s
+
+auth - udb
+plan - pdb
+subscription - sdb
+@enduml
+
+PlantUML version 1.2022.12(Sun Oct 23 19:12:26 BST 2022)
+(GPL source distribution)
+Java Runtime: OpenJDK Runtime Environment
+JVM: OpenJDK 64-Bit Server VM
+Default Encoding: Cp1252
+Language: en
+Country: US
+--></g></svg>

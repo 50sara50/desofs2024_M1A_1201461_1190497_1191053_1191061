@@ -1,0 +1,26 @@
+{
+    "env": {
+        "browser": true,
+        "commonjs": true,
+        "node": true,
+        "es2021": true
+    },
+    "extends": "standard",
+    "overrides": [],
+    "parserOptions": {
+        "ecmaVersion": "latest"
+    },
+    "rules": {
+        "no-multiple-empty-lines": "off",
+        "semi": "off",
+        "no-template-curly-in-string": "off",
+        "indent": ["warn", 4],
+        "no-unused-vars": "warn",
+        "no-trailing-spaces": "off",
+        "camelcase": "off",
+        "spaced-comment":"off",
+        "prefer-const":"off",
+        "no-const-assign":"off",
+        "space-before-function-paren":"off"
+    }
+}

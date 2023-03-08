@@ -1,0 +1,14 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+skin rose
+skinparam shadowing false
+skinparam handwritten true
+participant "Client" as CL
+participant "Gateway" as Gateway
+participant "User Service" as US
+CL --> Gateway :Post /user/login {userName,password}
+Gateway -> US: Post /user/login {userName}
+US --> Gateway: 401 Unauthorized
+Gateway --> CL: 401 Unauthorized
+@enduml

@@ -1,0 +1,80 @@
+.dashboardTable {
+    padding: 0;
+    margin: auto;
+    border-collapse: collapse;
+    width: 90%;
+    text-align: center;
+    color: whitesmoke;
+}
+
+.dashboardTableHeaderRow {
+    background-color: cadetblue;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-weight: bold;
+    font-size: large;
+    height: 60px;
+}
+
+.dashboardTable-Body:nth-child(odd) {
+    background-color: darkslategrey;
+}
+
+.dashboardTable td {
+    height: 25px;
+    color: black;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 18px;
+}
+
+.dashboardTable tr {
+    border: solid;
+    border-color: lightgray;
+    border-top: none;
+    border-width: 1px;
+}
+
+.dashboardTable tr.first-child {
+    border-top: none;
+    border-bottom: none;
+}
+
+.dashboardTable tr.last-child {
+    border-top: none;
+    border-bottom: none;
+    border: none;
+}
+
+.metrics-line {
+    text-align: justify;
+    font-weight: bold;
+}
+
+.dashboard-cashflows {
+    height: 4cm;
+}
+
+.metrics-column {
+    width: 30%;
+}
+
+.values-line-green {
+    background-color: #b2dfca;
+}
+
+.values-line-red {
+    background-color: #e7aba3;
+}
+
+.plans {
+    text-align: center;
+    font-weight: bold;
+}
+
+.title h1 {
+    color: darkslategrey;
+    text-align: center;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande',
+        'Lucida Sans Unicode';
+    font-weight: bold;
+    font-size: xx-large;
+}

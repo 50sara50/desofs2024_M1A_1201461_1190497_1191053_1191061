@@ -1,0 +1,63 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+skin rose
+skinparam shadowing false
+participant "Client" as CL
+participant "Gateway" as Gateway
+participant "Subscription Service" as SS
+participant "User Service" as US
+participant "Plan Service" as PS
+database  "Subscription Database" as DB
+
+CL -> Gateway : Post /user/login {username,password}
+Gateway -> US: Post /user/login {userName}
+US --> Gateway: 200 OK {token}
+Gateway --> CL: 200 OK {token}
+CL-> Gateway : Post /subscriptions/:subscriptionID/devices {auth:token, headers:{If-Match}}
+Gateway -> SS : Post /subscriptions/:subscriptionID/devices{headers:{username,userRole,If-Match} body:{name,description}}
+alt Missing name, description or Subscription ID
+ SS--> Gateway: 400 Bad Request {errorMessage:You need to provide a valid 'subscriptionID', \n 'name' and description}
+ Gateway --> CL:400 Bad Request {errorMessage:You need to provide a valid 'subscriptionID', \n 'name' and description}
+end
+alt Invalid Role
+ SS--> Gateway:  405 Bad Request {errorMessage:You do not have permissions to perform this action}
+ Gateway --> CL: 405 Bad Request {errorMessage:You do not have permissions to perform this action}
+end
+alt UserName missing
+ SS --> Gateway: 401 Unauthorized {errorMessage:You need to be authenticated \n to add a subscription to a plan.}
+ Gateway--> CL: 401 Unauthorized {errorMessage:You need to be authenticated \n to add a subscription to a plan.}
+
+end
+alt Rev Doesn't exist
+ SS --> Gateway: 400 Bad Request {errorMessage:Missing 'if-match' header}
+ Gateway --> CL: 400 Bad Request {errorMessage:Missing 'if-match' header}
+end
+alt Subscription Doesn't Exist
+ SS--> Gateway: 409 Conflict {errorMessage:Subscription not found}
+ Gateway --> CL: 409 Conflict {errorMessage: Subscription not found}
+end
+alt UserName != Subscription User
+  SS--> Gateway: 403 Forbidden {errorMessage:You are not authorized to update this subscription}
+  Gateway --> CL: 403 Forbidden {errorMessage:You are not authorized to update this subscription}
+end
+alt The information provided is correct
+SS->PS: Get /plans {planID,headers:{userName,userRole}}
+PS --> SS: 200 OK {body:plan}
+note right
+  Here, in the protocol representation we are assuming that the server is
+  working and that the plan exists (since the subscription also exists)
+end note
+alt Subscription With Maximum Number of Devices
+ SS --> Gateway: 400 Bad Request {errorMessage:The subscription has reached the maximum number of devices allowed}
+ Gateway --> CL: 400 Bad Request {errorMessage:The subscription with id has reached the maximum number of devices allowed}
+else Subscription still doesn't have the max number of devices
+ SS --> Gateway: 201 Created
+ Gateway --> CL: 201 Created
+end
+end
+alt Server Error
+ SS --> Gateway: 500 Internal Server Error
+ SS --> Gateway: 500 Internal Server Error
+
+@enduml

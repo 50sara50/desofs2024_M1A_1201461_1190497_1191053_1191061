@@ -1,0 +1,39 @@
+@startuml
+'https://plantuml.com/component-diagram
+skin rose
+skinparam shadowing false
+'skinparam backgroundColor red
+
+'------------- TRANSPARÊNCIA -------------------
+skinparam package<<Layout>> {
+  borderColor Transparent
+  backgroundColor Transparent
+  fontColor Transparent
+  stereotypeFontColor Transparent
+}
+
+package p2 <<Layout>> {
+}
+
+'------------------ Definição dos componentes --------------------------
+component [UsersManagement \n--\n /users] <<Service>> as auth
+component [PlanManagement \n--\n /plans] <<Service>> as plan
+component [SubscriptionManagement \n--\n /subscriptions\n /users\n /plans] <<Service>> as subscription
+component [API_Gateway \n--\n /users\n /plans\n /subscriptions] as api
+
+database Plans_DB <<local>> as pdb
+database Subscriptions_DB <<local>> as sdb
+database Users_DB <<local>> as udb
+
+'------------------ Ligações ----------------------------------------
+subscription ---- auth :http/s
+subscription -u--- plan :http/s
+
+api --- auth :http/s
+api --- plan :http/s
+api -u- subscription :http/s
+
+auth - udb
+plan - pdb
+subscription - sdb
+@enduml
