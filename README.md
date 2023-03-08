@@ -58,7 +58,7 @@ The API supports concurrent access, pagination, filtering, hypermedia, synchrono
 -   Download Repository
 -   Open with editor of choice (i.e. vs code)
 -   Install dependencies on each service with **npm install**
--   Create **.env** file and paste content of **.env.sample** file
+-   Create **.env** file inside API_Gateway_Authentication_Service folder and paste content of **.env.sample** file
 -   Start each service with **npm start** (Optionally you could use **npm run dev** to run the projects with **nodemon**)
 
 ## Users and passwords
