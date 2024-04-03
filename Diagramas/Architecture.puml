@@ -16,24 +16,34 @@ package p2 <<Layout>> {
 }
 
 '------------------ Definição dos componentes --------------------------
-component [UsersManagement \n--\n /users] <<Service>> as auth
+component [UsersManagement \n--\n /users \n /songs] <<Service>> as auth
 component [PlanManagement \n--\n /plans] <<Service>> as plan
 component [SubscriptionManagement \n--\n /subscriptions\n /users\n /plans] <<Service>> as subscription
-component [API_Gateway \n--\n /users\n /plans\n /subscriptions] as api
+component [API_Gateway \n--\n /users\n /plans\n /subscriptions \n /songs] as api
+component [Song_Management \n--\n /songs] <<Service>> as song
 
+
+'---TODO: Verificar se isto vai ser mesmo uma base de dados para cada serviço
 database Plans_DB <<local>> as pdb
 database Subscriptions_DB <<local>> as sdb
 database Users_DB <<local>> as udb
+database Songs_DB <<local>> as songDB
 
 '------------------ Ligações ----------------------------------------
 subscription ---- auth :http/s
 subscription -u--- plan :http/s
 
+song --- auth :http/s
+
 api --- auth :http/s
 api --- plan :http/s
 api -u- subscription :http/s
+api -- song :http/s
 
 auth - udb
 plan - pdb
 subscription - sdb
+
+song - songDB
+
 @enduml
