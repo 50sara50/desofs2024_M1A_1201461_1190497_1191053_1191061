@@ -1,0 +1,60 @@
+@startuml
+'https://plantuml.com/use-case-diagram
+left to right direction
+
+:Administrador: as Admin
+
+:Intérprete: as Artist
+
+:Utilizador: as User
+
+:Cliente: as Client
+
+package Sistema_Inicial {
+    (Visualizar planos) as UC1
+    (Subscrever plano) as UC2
+}
+
+package Sistema_Cliente{
+    (Remover subscrição) as UC3
+    (Allterar subscrição) as UC4
+    (Criar playlist) as UC5
+    (Editar detalhes da playlist) as UC6
+    (Eliminar playlist) as UC7
+}
+
+package Sistema_Interprete{
+    (Adicionar música a playlist) as UC8
+    (Remover música da playlist) as UC9
+    (Visualizar biblioteca) as UC10
+    (Realizar upload de música) as UC11
+    (Remover música da plataforma) as UC12
+}
+
+package Sistema_Admin{
+ (Adicionar novo plano) as UC13
+    (Editar plano) as UC14
+    (Remover plano) as UC15
+    (Visualizar subscrições do plano) as UC16
+}
+
+User --> UC1
+User --> UC2
+
+Client --> UC3
+Client --> UC4
+Client --> UC5
+Client --> UC6
+Client --> UC7
+
+Artist --> UC8
+Artist --> UC9
+Artist --> UC10
+Artist --> UC11
+Artist --> UC12
+
+Admin --> UC13
+Admin --> UC14
+Admin --> UC15
+Admin --> UC16
+@enduml

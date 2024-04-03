@@ -1,0 +1,83 @@
+@startuml
+'https://plantuml.com/class-diagram
+skin rose
+skinparam shadowing false
+'left to right direction
+
+package Songs {
+    class Song{
+        - Guid songId
+        - String songTitle
+        - String artistId
+        - TimeSpan duration
+        - String? albumId
+    }
+
+    class Album {
+        - String albumId
+        - String albumTitle
+        - String artistId
+    }
+
+    class Playlist {
+        - String playlistId
+        - String playlistTitle
+    }
+}
+
+package Users {
+    class User {
+        - Guid userId
+        - String userName
+        - String email
+        - String password
+        - String salt
+        - Role roles
+        - DateTime createdOn
+    }
+
+    enum Role {
+        - String admin
+        - String subscriber
+        - String artist
+    }
+}
+
+package Plans {
+    class Plan{
+        - Guid planId
+        - String status
+        - Double monthlyFee
+        - Double annualFee
+        - Int numberMinutes
+    }
+}
+
+package Subscriptions {
+    class Subscription {
+        - Guid subscriptionId
+        - String user
+        - String plan
+        - Date createdOn
+        - String type
+        - Date renewDate
+        - Status status
+    }
+
+    enum Status {
+        - String active
+        - String inactive
+    }
+}
+
+Song "1..*" -- "1" Album
+Song "1..*" -- "1..*" Playlist
+
+User "1..*" -- "1" Role
+User "1" -- "0..*" Playlist
+User "1" -- "1" Subscription
+
+Plan "1" -- "0..*" Subscription
+Subscription "1..*" -- "1" Status
+
+@enduml
