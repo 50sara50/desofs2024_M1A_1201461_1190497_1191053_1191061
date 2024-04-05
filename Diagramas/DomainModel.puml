@@ -2,26 +2,30 @@
 'https://plantuml.com/class-diagram
 skin rose
 skinparam shadowing false
-'left to right direction
+left to right direction
 
 package Songs {
     class Song{
         - Guid songId
         - String songTitle
-        - String artistId
+        - Guid artistId
         - TimeSpan duration
-        - String? albumId
+        - Guid? albumId
     }
+}
 
-    class Album {
-        - String albumId
-        - String albumTitle
-        - String artistId
-    }
-
+package Playlists {
     class Playlist {
-        - String playlistId
+        - Guid playlistId
         - String playlistTitle
+    }
+}
+
+package Albums {
+    class Album {
+        - Guid albumId
+        - String albumTitle
+        - Guid artistId
     }
 }
 
@@ -46,25 +50,28 @@ package Users {
 package Plans {
     class Plan{
         - Guid planId
-        - String status
+        - PlanStatus status
         - Double monthlyFee
-        - Double annualFee
         - Int numberMinutes
+    }
+
+    enum PlanStatus {
+        - String active
+        - String inactive
     }
 }
 
 package Subscriptions {
     class Subscription {
         - Guid subscriptionId
-        - String user
-        - String plan
+        - Guid userId
+        - Guid planId
         - Date createdOn
-        - String type
-        - Date renewDate
-        - Status status
+        - Date? renewDate
+        - SubscriptionStatus status
     }
 
-    enum Status {
+    enum SubscriptionStatus {
         - String active
         - String inactive
     }
@@ -72,12 +79,15 @@ package Subscriptions {
 
 Song "1..*" -- "1" Album
 Song "1..*" -- "1..*" Playlist
+Song "1..*" -- "1" User
+Album "1..*" -- "1" User
 
 User "1..*" -- "1" Role
 User "1" -- "0..*" Playlist
 User "1" -- "1" Subscription
 
 Plan "1" -- "0..*" Subscription
-Subscription "1..*" -- "1" Status
+Subscription "1..*" -- "1" SubscriptionStatus
+Plan "1..*" -- "1" PlanStatus
 
 @enduml
