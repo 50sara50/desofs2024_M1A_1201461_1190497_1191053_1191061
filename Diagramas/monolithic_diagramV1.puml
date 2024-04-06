@@ -19,6 +19,7 @@ component "App" as app {
     portin "Browser" as browser
     interface "AppApi" as api
     portout "DatabaseAPI" as dbApi
+    portout "FileSystemAPI" as fsApi
 
 }
 
@@ -49,4 +50,9 @@ api --> backend
 'Backend service comunica com a database service
 backend --> dbApi
 dbApi --> db_service
+
+' New connection: Backend service to File System
+backend --> fsApi
+fsApi --> FileSystem
+
 @enduml
