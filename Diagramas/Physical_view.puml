@@ -1,0 +1,36 @@
+@startuml
+skin rose
+skinparam shadowing false
+'skinparam backgroundColor red
+
+'------------- TRANSPARÊNCIA -------------------
+skinparam package<<Layout>> {
+  borderColor Transparent
+  backgroundColor Transparent
+  fontColor Transparent
+  stereotypeFontColor Transparent
+}
+
+
+node "Web Server" {
+    component "Backend App" as backend
+}
+
+node "Database Server" {
+    database "Microsoft SQL Server" as db
+}
+
+
+' Should we represent the browser as a component?
+node "Client Device" {
+    component "Client Browser" {
+        component "Frontend App" as frontend
+    }
+}
+
+
+
+frontend --> backend : HTTP/s
+backend --> db : ADO.NET Query
+
+@enduml
