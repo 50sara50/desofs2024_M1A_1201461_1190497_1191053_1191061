@@ -51,8 +51,8 @@
             },
             "visible": true,
             "shape": "process",
-            "id": "7ffb2e6d-ca9b-4aaa-bd75-e64fdb051dac",
             "zIndex": 1,
+            "id": "7ffb2e6d-ca9b-4aaa-bd75-e64fdb051dac",
             "data": {
               "type": "tm.Process",
               "name": "Backend Server",
@@ -88,8 +88,8 @@
             },
             "visible": true,
             "shape": "actor",
-            "id": "edfde66f-3cf9-4ab7-b5fb-f9b476b30d6d",
             "zIndex": 2,
+            "id": "edfde66f-3cf9-4ab7-b5fb-f9b476b30d6d",
             "data": {
               "type": "tm.Actor",
               "name": "Admin",
@@ -122,6 +122,7 @@
             },
             "visible": true,
             "shape": "actor",
+            "zIndex": 3,
             "id": "a0c25a2a-5bc7-4b09-80dd-ab9127f852e5",
             "data": {
               "type": "tm.Actor",
@@ -132,8 +133,7 @@
               "hasOpenThreats": false,
               "providesAuthentication": false,
               "threats": []
-            },
-            "zIndex": 3
+            }
           },
           {
             "position": {
@@ -156,6 +156,7 @@
             },
             "visible": true,
             "shape": "actor",
+            "zIndex": 4,
             "id": "f5f6191f-c83c-458d-8d06-e60587a7046d",
             "data": {
               "type": "tm.Actor",
@@ -166,8 +167,7 @@
               "hasOpenThreats": false,
               "providesAuthentication": false,
               "threats": []
-            },
-            "zIndex": 4
+            }
           },
           {
             "position": {
@@ -190,8 +190,8 @@
             },
             "visible": true,
             "shape": "actor",
-            "id": "21315286-34f3-49e6-a2f8-86dd189d04c6",
             "zIndex": 5,
+            "id": "21315286-34f3-49e6-a2f8-86dd189d04c6",
             "data": {
               "type": "tm.Actor",
               "name": "Utilizador",
@@ -939,8 +939,8 @@
             },
             "visible": true,
             "shape": "td-text-block",
-            "id": "9033287c-c6de-4421-9114-1f30ee1d21c1",
             "zIndex": 11,
+            "id": "9033287c-c6de-4421-9114-1f30ee1d21c1",
             "data": {
               "type": "tm.Text",
               "name": "Response",
@@ -963,8 +963,8 @@
             },
             "visible": true,
             "shape": "td-text-block",
-            "id": "7852899f-b324-47f3-b2b5-4bc62729c2c2",
             "zIndex": 12,
+            "id": "7852899f-b324-47f3-b2b5-4bc62729c2c2",
             "data": {
               "type": "tm.Text",
               "name": "Request",
@@ -987,8 +987,8 @@
             },
             "visible": true,
             "shape": "td-text-block",
-            "id": "ae2a842d-964c-4662-bbd1-e14cf619300d",
             "zIndex": 13,
+            "id": "ae2a842d-964c-4662-bbd1-e14cf619300d",
             "data": {
               "type": "tm.Text",
               "name": "User/Backend\nBoundary",
@@ -1011,8 +1011,8 @@
             },
             "visible": true,
             "shape": "td-text-block",
-            "id": "8c2c39dc-b2dc-4a55-8d67-47b4fbaf0fe7",
             "zIndex": 14,
+            "id": "8c2c39dc-b2dc-4a55-8d67-47b4fbaf0fe7",
             "data": {
               "type": "tm.Text",
               "name": "Reponse",
@@ -1035,8 +1035,8 @@
             },
             "visible": true,
             "shape": "td-text-block",
-            "id": "aed09872-26fc-4a81-b5ee-c12d05306336",
             "zIndex": 15,
+            "id": "aed09872-26fc-4a81-b5ee-c12d05306336",
             "data": {
               "type": "tm.Text",
               "name": "Request",
@@ -1059,8 +1059,8 @@
             },
             "visible": true,
             "shape": "td-text-block",
-            "id": "8c5a3740-e41e-40c9-9f35-ee2347d976f4",
             "zIndex": 16,
+            "id": "8c5a3740-e41e-40c9-9f35-ee2347d976f4",
             "data": {
               "type": "tm.Text",
               "name": "Request",
@@ -1083,8 +1083,8 @@
             },
             "visible": true,
             "shape": "td-text-block",
-            "id": "af948b67-4506-4b02-a345-1400e0d5d1a6",
             "zIndex": 17,
+            "id": "af948b67-4506-4b02-a345-1400e0d5d1a6",
             "data": {
               "type": "tm.Text",
               "name": "Response",
@@ -1107,8 +1107,8 @@
             },
             "visible": true,
             "shape": "td-text-block",
-            "id": "7095d36f-bd65-483d-b430-ee137ecb8f27",
             "zIndex": 18,
+            "id": "7095d36f-bd65-483d-b430-ee137ecb8f27",
             "data": {
               "type": "tm.Text",
               "name": "Response",
@@ -1131,8 +1131,8 @@
             },
             "visible": true,
             "shape": "td-text-block",
-            "id": "e10f182e-64e5-498d-88fe-75bcf3b67a0e",
             "zIndex": 19,
+            "id": "e10f182e-64e5-498d-88fe-75bcf3b67a0e",
             "data": {
               "type": "tm.Text",
               "name": "Request",
@@ -1160,8 +1160,8 @@
             },
             "visible": true,
             "shape": "process",
-            "id": "eae922cc-3918-4de1-8944-246e75eb0542",
             "zIndex": 20,
+            "id": "eae922cc-3918-4de1-8944-246e75eb0542",
             "data": {
               "type": "tm.Process",
               "name": "Microsoft\nSql\nServer\n",
@@ -1200,8 +1200,8 @@
             },
             "visible": true,
             "shape": "store",
-            "id": "1d44e42f-76c2-48aa-b519-02d3c6cb715f",
             "zIndex": 21,
+            "id": "1d44e42f-76c2-48aa-b519-02d3c6cb715f",
             "data": {
               "type": "tm.Store",
               "name": "Database\nFiles",
@@ -1233,8 +1233,8 @@
             },
             "visible": true,
             "shape": "td-text-block",
-            "id": "dec92123-aaf3-4605-9a68-a8dcf8141cfd",
             "zIndex": 22,
+            "id": "dec92123-aaf3-4605-9a68-a8dcf8141cfd",
             "data": {
               "type": "tm.Text",
               "name": "SQL \nQuery\nCall",
@@ -1257,8 +1257,8 @@
             },
             "visible": true,
             "shape": "td-text-block",
-            "id": "090f765b-dbe4-4479-bf46-cb796efaf3ea",
             "zIndex": 23,
+            "id": "090f765b-dbe4-4479-bf46-cb796efaf3ea",
             "data": {
               "type": "tm.Text",
               "name": "Data",
@@ -1281,8 +1281,8 @@
             },
             "visible": true,
             "shape": "td-text-block",
-            "id": "e2f2a9ea-129a-47d3-af07-c68ce086947d",
             "zIndex": 24,
+            "id": "e2f2a9ea-129a-47d3-af07-c68ce086947d",
             "data": {
               "type": "tm.Text",
               "name": "Backend Server/\nDatabase \nBoundary",
@@ -1305,8 +1305,8 @@
             },
             "visible": true,
             "shape": "td-text-block",
-            "id": "aea5e041-b714-40a2-ae2f-b1fcaa34ecfe",
             "zIndex": 25,
+            "id": "aea5e041-b714-40a2-ae2f-b1fcaa34ecfe",
             "data": {
               "type": "tm.Text",
               "name": "Data",
@@ -1329,8 +1329,8 @@
             },
             "visible": true,
             "shape": "td-text-block",
-            "id": "dcc538f7-dcf4-4cf9-ba31-8ef1b3014572",
             "zIndex": 26,
+            "id": "dcc538f7-dcf4-4cf9-ba31-8ef1b3014572",
             "data": {
               "type": "tm.Text",
               "name": "Data",
@@ -1358,8 +1358,8 @@
             },
             "visible": true,
             "shape": "process",
-            "id": "9ba1b740-6cfe-4243-86ed-eecdcc64260f",
             "zIndex": 27,
+            "id": "9ba1b740-6cfe-4243-86ed-eecdcc64260f",
             "data": {
               "type": "tm.Process",
               "name": "File API",
@@ -1390,8 +1390,8 @@
             },
             "visible": true,
             "shape": "td-text-block",
-            "id": "fef73b16-3173-4dd6-8edf-0eaa87156b25",
             "zIndex": 28,
+            "id": "fef73b16-3173-4dd6-8edf-0eaa87156b25",
             "data": {
               "type": "tm.Text",
               "name": "Request",
@@ -1414,8 +1414,8 @@
             },
             "visible": true,
             "shape": "td-text-block",
-            "id": "c20dd33e-80ed-4497-9b4a-164df898a15e",
             "zIndex": 29,
+            "id": "c20dd33e-80ed-4497-9b4a-164df898a15e",
             "data": {
               "type": "tm.Text",
               "name": "Response",
@@ -1438,12 +1438,86 @@
             },
             "visible": true,
             "shape": "td-text-block",
-            "id": "b3c56bf2-4936-4bae-b96e-6c7af31f5d52",
             "zIndex": 30,
+            "id": "b3c56bf2-4936-4bae-b96e-6c7af31f5d52",
             "data": {
               "type": "tm.Text",
               "name": "Backend/Server \nFile API\nBoundary",
               "hasOpenThreats": false
+            }
+          },
+          {
+            "position": {
+              "x": 322,
+              "y": 305
+            },
+            "size": {
+              "width": 120,
+              "height": 120
+            },
+            "attrs": {
+              "text": {
+                "text": ""
+              },
+              "body": {
+                "stroke": "#333333",
+                "strokeWidth": 1.5,
+                "strokeDasharray": null
+              }
+            },
+            "visible": true,
+            "shape": "process",
+            "id": "3c1c3a15-0618-4010-acb2-eacc1cc68a5c",
+            "zIndex": 31,
+            "data": {
+              "type": "tm.Process",
+              "name": "",
+              "description": "",
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "hasOpenThreats": false,
+              "handlesCardPayment": false,
+              "handlesGoodsOrServices": false,
+              "isWebApplication": false,
+              "privilegeLevel": "",
+              "threats": []
+            }
+          },
+          {
+            "position": {
+              "x": 149.99999999999997,
+              "y": 498
+            },
+            "size": {
+              "width": 80,
+              "height": 100
+            },
+            "attrs": {
+              "text": {
+                "text": ""
+              },
+              "body": {
+                "stroke": "#333333",
+                "strokeWidth": 1.5,
+                "strokeDasharray": null
+              }
+            },
+            "visible": true,
+            "shape": "process",
+            "id": "6f1f155b-b53e-4707-98a2-450d9edd9f55",
+            "zIndex": 32,
+            "data": {
+              "type": "tm.Process",
+              "name": "",
+              "description": "",
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "hasOpenThreats": false,
+              "handlesCardPayment": false,
+              "handlesGoodsOrServices": false,
+              "isWebApplication": false,
+              "privilegeLevel": "",
+              "threats": []
             }
           }
         ]
