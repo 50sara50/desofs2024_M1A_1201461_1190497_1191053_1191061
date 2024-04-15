@@ -1,0 +1,59 @@
+@startuml
+'https://plantuml.com/component-diagram
+
+skin rose
+skinparam shadowing false
+
+'skinparam backgroundColor red
+
+'------------- TRANSPARÊNCIA -------------------
+' Should the API be a proxy component instead
+skinparam package<<Layout>> {
+  borderColor Transparent
+  backgroundColor Transparent
+  fontColor Transparent
+  stereotypeFontColor Transparent
+}
+component "App" as app {
+    component  "Backend Service" as backend
+    component  "Frontend App" as frontend
+    portin "Browser" as browser
+    interface "AppApi" as api
+    portout "DatabaseAPI" as dbApi
+    portout "FileSystemAPI" as fsApi
+
+}
+
+database "Microsoft SQL Server" as db {
+    component "Database Service" as db_service
+}
+
+
+() " Utilizador" as utilizador
+() " Cliente" as cliente
+() " Admin" as admin
+() " Intérprete" as interprete
+
+
+'Interfaces comunicam com a frontend app
+utilizador -d-> browser
+cliente --> browser
+admin -r-> browser
+subscritor --> browser
+interprete ---> browser
+
+browser -d- frontend
+
+'Frontend app comunica com o backend service
+frontend ..> api : uses
+api --> backend
+
+'Backend service comunica com a database service
+backend --> dbApi
+dbApi --> db_service
+
+' New connection: Backend service to File System
+backend --> fsApi
+fsApi --> FileSystem
+
+@enduml
