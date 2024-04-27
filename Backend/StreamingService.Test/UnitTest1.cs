@@ -1,4 +1,6 @@
 
+using StreamingPlatform;
+
 [assembly: Parallelize(Workers = 0, Scope = ExecutionScope.ClassLevel)]
 namespace StreamingService.Test
 {
@@ -22,6 +24,17 @@ namespace StreamingService.Test
         public void TestInitialize()
         {
             Console.WriteLine("TestInitialize");
+        }
+
+        [TestMethod]
+        public void Test3()
+        {
+            WeatherForecast weatherForecast = new WeatherForecast()
+            {
+                TemperatureC = 10,
+                Summary = "Cool"
+            };
+            Assert.AreEqual(10, weatherForecast.TemperatureC);
         }
     }
 }
