@@ -1,0 +1,40 @@
+# This workflow will build a .NET project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
+
+name: Build Project
+
+on:
+  push:
+    branches: [ "develop" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 6.0.x
+    # get the latest commit to check the changed files
+    - name: Get base commit
+      run: |
+        git fetch origin "$GITHUB_BASE_REF"
+        base_sha=$(git rev-parse "origin/$GITHUB_BASE_REF")
+        echo "base_sha=$base_sha" >> $GITHUB_ENV
+        echo "Merging ${GITHUB_SHA} into ${GITHUB_BASE_REF}"
+    - name: Get changed files
+      run: |
+        changed_source_files=$(git diff-tree --no-commit-id --name-only -r "$base_sha" "$GITHUB_SHA" | { grep "**.cs$" || test $? = 1; })
+        echo "Files to validate: '${changed_source_files}'"
+        echo "updated_files=$(echo ${changed_source_files})" >> $GITHUB_ENV
+    # Linting, building, and testing the project
+    - name: Restore dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --no-restore
+    - name: Test
+      run: dotnet test --no-build --verbosity normal
