@@ -1,9 +1,19 @@
 name: "Scan code "
 on:
   push:
-    branches: ["develop"]
+    branches:
+     - develop
+    paths-ignore:
+      - '**/*.md'
+      - '**/*.txt'
+      - '**/*.pdf'
+      - '**/*.puml'
+      - '**/*.xlsx'
+      - '**/*.drawio'
+    
   pull_request:
-    branches: [ "master"]
+    branches:
+      - master
     paths-ignore:
       - '**/*.md'
       - '**/*.txt'
@@ -33,7 +43,7 @@ jobs:
           - language: csharp
             build-mode: autobuild
           - language: javascript-typescript
-            build-mode: autobuild
+            build-mode: none
           
     steps:
     - name: Checkout repository
