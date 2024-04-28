@@ -16,8 +16,8 @@ jobs:
     # get the latest commit to check the changed files
     - name: Get base commit
       run: |
-        git fetch origin "$GITHUB_BASE_REF"
-        base_sha=$(git rev-parse "origin/${{github.head_ref || github.ref_name}} ")
+        git fetch origin "${{github.head_ref || github.ref_name}}"
+        base_sha=$(git rev-parse "origin/${{github.head_ref || github.ref_name}}")
         echo "base_sha=$base_sha" >> $GITHUB_ENV
     - name: Get Backend changed files
       run: |
