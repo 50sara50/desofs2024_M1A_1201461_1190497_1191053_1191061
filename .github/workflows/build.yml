@@ -10,9 +10,6 @@ permissions:
 jobs:
   build_backend:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [14.x, 16.x, 18.x]
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
@@ -20,9 +17,8 @@ jobs:
     - name: Get base commit
       run: |
         git fetch origin "$GITHUB_BASE_REF"
-        base_sha=$(git rev-parse "origin/$GITHUB_BASE_REF")
+        base_sha=$(git rev-parse "origin/${{github.head_ref || github.ref_name}} ")
         echo "base_sha=$base_sha" >> $GITHUB_ENV
-        echo "Merging ${GITHUB_SHA} into ${GITHUB_BASE_REF}"
     - name: Get Backend changed files
       run: |
         changed_source_backend_files=$(git diff-tree --no-commit-id --name-only -r "$base_sha" "$GITHUB_SHA" | { grep "**.cs$" || test $? = 1; })
@@ -68,9 +64,8 @@ jobs:
     - name: Get base commit
       run: |
         git fetch origin "$GITHUB_BASE_REF"
-        base_sha=$(git rev-parse "origin/$GITHUB_BASE_REF")
+        base_sha=$(git rev-parse "origin/${{github.head_ref || github.ref_name}} ")
         echo "base_sha=$base_sha" >> $GITHUB_ENV
-        echo "Merging ${GITHUB_SHA} into ${GITHUB_BASE_REF}"
     - name: Get Client changed files
       run: |
         changed_source_client_files=$(git diff-tree --no-commit-id --name-only -r "$base_sha" "$GITHUB_SHA" | { grep "**.ts$" || test $? = 1; })
@@ -90,7 +85,7 @@ jobs:
       if: steps.check_changes_client.outputs.client_files_changed == 'true'
       uses: actions/setup-node@v3
       with:
-        node-version: ${{ matrix.node-version }}
+        node-version: 18.x
         cache: 'npm'
     - name: Clean install Client Project
       if: steps.check_changes_client.outputs.client_files_changed == 'true'
