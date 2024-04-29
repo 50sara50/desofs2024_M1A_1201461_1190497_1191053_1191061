@@ -13,11 +13,17 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
-    - name: Get Backend changed files
+      with:
+        fetch-depth: 0
+        # get the latest commit to check the changed files
+    - name: Get base commit
       run: |
-        echo "Base Sha: '${base_sha}'"
-         echo "Github Sha: '$(GITHUB_SHA)'"
-        changed_source_backend_files=$(git diff --name-only Head Head~1| grep '\.cs$' || true)
+        git fetch origin "${{github.head_ref || github.ref_name}}"
+        base_sha=$(git rev-parse "origin/${{github.head_ref || github.ref_name}}")
+        echo "base_sha=$base_sha" >> $GITHUB_ENV
+    - name: Get Client changed files
+      run: |
+        changed_source_backend_files=$(git diff-tree --no-commit-id --name-only -r ${{ github.sha }} | { grep "**.cs$" || test $? = 1; })
         echo "Files to validate: '${changed_source_backend_files}'"
         echo "updated_files=$(echo ${changed_source_backend_files})" >> $GITHUB_ENV
     # Determine if there are changed .cs files
