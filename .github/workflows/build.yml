@@ -10,8 +10,6 @@ on:
       - '**/*.puml'
       - '**/*.xlsx'
       - '**/*.drawio'
-      - '**/*.yml'
-
 permissions:
   checks: write
   contents: write
@@ -38,6 +36,8 @@ jobs:
       run: dotnet build --no-restore    
     - name: Test
       run: dotnet test --no-build --verbosity normal
+    - name: Format
+      run: dotnet format --verify-no-changes --verbosity diagnostic
   build_client:
     runs-on: ubuntu-latest
     defaults:
@@ -54,6 +54,10 @@ jobs:
         cache-dependency-path: Client/streaming-service
     - name: Clean install Client Project
       run: npm ci
+    - name: Install Angular
+      run: npm install -g @angular/cli@latest 
+    - name: Code Linting
+      run: npm run lint
     - name: Build Client Project
       run: npm run build --if-present
       
