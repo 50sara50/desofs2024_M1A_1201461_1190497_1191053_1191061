@@ -13,24 +13,17 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
         # get the latest commit to check the changed files
-    - name: Get base commit
-      run: |
-        git fetch origin "${{github.head_ref || github.ref_name}}"
-        base_sha=$(git rev-parse "origin/${{github.head_ref || github.ref_name}}")
-        echo "base_sha=$base_sha" >> $GITHUB_ENV
     - name: Get Client changed files
       run: |
         changed_source_backend_files=$(git diff-tree --no-commit-id --name-only -r ${{ github.sha }} | { grep "**.cs$" || test $? = 1; })
         echo "Files to validate: '${changed_source_backend_files}'"
-        echo "updated_files=$(echo ${changed_source_backend_files})" >> $GITHUB_ENV
+        echo "updated_backend_files=$(echo ${changed_source_backend_files})" >> $GITHUB_ENV
     # Determine if there are changed .cs files
     - name: Check for backend changed files
       id: check_changes_cs
       run: |
-        if [[ -n "$changed_source_backend_files" ]]; then
+        if [[ -n "$updated_backend_files" ]]; then
           echo "files_changed=true" >> $GITHUB_ENV
         else
           echo "files_changed=false" >> $GITHUB_ENV
@@ -62,22 +55,16 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
-    # get the latest commit to check the changed files
-    - name: Get base commit
-      run: |
-        git fetch origin "${{github.head_ref || github.ref_name}}"
-        base_sha=$(git rev-parse "origin/${{github.head_ref || github.ref_name}}")
-        echo "base_sha=$base_sha" >> $GITHUB_ENV
     - name: Get Client changed files
       run: |
-        changed_source_client_files=$(git diff-tree --no-commit-id --name-only -r "$base_sha" "$GITHUB_SHA" | { grep "**.ts$" || test $? = 1; })
+        changed_source_client_files=$(git diff-tree --no-commit-id --name-only -r ${{ github.sha }} | { grep "**.ts$" || test $? = 1; })
         echo "Files to validate: '${changed_source_client_files}'"
-        echo "updated_files=$(echo ${changed_source_client_files})" >> $GITHUB_ENV
+        echo "updated_client_files=$(echo ${changed_source_client_files})" >> $GITHUB_ENV
        # Determine if there are changed .cs files
     - name: Check for backend changed files
       id: check_changes_client
       run: |
-        if [[ -n "$changed_source_client_files" ]]; then
+        if [[ -n "$updated_client_files" ]]; then
           echo "client_files_changed=true" >> $GITHUB_ENV
         else
           echo "client_files_changed=false" >> $GITHUB_ENV
