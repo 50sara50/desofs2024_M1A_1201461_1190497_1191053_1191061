@@ -34,7 +34,6 @@ jobs:
       uses: wearerequired/lint-action@v2
       with:
         dotnet_format: true
-        working-directory: Backend/StreamingPlatform
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
@@ -49,17 +48,17 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
-    - name: Use Node.js ${{ matrix.node-version }}
+    - name: Use Node.js 18.x
       uses: actions/setup-node@v3
       with:
         node-version: 18.x
         cache: 'npm'
+        cache-dependency-path: Client/streaming-service
     - name: Clean install Client Project
       run: npm ci
     - name: Run eslint and prettier
       uses: wearerequired/lint-action@v2
       with:
-        working-directory: Client/streaming-service
         eslint: true
         prettier: true
     - name: Build Client Project
