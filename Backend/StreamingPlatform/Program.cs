@@ -23,6 +23,7 @@ namespace StreamingPlatform
             }
 
             app.UseHttpsRedirection();
+
             app.UseAuthorization();
             app.MapControllers();
             app.Run();
