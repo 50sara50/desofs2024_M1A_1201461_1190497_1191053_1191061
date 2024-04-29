@@ -17,7 +17,7 @@ jobs:
     - name: Get base commit
       run: |
         git fetch origin "${{github.head_ref || github.ref_name}}"
-        base_sha=$(git rev-parse "origin/${{github.head_ref || github.ref_name}}")
+        base_sha=$(git rev-parse "origin/develop")
         echo "base_sha=$base_sha" >> $GITHUB_ENV
     - name: Get Backend changed files
       run: |
@@ -29,9 +29,9 @@ jobs:
       id: check_changes_cs
       run: |
         if [[ -n "$changed_source_backend_files" ]]; then
-          echo "::set-output name=files_changed::true"
+          echo "files_changed=true" >> $GITHUB_ENV
         else
-          echo "::set-output name=files_changed::false"
+          echo "files_changed=false" >> $GITHUB_ENV
         fi  
     # Linting, building, and testing the project
     - name: Setup .NET
@@ -76,9 +76,9 @@ jobs:
       id: check_changes_client
       run: |
         if [[ -n "$changed_source_client_files" ]]; then
-          echo "::set-output name=client_files_changed::true"
+          echo "client_files_changed=true" >> $GITHUB_ENV
         else
-          echo "::set-output name=client_files_changed::false"
+          echo "client_files_changed=false" >> $GITHUB_ENV
         fi
    
     - name: Use Node.js ${{ matrix.node-version }}
