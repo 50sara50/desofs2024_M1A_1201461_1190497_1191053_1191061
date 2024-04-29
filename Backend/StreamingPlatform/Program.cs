@@ -18,7 +18,6 @@ namespace StreamingPlatform
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
-
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
