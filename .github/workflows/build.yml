@@ -45,14 +45,14 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
+    - name: Move to Client Folder
+      run: |
+        cd Client/streaming-service
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
       with:
         node-version: 18.x
         cache: 'npm'
-    - name: Move to Backend Folder
-      run: |
-        cd Client/streaming-service
     - name: Clean install Client Project
       run: npm ci
     - name: Run eslint and prettier
