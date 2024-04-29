@@ -3,6 +3,14 @@ on:
   push:
     branches: 
       - develop
+    paths-ignore:
+      - '**/*.md'
+      - '**/*.txt'
+      - '**/*.pdf'
+      - '**/*.puml'
+      - '**/*.xlsx'
+      - '**/*.drawio'
+      - '**/*.yml'
 permissions:
   checks: write
   contents: write
@@ -15,24 +23,8 @@ jobs:
       uses: actions/checkout@v4
       with:
         fetch-depth: 0 
-    # get the latest commit to check the changed files
-    - name: Get Client changed files
-      run: |
-        changed_source_backend_files=$(git diff-tree --no-commit-id --name-only -r ${{ github.sha }} | { grep "**.cs$" || test $? = 1; })
-        echo "Files to validate: '${changed_source_backend_files}'"
-        echo "updated_backend_files=$(echo ${changed_source_backend_files})" >> $GITHUB_ENV
-    # Determine if there are changed .cs files
-    - name: Check for backend changed files
-      id: check_changes_cs
-      run: |
-        if [[ -n "$updated_backend_files" ]]; then
-          echo "files_changed=true" >> $GITHUB_ENV
-        else
-          echo "files_changed=false" >> $GITHUB_ENV
-        fi  
     # Linting, building, and testing the project
     - name: Setup .NET
-      if: steps.check_changes_cs.outputs.files_changed == 'true'
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 6.0.x
@@ -42,53 +34,29 @@ jobs:
       with:
         dotnet_format: true
     - name: Restore dependencies
-      if: steps.check_changes_cs.outputs.files_changed == 'true'
       run: dotnet restore
     - name: Build
-      if: steps.check_changes.outputs.files_changed == 'true'
-      run: dotnet build --no-restore
-      
-      
+      run: dotnet build --no-restore    
     - name: Test
-      if: steps.check_changes.outputs.files_changed == 'true'
       run: dotnet test --no-build --verbosity normal
   build_client:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
-    - name: Get Client changed files
-      run: |
-        changed_source_client_files=$(git diff-tree --no-commit-id --name-only -r ${{ github.sha }} | { grep "**.ts$" || test $? = 1; })
-        echo "Files to validate: '${changed_source_client_files}'"
-        echo "updated_client_files=$(echo ${changed_source_client_files})" >> $GITHUB_ENV
-       # Determine if there are changed .cs files
-    - name: Check for backend changed files
-      id: check_changes_client
-      run: |
-        if [[ -n "$updated_client_files" ]]; then
-          echo "client_files_changed=true" >> $GITHUB_ENV
-        else
-          echo "client_files_changed=false" >> $GITHUB_ENV
-        fi
-   
     - name: Use Node.js ${{ matrix.node-version }}
-      if: steps.check_changes_client.outputs.client_files_changed == 'true'
       uses: actions/setup-node@v3
       with:
         node-version: 18.x
         cache: 'npm'
     - name: Clean install Client Project
-      if: steps.check_changes_client.outputs.client_files_changed == 'true'
       run: npm ci
     - name: Run eslint and prettier
-      if: steps.check_changes_client.outputs.client_files_changed == 'true'
       uses: wearerequired/lint-action@v2
       with:
         eslint: true
         prettier: true
     - name: Build Client Project
-      if: steps.check_changes_client.outputs.client_files_changed == 'true'
       run: npm run build --if-present
       
 
