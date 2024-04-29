@@ -34,6 +34,7 @@ jobs:
       uses: wearerequired/lint-action@v2
       with:
         dotnet_format: true
+        working-directory: Backend/StreamingPlatform
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
@@ -42,12 +43,12 @@ jobs:
       run: dotnet test --no-build --verbosity normal
   build_client:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: Client/streaming-service
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
-    - name: Move to Client Folder
-      run: |
-        cd ../../Client/streaming-service
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
       with:
@@ -58,6 +59,7 @@ jobs:
     - name: Run eslint and prettier
       uses: wearerequired/lint-action@v2
       with:
+        working-directory: Client/streaming-service
         eslint: true
         prettier: true
     - name: Build Client Project
