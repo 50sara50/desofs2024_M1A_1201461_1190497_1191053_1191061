@@ -33,7 +33,9 @@ jobs:
         dotnet_format: true
     - name: Move to Backend Folder
       run: |
-        cd ../../Backend/StreamingPlatform
+        ls
+        cd Backend/StreamingPlatform
+        ls
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
