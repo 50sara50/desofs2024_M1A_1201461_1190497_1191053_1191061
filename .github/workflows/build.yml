@@ -17,6 +17,9 @@ permissions:
 jobs:
   build_backend:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: Backend/StreamingPlatform
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
@@ -31,11 +34,6 @@ jobs:
       uses: wearerequired/lint-action@v2
       with:
         dotnet_format: true
-    - name: Move to Backend Folder
-      run: |
-        ls
-        cd Backend/StreamingPlatform
-        ls
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
