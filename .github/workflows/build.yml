@@ -18,10 +18,12 @@ jobs:
       run: |
         git fetch origin "${{github.head_ref || github.ref_name}}"
         base_sha=$(git rev-parse "origin/develop")
+        echo "Base Sha: '${base_sha}'"
         echo "base_sha=$base_sha" >> $GITHUB_ENV
     - name: Get Backend changed files
       run: |
-        changed_source_backend_files=$(git diff-tree --no-commit-id --name-only -r "$base_sha" "$GITHUB_SHA" | { grep "**.cs$" || test $? = 1; })
+        echo "Base Sha: '${base_sha}'"
+        changed_source_backend_files=$(git diff --name-only "$base_sha" "$GITHUB_SHA" | grep '\.cs$' || true)
         echo "Files to validate: '${changed_source_backend_files}'"
         echo "updated_files=$(echo ${changed_source_backend_files})" >> $GITHUB_ENV
     # Determine if there are changed .cs files
