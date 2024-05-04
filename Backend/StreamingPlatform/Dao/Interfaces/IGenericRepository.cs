@@ -13,9 +13,9 @@ namespace StreamingPlatform.Dao.Interfaces
 
         Task<IEnumerable<TEntity>> GetAllRecordsAsync(bool tracked = false);
 
-        List<TEntity> GetRecords(Expression<Func<TEntity, bool>> expression, bool tracked = false);
+        List<TEntity> GetRecords(Expression<Func<TEntity, bool>> expression, bool tracked = false, int? numberOfRecords = null, int? pageNumber = null);
 
-        Task<List<TEntity>> GetRecordsAsync(Expression<Func<TEntity, bool>> expression, bool tracked = false);
+        Task<List<TEntity>> GetRecordsAsync(Expression<Func<TEntity, bool>> expression, bool tracked = false, int? numberOfRecords = null, int? pageNumber = null);
 
         TEntity? GetRecord(Expression<Func<TEntity, bool>> expression);
 

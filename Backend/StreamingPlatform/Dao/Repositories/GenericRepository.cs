@@ -14,6 +14,7 @@ namespace StreamingPlatform.Dao.Repositories
     {
         private readonly StreamingDbContext context = context;
         private readonly DbSet<TEntity> dbSet = context.Set<TEntity>();
+        private readonly int defaultPageSize = 50;
 
         /// <summary>
         /// Get all records from the database.
@@ -51,30 +52,38 @@ namespace StreamingPlatform.Dao.Repositories
         /// <param name="filter">he filter being applied</param>
         /// <param name="tracked">indicates if changes detected in the entity are persisted to the database during SaveChanges</param>
         /// <returns>the list of records retrieved from the database</returns>
-        public virtual List<TEntity> GetRecords(Expression<Func<TEntity, bool>> filter, bool tracked = false)
+        public virtual List<TEntity> GetRecords(Expression<Func<TEntity, bool>> filter, bool tracked = false, int? numberOfRecords = null, int? pageNumber = null)
         {
+            IQueryable<TEntity> query = this.dbSet.Where(filter).AsNoTracking();
             if (tracked)
             {
-                return this.dbSet.Where(filter).ToList();
+                query = this.dbSet.Where(filter);
             }
 
-            return this.dbSet.Where(filter).AsNoTracking().ToList();
+            query = this.ApplyPagination(numberOfRecords, pageNumber, query);
+
+            return query.ToList();
         }
 
         /// <summary>
-        /// Get records from the database based on the given filtering expression asynchronously.
+        /// Retrieves records from the database asynchronously based on the specified filter and pagination settings.
         /// </summary>
-        /// <param name="filter">he filter being applied</param>
-        /// <param name="tracked">indicates if changes detected in the entity are persisted to the database during SaveChanges</param>
-        /// <returns>the list of records retrieved from the database</returns>
-        public virtual async Task<List<TEntity>> GetRecordsAsync(Expression<Func<TEntity, bool>> filter, bool tracked = false)
+        /// <param name="filter">The filter expression to apply.</param>
+        /// <param name="tracked">Indicates whether entity changes should be tracked.</param>
+        /// <param name="numberOfRecords">The number of records to retrieve per page (optional).</param>
+        /// <param name="pageNumber">The current page number (1-based) for pagination (optional).</param>
+        /// <returns>A list of records retrieved from the database.</returns>
+        public virtual async Task<List<TEntity>> GetRecordsAsync(Expression<Func<TEntity, bool>> filter, bool tracked = false, int? numberOfRecords = null, int? pageNumber = null)
         {
+            IQueryable<TEntity> query = this.dbSet.Where(filter).AsNoTracking();
             if (tracked)
             {
-                return await this.dbSet.Where(filter).ToListAsync();
+                query = this.dbSet.Where(filter);
             }
 
-            return await this.dbSet.Where(filter).AsNoTracking().ToListAsync();
+            query = this.ApplyPagination(numberOfRecords, pageNumber, query);
+
+            return await query.ToListAsync();
         }
 
         /// <summary>
@@ -164,6 +173,36 @@ namespace StreamingPlatform.Dao.Repositories
             }
 
             this.dbSet.Remove(entityToDelete);
+        }
+
+        /// <summary>
+        /// Applies pagination to the given query based on the provided pagination parameters.
+        /// </summary>
+        /// <param name="numberOfRecords">The number of records to retrieve per page.</param>
+        /// <param name="pageNumber">The current page number (1-based).</param>
+        /// <param name="query">The IQueryable query to be paginated.</param>
+        /// <returns>The paginated IQueryable query.</returns>
+        protected IQueryable<TEntity> ApplyPagination(int? numberOfRecords, int? pageNumber, IQueryable<TEntity> query)
+        {
+            if (numberOfRecords.HasValue)
+            {
+                if (pageNumber.HasValue)
+                {
+                    int recordsToSkip = (pageNumber.Value - 1) * numberOfRecords.Value;
+                    query = query.Skip(recordsToSkip).Take(numberOfRecords.Value);
+                }
+                else
+                {
+                    query = query.Take(numberOfRecords.Value);
+                }
+            }
+            else if (pageNumber.HasValue)
+            {
+                int defaultRecordsToSkip = (pageNumber.Value - 1) * this.defaultPageSize;
+                query = query.Skip(defaultRecordsToSkip).Take(this.defaultPageSize);
+            }
+
+            return query;
         }
     }
 }
