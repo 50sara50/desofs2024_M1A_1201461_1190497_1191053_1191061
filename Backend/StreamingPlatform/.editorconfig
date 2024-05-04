@@ -81,3 +81,6 @@ dotnet_style_prefer_simplified_boolean_expressions = true:suggestion
 
 # Default severity for analyzer diagnostics with category 'StyleCop.CSharp.SpacingRules'
 dotnet_analyzer_diagnostic.category-StyleCop.CSharp.SpacingRules.severity = silent
+
+# IDE0305: Simplify collection initialization
+dotnet_diagnostic.IDE0305.severity = silent
