@@ -37,17 +37,18 @@ namespace StreamingService.Test.DaoTesting
             {
                 Assert.Fail("Context is null");
             }
-            GenericRepository<Plan> repository = new GenericRepository<Plan>(this.context);
-            SetupMockData(repository);
-            List<Plan> activePlans = repository.GetRecords(x => x.Status == PlanStatus.Active, pageNumber: 1, numberOfRecords: 3);
-            List<Plan> firstActivePlan = repository.GetRecords(x => x.Status == PlanStatus.Active, numberOfRecords: 1);
-            List<Plan> inactivePlan = repository.GetRecords(x => x.Status == PlanStatus.Inactive, pageNumber: 1, numberOfRecords: 3);
+            UnitOfWork unitOfWork = new(this.context);
+            GenericRepository<Plan> planRepository = (GenericRepository<Plan>)unitOfWork.Repository<Plan>();
+            SetupMockData(planRepository, unitOfWork);
+            List<Plan> activePlans = planRepository.GetRecords(x => x.Status == PlanStatus.Active, pageNumber: 1, numberOfRecords: 3);
+            List<Plan> firstActivePlan = planRepository.GetRecords(x => x.Status == PlanStatus.Active, numberOfRecords: 1);
+            List<Plan> inactivePlan = planRepository.GetRecords(x => x.Status == PlanStatus.Inactive, pageNumber: 1, numberOfRecords: 3);
             Assert.IsTrue(activePlans.Count == 3);
             Assert.IsTrue(firstActivePlan.Count == 1);
             Assert.IsTrue(inactivePlan.Count == 1);
         }
 
-        private void SetupMockData(GenericRepository<Plan> repository)
+        private void SetupMockData(GenericRepository<Plan> repository, UnitOfWork unitOfWork)
         {
             Plan plan = new()
             {
@@ -80,12 +81,7 @@ namespace StreamingService.Test.DaoTesting
             repository.Create(plan2);
             repository.Create(plan3);
             repository.Create(plan4);
-            if (this.context == null)
-            {
-                Assert.Fail("Context is null");
-            }
-
-            this.context.SaveChanges();
+            unitOfWork.SaveChanges();
         }
     }
 
