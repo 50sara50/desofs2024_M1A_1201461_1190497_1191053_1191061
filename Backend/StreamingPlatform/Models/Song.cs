@@ -4,18 +4,36 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace StreamingPlatform.Models
 {
+    /// <summary>
+    /// Represents a Song.
+    /// </summary>
 	[Table("Songs")]
 	public class Song
 	{
+        /// <summary>
+        /// The song's unique identifier.
+        /// </summary>
 		[Key]
 		public Guid Id { get; set; }
 
+        /// <summary>
+        /// The song's title.
+        /// </summary>
 		public string Title { get; set; }
 
+        /// <summary>
+        /// The unique identifier of the owner of the song.
+        /// </summary>
 		public Guid ArtistId { get; set; }
 
+        /// <summary>
+        /// The song's duration in minutes.
+        /// </summary>
 		public TimeSpan Duration { get; set; }
 
+        /// <summary>
+        /// The album the song belongs to.
+        /// </summary>
 		public Guid? AlbumId { get; set; }
 
 		public Song()

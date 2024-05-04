@@ -1,15 +1,19 @@
-﻿using StreamingPlatform.Models.Enums;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using StreamingPlatform.Models.Enums;
 
 namespace StreamingPlatform.Models
 {
     /// <summary>
     /// Represents a Plan.
     /// </summary>
+    [Table("Plans")]
     public sealed class Plan
     {
         /// <summary>
         /// Represents an unique identifier for the Plan.
         /// </summary>
+        [Key]
         public Guid PlanId { get; set; }
 
         /// <summary>
