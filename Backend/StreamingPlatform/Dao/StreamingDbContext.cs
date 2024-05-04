@@ -10,5 +10,12 @@ namespace StreamingPlatform.Dao
         public DbSet<Song> Songs { get; set; }
 
         public DbSet<Album> Albums { get; set; }
+        
+        public DbSet<Playlist> Playlists { get; set; }
+        
+        public DbSet<User> Users { get; set; }
+        
+        public DbSet<Subscription> Subscriptions { get; set; }
+        
     }
 }

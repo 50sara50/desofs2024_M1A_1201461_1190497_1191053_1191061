@@ -1,0 +1,40 @@
+@startuml
+'https://plantuml.com/use-case-diagram
+skin rose
+skinparam shadowing false
+skinparam actorStyle awesome
+left to right direction
+
+Utilizador as user
+Hacker as hacker
+Aplicação as app
+
+(Insere credenciais) as cred 
+(Autenticação) as auth
+(Mostra mensagem de erro) as errorMsg
+(Valida password) as validate
+
+user --> cred #line:black
+cred -> auth  #line:black : inclui
+auth -> errorMsg #line:black : inclui 
+errorMsg -> validate #line:black : inclui 
+
+app --> auth #line:black
+app --> errorMsg #line:black
+app --> validate #line:black
+(Brute force) as force 
+(Tenta obter credenciais) as harvest 
+(Tenta adivinhar credenciais) as guess
+
+hacker -> force  #line:black
+hacker -> harvest #line:black
+hacker -> guess #line:black
+force -> auth  #line:red;text:red : ameaça
+force --> harvest  #line:black : inclui
+force --> guess #line:black : inclui
+
+validate ---> guess #line:green;text:green : defende
+validate ---> force #line:green;text:green : defende
+errorMsg ---> harvest #line:green;text:green : defende
+
+@enduml
