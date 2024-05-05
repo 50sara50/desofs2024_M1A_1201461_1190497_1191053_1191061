@@ -6,7 +6,7 @@ namespace StreamingPlatform.Utils
     /// <summary>
     /// Helper class to encrypt and decrypt data using AES encryption. This will be used to encrypt and decrypt secure data in the application.
     /// </summary>
-    public static class SecureDataEncriptionHelper
+    public static class SecureDataEncryptionHelper
     {
         /// <summary>
         /// The encryption key used to encrypt and decrypt data.
@@ -20,7 +20,7 @@ namespace StreamingPlatform.Utils
         /// <returns>The encrypted data as a Base64-encoded string.</returns>
         public static string Encrypt(string dataToEncrypt)
         {
-            ArgumentNullException.ThrowIfNull(Key, "Encryption key");
+            ArgumentNullException.ThrowIfNullOrEmpty(Key, "Encryption key");
 
             if (string.IsNullOrEmpty(dataToEncrypt) || string.IsNullOrWhiteSpace(dataToEncrypt))
             {
@@ -57,7 +57,7 @@ namespace StreamingPlatform.Utils
         /// <returns>The decrypted data as a string.</returns>
         public static string Decrypt(string dataToDecrypt)
         {
-            ArgumentNullException.ThrowIfNull(Key, "Encryption key");
+            ArgumentNullException.ThrowIfNullOrEmpty(Key, "Encryption key");
 
             if (string.IsNullOrEmpty(dataToDecrypt) || string.IsNullOrWhiteSpace(dataToDecrypt))
             {

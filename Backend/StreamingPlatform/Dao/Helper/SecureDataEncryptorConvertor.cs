@@ -3,8 +3,7 @@ using StreamingPlatform.Utils;
 
 namespace StreamingPlatform.Dao.Helper
 {
-
-    public class SecureDataEncryptorConvertor(ConverterMappingHints? mappingHints = null) : ValueConverter<string, string>(x => SecureDataEncriptionHelper.Encrypt(x), x => SecureDataEncriptionHelper.Decrypt(x), mappingHints)
+    public class SecureDataEncryptorConvertor(ConverterMappingHints? mappingHints = null) : ValueConverter<string, string>(x => SecureDataEncryptionHelper.Encrypt(x), x => SecureDataEncryptionHelper.Decrypt(x), mappingHints)
     {
     }
 }

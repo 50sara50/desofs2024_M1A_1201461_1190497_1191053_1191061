@@ -1,4 +1,8 @@
-﻿using StreamingPlatform.Utils;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Protocols;
+using StreamingPlatform.Dao;
+using StreamingPlatform.Utils;
+using System.Reflection;
 
 namespace StreamingService.Test.Utils
 {
@@ -6,7 +10,37 @@ namespace StreamingService.Test.Utils
     public class PasswordEncryptorTests
     {
         private const string TestPassword = "P@ssw0rd";
-        private const string TestPepper = "SecretPepper";
+        private string TestPepper = "SecretPepper";
+        private int TestIterations = 100;
+
+        [TestInitialize]
+
+        public void Initialize()
+        {
+            // the type specified here is just so the secrets library can 
+            // find the UserSecretId we added in the csproj file
+            IConfigurationBuilder secretsBuilder = new ConfigurationBuilder()
+                .AddUserSecrets<StreamingDbContext>();
+            IConfigurationRoot secretsConfiguration = secretsBuilder.Build();
+            string? passwordPepper = secretsConfiguration.GetValue<string>("Keys:PasswordPepper");
+            if (passwordPepper != null)
+            {
+                TestPepper = passwordPepper;
+            }
+            Dictionary<string, string?> inMemorySettings = new()
+            {
+                { "HashingIterations","1000"}
+            };
+            IConfigurationBuilder builder = new ConfigurationBuilder()
+                .AddInMemoryCollection(inMemorySettings);
+            IConfigurationRoot appSettings = builder.Build();
+            string? iterations = appSettings.GetValue<string?>("HashingIterations");
+            if (iterations != null)
+            {
+                TestIterations = int.Parse(iterations);
+            }
+
+        }
 
         [TestMethod]
         public void EncryptPasswordValidInputReturnsNonEmptyString()
@@ -38,9 +72,8 @@ namespace StreamingService.Test.Utils
         public void EncryptPasswordSameInputAndParametersReturnsSameOutput()
         {
             string salt = PasswordEncryptor.GenerateSalt();
-            int iteration = 50;
-            string encryptedPassword1 = PasswordEncryptor.EncryptPassword(TestPassword, salt, TestPepper, iteration);
-            string encryptedPassword2 = PasswordEncryptor.EncryptPassword(TestPassword, salt, TestPepper, iteration);
+            string encryptedPassword1 = PasswordEncryptor.EncryptPassword(TestPassword, salt, TestPepper, TestIterations);
+            string encryptedPassword2 = PasswordEncryptor.EncryptPassword(TestPassword, salt, TestPepper, TestIterations);
             Assert.AreEqual(encryptedPassword1, encryptedPassword2);
         }
     }

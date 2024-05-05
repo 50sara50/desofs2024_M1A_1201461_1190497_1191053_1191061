@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using StreamingPlatform.Dao;
 using StreamingPlatform.Dao.Repositories;
 using StreamingPlatform.Models;
@@ -11,6 +12,10 @@ namespace StreamingService.Test.DaoTesting
     {
         private StreamingDbContext? context;
 
+        private string TestPasswordPepper = PasswordEncryptor.GenerateSalt();
+
+
+
         [TestInitialize]
         public void Setup()
         {
@@ -19,7 +24,20 @@ namespace StreamingService.Test.DaoTesting
                .Options;
 
             this.context = new StreamingDbContext(options);
+            // the type specified here is just so the secrets library can 
+            // find the UserSecretId we added in the csproj file
+            IConfigurationBuilder builder = new ConfigurationBuilder()
+                .AddUserSecrets<StreamingDbContext>();
+            IConfigurationRoot configuration = builder.Build();
+            string encryptionKey = configuration.GetValue<string>("Keys:SecureDataKey") ?? PasswordEncryptor.GenerateSalt();
+            SecureDataEncryptionHelper.SetEncryptionKey(encryptionKey);
+            string? passwordPepper = configuration.GetValue<string?>("Keys:PasswordPepper");
+            if (passwordPepper != null)
+            {
+                TestPasswordPepper = passwordPepper;
+            }
         }
+
         [TestCleanup]
 
         public void Cleanup()
@@ -58,16 +76,18 @@ namespace StreamingService.Test.DaoTesting
                 Assert.Fail("Context is null");
             }
             string userPassword = Faker.Lorem.Sentence().Trim();
-
-
             UnitOfWork unitOfWork = new(this.context);
             GenericRepository<User> userRepository = (GenericRepository<User>)unitOfWork.Repository<User>();
-            string pepper = PasswordEncryptor.GenerateSalt(); // TODO: Use the value from the configuration file/secrets instead of generating it.
+            string address = Faker.Address.StreetAddress();
+            Guid userId = Guid.NewGuid();
+
             User user = new()
             {
+                Id = userId,
                 UserName = "test",
                 Email = Faker.Internet.Email(),
-                Password = new Password(userPassword, pepper)
+                Password = new Password(userPassword, TestPasswordPepper),
+                Address = address,
             };
             userRepository.Create(user);
             unitOfWork.SaveChanges();
@@ -75,6 +95,7 @@ namespace StreamingService.Test.DaoTesting
             Assert.IsTrue(users.Count == 1);
             Assert.IsTrue(users[0].UserName == user.UserName);
             Assert.IsTrue(users[0].Email == user.Email);
+            Assert.IsTrue(users[0].Address == address);
         }
 
         private void SetupMockData(GenericRepository<Plan> repository, UnitOfWork unitOfWork)
