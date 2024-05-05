@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using StreamingPlatform.Dao.Properties;
 using StreamingPlatform.Models.Enums;
 
 namespace StreamingPlatform.Models
@@ -68,6 +69,7 @@ namespace StreamingPlatform.Models
         /// <summary>
         /// The user's address.
         /// </summary>
+        [SecureProperty]
         public string Address { get; set; }
 
         /// <summary>
