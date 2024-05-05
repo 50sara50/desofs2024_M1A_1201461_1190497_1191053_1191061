@@ -1,4 +1,4 @@
-using System.ComponentModel.DataAnnotations;
+using StreamingPlatform.Utils;
 
 namespace StreamingPlatform.Models
 {
@@ -7,9 +7,18 @@ namespace StreamingPlatform.Models
     /// </summary>
     public class Password
     {
-        //TODO: We need to define if we are going to have an Id for the password. We need it to make the relationship with the User.
-        [Key]
-        public Guid Id { get; set; }
+        public Password(string password, string pepper, int iterations = 3)
+        {
+            string salt = PasswordEncryptor.GenerateSalt();
+            this.Salt = salt;
+            this.Value = PasswordEncryptor.EncryptPassword(password, salt, pepper, iterations);
+        }
+
+        public Password()
+        {
+            this.Value = string.Empty;
+            this.Salt = string.Empty;
+        }
 
         /// <summary>
         /// The password's value.
@@ -20,11 +29,5 @@ namespace StreamingPlatform.Models
         /// The password's hash.
         /// </summary>
         public string Salt { get; set; }
-
-        public Password(string value)
-        {
-            this.Value = value;
-            //TODO salt
-        }
     }
 }
