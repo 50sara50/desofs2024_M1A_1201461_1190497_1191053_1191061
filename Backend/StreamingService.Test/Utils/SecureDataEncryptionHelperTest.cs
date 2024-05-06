@@ -45,23 +45,13 @@ namespace StreamingService.Test.Utils
             Assert.AreEqual(string.Empty, decryptedData);
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
 
-        public void EncryptWithNullKeyThrowsArgumentNullException()
-        {
-            // Arrange
-            SecureDataEncryptionHelper.SetEncryptionKey(string.Empty);
-            SecureDataEncryptionHelper.Encrypt("Test Data");
-
-        }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
-        public void DecryptWithNullKeyThrowsArgumentNullException()
+        public void EmptyKeyThrowsArgumentException()
         {
-            SecureDataEncryptionHelper.SetEncryptionKey(string.Empty);
-            SecureDataEncryptionHelper.Decrypt("Base64EncodedData");
+            ArgumentException exception = Assert.ThrowsException<ArgumentException>(() => SecureDataEncryptionHelper.SetEncryptionKey(string.Empty));
+            Assert.AreEqual("Encryption key cannot be null or empty.", exception.Message);
         }
     }
 }

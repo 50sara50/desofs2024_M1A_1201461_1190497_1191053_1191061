@@ -4,14 +4,19 @@ using System.Text;
 namespace StreamingPlatform.Utils
 {
     /// <summary>
-    /// Helper class to encrypt and decrypt data using AES encryption. This will be used to encrypt and decrypt secure data in the application.
+    /// Helper class to encrypt and decrypt data using AES encryption.
     /// </summary>
     public static class SecureDataEncryptionHelper
     {
         /// <summary>
-        /// The encryption key used to encrypt and decrypt data.
+        /// The block size for AES encryption in bits (128 bits = 16 bytes).
         /// </summary>
-        public static string? Key { get; private set; }
+        private const int AesBlockSize = 128;
+
+        /// <summary>
+        /// The encryption key used for AES encryption and decryption.
+        /// </summary>
+        private static string? Key { get; set; }
 
         /// <summary>
         /// Encrypts the specified data using AES encryption.
@@ -20,9 +25,12 @@ namespace StreamingPlatform.Utils
         /// <returns>The encrypted data as a Base64-encoded string.</returns>
         public static string Encrypt(string dataToEncrypt)
         {
-            ArgumentNullException.ThrowIfNullOrEmpty(Key, "Encryption key");
+            if (string.IsNullOrEmpty(Key))
+            {
+                throw new InvalidOperationException("Encryption key is not set.");
+            }
 
-            if (string.IsNullOrEmpty(dataToEncrypt) || string.IsNullOrWhiteSpace(dataToEncrypt))
+            if (string.IsNullOrEmpty(dataToEncrypt))
             {
                 return string.Empty;
             }
@@ -32,17 +40,16 @@ namespace StreamingPlatform.Utils
             aesAlg.Mode = CipherMode.CBC;
             aesAlg.Padding = PaddingMode.PKCS7;
 
-            aesAlg.GenerateIV();
-            byte[] iv = aesAlg.IV;
+            byte[] iv = GenerateIV();
 
             ICryptoTransform encryptor = aesAlg.CreateEncryptor(aesAlg.Key, iv);
 
             using MemoryStream memoryStream = new();
             using CryptoStream cryptoStream = new(memoryStream, encryptor, CryptoStreamMode.Write);
-            using (StreamWriter streamWriter = new(cryptoStream))
-            {
-                streamWriter.Write(dataToEncrypt);
-            }
+
+            byte[] dataBytes = Encoding.UTF8.GetBytes(dataToEncrypt);
+            cryptoStream.Write(dataBytes, 0, dataBytes.Length);
+            cryptoStream.FlushFinalBlock();
 
             byte[] encryptedBytes = memoryStream.ToArray();
             byte[] result = new byte[iv.Length + encryptedBytes.Length];
@@ -59,9 +66,12 @@ namespace StreamingPlatform.Utils
         /// <returns>The decrypted data as a string.</returns>
         public static string Decrypt(string dataToDecrypt)
         {
-            ArgumentNullException.ThrowIfNullOrEmpty(Key, "Encryption key");
+            if (string.IsNullOrEmpty(Key))
+            {
+                throw new InvalidOperationException("Encryption key is not set.");
+            }
 
-            if (string.IsNullOrEmpty(dataToDecrypt) || string.IsNullOrWhiteSpace(dataToDecrypt))
+            if (string.IsNullOrEmpty(dataToDecrypt))
             {
                 return string.Empty;
             }
@@ -73,10 +83,10 @@ namespace StreamingPlatform.Utils
             aesAlg.Mode = CipherMode.CBC;
             aesAlg.Padding = PaddingMode.PKCS7;
 
-            byte[] iv = new byte[aesAlg.BlockSize / 8];
-            byte[] encryptedDataWithoutIV = new byte[encryptedBytes.Length - iv.Length];
-
+            byte[] iv = new byte[AesBlockSize / 8];
             Buffer.BlockCopy(encryptedBytes, 0, iv, 0, iv.Length);
+
+            byte[] encryptedDataWithoutIV = new byte[encryptedBytes.Length - iv.Length];
             Buffer.BlockCopy(encryptedBytes, iv.Length, encryptedDataWithoutIV, 0, encryptedDataWithoutIV.Length);
 
             aesAlg.IV = iv;
@@ -96,7 +106,25 @@ namespace StreamingPlatform.Utils
         /// <param name="key">The encryption key.</param>
         public static void SetEncryptionKey(string key)
         {
+            if (string.IsNullOrEmpty(key))
+            {
+                throw new ArgumentException("Encryption key cannot be null or empty.");
+            }
+
             Key = key;
+        }
+
+        /// <summary>
+        /// Generates a new random initialization vector (IV) for AES encryption.
+        /// </summary>
+        /// <returns>The generated IV as a byte array.</returns>
+        private static byte[] GenerateIV()
+        {
+            using Aes aes = Aes.Create();
+            aes.Mode = CipherMode.CBC;
+            aes.Padding = PaddingMode.PKCS7;
+            aes.GenerateIV();
+            return aes.IV;
         }
     }
 }
