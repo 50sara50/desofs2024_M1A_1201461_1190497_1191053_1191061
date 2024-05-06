@@ -2,7 +2,7 @@ name: "Scan code "
 on:
   pull_request:
     branches:
-     - master
+      - master
     paths-ignore:
       - '**/*.md'
       - '**/*.txt'
