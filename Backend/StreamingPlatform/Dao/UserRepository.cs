@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using StreamingPlatform.Dao;
 using StreamingPlatform.Models;
 
-namespace StreamingPlatform.Repositories
+namespace StreamingPlatform.Dao.Repositories
 {
     public class UserRepository
     {
