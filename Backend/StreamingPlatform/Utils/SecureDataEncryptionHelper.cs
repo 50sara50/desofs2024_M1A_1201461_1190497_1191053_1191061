@@ -27,27 +27,29 @@ namespace StreamingPlatform.Utils
                 return string.Empty;
             }
 
-            byte[] encrypted;
+            using Aes aesAlg = Aes.Create();
+            aesAlg.Key = Encoding.UTF8.GetBytes(Key);
+            aesAlg.Mode = CipherMode.CBC;
+            aesAlg.Padding = PaddingMode.PKCS7;
 
-            using (Aes aesAlg = Aes.Create())
+            aesAlg.GenerateIV();
+            byte[] iv = aesAlg.IV;
+
+            ICryptoTransform encryptor = aesAlg.CreateEncryptor(aesAlg.Key, iv);
+
+            using MemoryStream memoryStream = new();
+            using CryptoStream cryptoStream = new(memoryStream, encryptor, CryptoStreamMode.Write);
+            using (StreamWriter streamWriter = new(cryptoStream))
             {
-                aesAlg.Key = Encoding.UTF8.GetBytes(Key);
-                aesAlg.Mode = CipherMode.ECB;
-                aesAlg.Padding = PaddingMode.PKCS7;
-
-                ICryptoTransform encryptor = aesAlg.CreateEncryptor(aesAlg.Key, aesAlg.IV);
-
-                using MemoryStream memoryStream = new();
-                using CryptoStream cryptoStream = new(memoryStream, encryptor, CryptoStreamMode.Write);
-                using (StreamWriter streamWriter = new(cryptoStream))
-                {
-                    streamWriter.Write(dataToEncrypt);
-                }
-
-                encrypted = memoryStream.ToArray();
+                streamWriter.Write(dataToEncrypt);
             }
 
-            return Convert.ToBase64String(encrypted);
+            byte[] encryptedBytes = memoryStream.ToArray();
+            byte[] result = new byte[iv.Length + encryptedBytes.Length];
+            Buffer.BlockCopy(iv, 0, result, 0, iv.Length);
+            Buffer.BlockCopy(encryptedBytes, 0, result, iv.Length, encryptedBytes.Length);
+
+            return Convert.ToBase64String(result);
         }
 
         /// <summary>
@@ -64,15 +66,27 @@ namespace StreamingPlatform.Utils
                 return string.Empty;
             }
 
-            using Aes aes = Aes.Create();
-            aes.Key = Encoding.UTF8.GetBytes(Key);
-            aes.Mode = CipherMode.ECB;
-            aes.Padding = PaddingMode.PKCS7;
-            ICryptoTransform descriptor = aes.CreateDecryptor(aes.Key, aes.IV);
-            byte[] buffer = Convert.FromBase64String(dataToDecrypt);
-            using MemoryStream memoryStream = new(buffer);
-            using CryptoStream cryptoStream = new(memoryStream, descriptor, CryptoStreamMode.Read);
+            byte[] encryptedBytes = Convert.FromBase64String(dataToDecrypt);
+
+            using Aes aesAlg = Aes.Create();
+            aesAlg.Key = Encoding.UTF8.GetBytes(Key);
+            aesAlg.Mode = CipherMode.CBC;
+            aesAlg.Padding = PaddingMode.PKCS7;
+
+            byte[] iv = new byte[aesAlg.BlockSize / 8];
+            byte[] encryptedDataWithoutIV = new byte[encryptedBytes.Length - iv.Length];
+
+            Buffer.BlockCopy(encryptedBytes, 0, iv, 0, iv.Length);
+            Buffer.BlockCopy(encryptedBytes, iv.Length, encryptedDataWithoutIV, 0, encryptedDataWithoutIV.Length);
+
+            aesAlg.IV = iv;
+
+            ICryptoTransform decryptor = aesAlg.CreateDecryptor(aesAlg.Key, aesAlg.IV);
+
+            using MemoryStream memoryStream = new(encryptedDataWithoutIV);
+            using CryptoStream cryptoStream = new(memoryStream, decryptor, CryptoStreamMode.Read);
             using StreamReader streamReader = new(cryptoStream);
+
             return streamReader.ReadToEnd();
         }
 
