@@ -11,19 +11,6 @@ on:
       - '**/*.xlsx'
       - '**/*.drawio'
       - '**/*.yml'
-    
-  pull_request:
-    branches:
-      - master
-    paths-ignore:
-      - '**/*.md'
-      - '**/*.txt'
-      - '**/*.pdf'
-      - '**/*.puml'
-      - '**/*.xlsx'
-      - '**/*.drawio'
-      - '**/*.yml'
-
   schedule:
     - cron: '0 1 * * 1,5'
 
