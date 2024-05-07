@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using StreamingPlatform.Dtos.Contracts;
 
 namespace StreamingPlatform;
 
@@ -17,7 +19,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("register")]
-    public async Task<IActionResult> Register(NewUserDto newUser)
+    public async Task<IActionResult> Register(NewUserContract newUser)
     {
         try
         {

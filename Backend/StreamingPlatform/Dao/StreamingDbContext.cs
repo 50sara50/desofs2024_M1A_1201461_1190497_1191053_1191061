@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using StreamingPlatform.Dao.Helper;
 using StreamingPlatform.Models;
 
@@ -8,7 +9,7 @@ namespace StreamingPlatform.Dao
     /// Class that represents the database context.
     /// </summary>
     /// <param name="options"></param>
-    public class StreamingDbContext(DbContextOptions options) : DbContext(options)
+    public class StreamingDbContext(DbContextOptions<StreamingDbContext> options) : DbContext(options)
     {
         /// <summary>
         /// Set of users in the database.
@@ -33,15 +34,15 @@ namespace StreamingPlatform.Dao
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.UseEncryption();
-            modelBuilder.Entity<User>(entity =>
-            {
-                entity.OwnsOne(u => u.Password, password =>
-                {
-                    password.Property(p => p.Value).HasColumnName("Password");
-                    password.Property(p => p.Salt).HasColumnName("Salt");
-                });
-            });
+            //modelBuilder.UseEncryption();
+            // modelBuilder.Entity<User>(entity =>
+            // {
+            //     entity.OwnsOne(u => u.Password, password =>
+            //     {
+            //         password.Property(p => p.Value).HasColumnName("Password");
+            //         password.Property(p => p.Salt).HasColumnName("Salt");
+            //     });
+            // });
         }
     }
 }

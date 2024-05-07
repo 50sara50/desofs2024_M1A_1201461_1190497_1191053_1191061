@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using StreamingPlatform.Utils;
 
 namespace StreamingPlatform.Models
@@ -5,6 +6,7 @@ namespace StreamingPlatform.Models
     /// <summary>
     /// The user's password.
     /// </summary>
+    [Keyless]
     public class Password
     {
         public Password(string password, string pepper, int iterations = 3)

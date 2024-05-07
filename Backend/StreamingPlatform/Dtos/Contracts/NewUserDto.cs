@@ -1,9 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Text.RegularExpressions;
 
-namespace StreamingPlatform;
+namespace StreamingPlatform.Dtos.Contracts;
 
-public class NewUserDto
+public class NewUserContract
 {
     /// <summary>
     /// The user's password.
