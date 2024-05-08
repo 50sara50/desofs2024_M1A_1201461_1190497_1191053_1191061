@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using StreamingPlatform.Dao;
+using StreamingPlatform.Dao.Helper;
 using StreamingPlatform.Dao.Repositories;
 using StreamingPlatform.Models;
 using StreamingPlatform.Models.Enums;
@@ -59,12 +60,12 @@ namespace StreamingService.Test.DaoTesting
             UnitOfWork unitOfWork = new(this.context);
             GenericRepository<Plan> planRepository = (GenericRepository<Plan>)unitOfWork.Repository<Plan>();
             SetupMockData(planRepository, unitOfWork);
-            List<Plan> activePlans = planRepository.GetRecords(x => x.Status == PlanStatus.Active, pageNumber: 1, numberOfRecords: 3);
-            List<Plan> firstActivePlan = planRepository.GetRecords(x => x.Status == PlanStatus.Active, numberOfRecords: 1);
-            List<Plan> inactivePlan = planRepository.GetRecords(x => x.Status == PlanStatus.Inactive, pageNumber: 1, numberOfRecords: 3);
-            Assert.IsTrue(activePlans.Count == 3);
-            Assert.IsTrue(firstActivePlan.Count == 1);
-            Assert.IsTrue(inactivePlan.Count == 1);
+            PagedResponseOffset<Plan> activePlans = planRepository.GetRecords(x => x.Status == PlanStatus.Active, pageNumber: 1, numberOfRecords: 2);
+            IEnumerable<Plan> allActivePlans = planRepository.GetRecords(x => x.Status == PlanStatus.Active);
+            PagedResponseOffset<Plan> inactivePlan = planRepository.GetRecords(x => x.Status == PlanStatus.Inactive, pageNumber: 1, numberOfRecords: 3);
+            Assert.IsTrue(activePlans.Data.Count == 2);
+            Assert.IsTrue(allActivePlans.Count() == 3);
+            Assert.IsTrue(inactivePlan.Data.Count == 1);
         }
 
         [TestMethod]

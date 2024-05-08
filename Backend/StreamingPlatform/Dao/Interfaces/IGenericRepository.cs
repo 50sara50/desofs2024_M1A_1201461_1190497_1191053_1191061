@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using StreamingPlatform.Dao.Helper;
 
 namespace StreamingPlatform.Dao.Interfaces
 {
@@ -11,11 +12,19 @@ namespace StreamingPlatform.Dao.Interfaces
     {
         IEnumerable<TEntity> GetAllRecords(bool tracked = false);
 
+        PagedResponseOffset<TEntity> GetAllRecords(int numberOfRecords, int pageNumber, bool tracked = false);
+
         Task<IEnumerable<TEntity>> GetAllRecordsAsync(bool tracked = false);
 
-        List<TEntity> GetRecords(Expression<Func<TEntity, bool>> expression, bool tracked = false, int? numberOfRecords = null, int? pageNumber = null);
+        Task<PagedResponseOffset<TEntity>> GetAllRecordsAsync(int numberOfRecords, int pageNumber, bool tracked = false);
 
-        Task<List<TEntity>> GetRecordsAsync(Expression<Func<TEntity, bool>> expression, bool tracked = false, int? numberOfRecords = null, int? pageNumber = null);
+        PagedResponseOffset<TEntity> GetRecords(Expression<Func<TEntity, bool>> expression, int numberOfRecords, int pageNumber, bool tracked = false);
+
+        IEnumerable<TEntity> GetRecords(Expression<Func<TEntity, bool>> expression, bool tracked = false);
+
+        Task<PagedResponseOffset<TEntity>> GetRecordsAsync(Expression<Func<TEntity, bool>> expression, int numberOfRecords, int pageNumber, bool tracked = false);
+
+        Task<IEnumerable<TEntity>> GetRecordsAsync(Expression<Func<TEntity, bool>> expression, bool tracked = false);
 
         TEntity? GetRecord(Expression<Func<TEntity, bool>> expression);
 
