@@ -23,18 +23,25 @@ namespace StreamingPlatform.Models
         /// The songs in the playlist.
         /// </summary>
         public List<Song> SongList { get; set; }
+        
+        /// <summary>
+        /// The unique identifier of the owner of the playlist.
+        /// </summary>
+        public Guid UserId { get; set; }
 
         public Playlist()
         {
             this.Title = string.Empty;
             this.SongList = new List<Song>();
+            this.UserId = new Guid();
         }
 
-        public Playlist(Guid id, string title)
+        public Playlist(Guid id, string title, Guid userId)
         {
             this.Id = id;
             this.Title = title;
             this.SongList = new List<Song>();
+            this.UserId = userId;
         }
 
         /// <summary>

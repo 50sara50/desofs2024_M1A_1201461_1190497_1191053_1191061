@@ -15,7 +15,7 @@ namespace StreamingPlatform.Migrations
                 name: "Plans",
                 columns: table => new
                 {
-                    PlanId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    PlanId = table.Column<Guid>(type: "varchar(255)",nullable: false),
                     MontlyFee = table.Column<double>(type: "float", nullable: false),
                     NumberOfMinutes = table.Column<int>(type: "int", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false)

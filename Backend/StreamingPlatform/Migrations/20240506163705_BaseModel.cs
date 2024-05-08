@@ -15,9 +15,9 @@ namespace StreamingPlatform.Migrations
                 name: "Albums",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ArtistId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    Id = table.Column<Guid>(type: "varchar(255)", nullable: false),
+                    Title = table.Column<string>(type: "varchar(255)", nullable: false),
+                    ArtistId = table.Column<Guid>(type: "varchar(255)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -28,8 +28,8 @@ namespace StreamingPlatform.Migrations
                 name: "Playlists",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Id = table.Column<Guid>(type: "varchar(255)", nullable: false),
+                    Title = table.Column<string>(type: "varchar(255)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -40,11 +40,11 @@ namespace StreamingPlatform.Migrations
                 name: "Subscriptions",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    PlanId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    RenewDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Id = table.Column<Guid>(type: "varchar(255)", nullable: false),
+                    UserId = table.Column<Guid>(type: "varchar(255)", nullable: false),
+                    PlanId = table.Column<Guid>(type: "varchar(255)", nullable: false),
+                    CreatedOn = table.Column<DateTime>(type: "date", nullable: false),
+                    RenewDate = table.Column<DateTime>(type: "date", nullable: true),
                     Status = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -56,16 +56,16 @@ namespace StreamingPlatform.Migrations
                 name: "Users",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Salt = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Id = table.Column<Guid>(type: "varchar(255)", nullable: false),
+                    UserName = table.Column<string>(type: "varchar(255)", nullable: false),
+                    Email = table.Column<string>(type: "varchar(255)", nullable: false),
+                    Password = table.Column<string>(type: "varchar(255)", nullable: false),
+                    Salt = table.Column<string>(type: "varchar(255)", nullable: false),
+                    Name = table.Column<string>(type: "varchar(255)", nullable: false),
                     Age = table.Column<int>(type: "int", nullable: false),
-                    Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Address = table.Column<string>(type: "varchar(255)", nullable: false),
                     Role = table.Column<int>(type: "int", nullable: false),
-                    CreateOn = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    CreateOn = table.Column<DateTime>(type: "date", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -76,12 +76,12 @@ namespace StreamingPlatform.Migrations
                 name: "Songs",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ArtistId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<Guid>(type: "varchar(255)", nullable: false),
+                    Title = table.Column<string>(type: "varchar(255)", nullable: false),
+                    ArtistId = table.Column<Guid>(type: "varchar(255)", nullable: false),
                     Duration = table.Column<TimeSpan>(type: "time", nullable: false),
-                    AlbumId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    PlaylistId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                    AlbumId = table.Column<Guid>(type: "varchar(255)", nullable: true),
+                    PlaylistId = table.Column<Guid>(type: "varchar(255)", nullable: true)
                 },
                 constraints: table =>
                 {
