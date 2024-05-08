@@ -5,7 +5,7 @@
     /// </summary>
     public interface IUnitOfWork
     {
-        void SaveChangesAsync();
+        Task SaveChangesAsync();
 
         void SaveChanges();
 

@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 using StreamingPlatform.Models.Enums;
 
 namespace StreamingPlatform.Models
@@ -8,8 +9,28 @@ namespace StreamingPlatform.Models
     /// Represents a Plan.
     /// </summary>
     [Table("Plans")]
+    [Index(nameof(PlanName), IsUnique = true)]
+
     public sealed class Plan
     {
+
+        public Plan()
+        {
+            this.PlanName = string.Empty;
+            this.MontlyFee = 0;
+            this.NumberOfMinutes = 0;
+            this.Status = PlanStatus.Active;
+        }
+
+        public Plan(string planName, double montlyFee, int numberOfMinutes)
+        {
+            this.PlanId = Guid.NewGuid();
+            this.PlanName = planName;
+            this.MontlyFee = montlyFee;
+            this.NumberOfMinutes = numberOfMinutes;
+            this.Status = PlanStatus.Active;
+        }
+
         /// <summary>
         /// Represents an unique identifier for the Plan.
         /// </summary>
@@ -17,18 +38,28 @@ namespace StreamingPlatform.Models
         public Guid PlanId { get; set; }
 
         /// <summary>
+        /// Represents the name of the Plan.
+        /// </summary>
+        [Required(ErrorMessage = "Plan name is required.")]
+        [MaxLength(50, ErrorMessage = "Plan name is too long. Max length is 50 characters.")]
+        public string PlanName { get; set; }
+
+        /// <summary>
         /// Represents the monthly fee of the Plan.
         /// </summary>
+        [Range(0, double.MaxValue, ErrorMessage = "Monthly fee must be greater than 0.")]
         public double MontlyFee { get; set; }
 
         /// <summary>
         /// Represents the number of minutes of the Plan.
         /// </summary>
+        [Range(0, int.MaxValue, ErrorMessage = "Number of minutes must be greater than 0.")]
         public int NumberOfMinutes { get; set; }
 
         /// <summary>
         /// Represents the status of the Plan. Can be Active or Inactive.
         /// </summary>
         public PlanStatus Status { get; set; }
+
     }
 }
