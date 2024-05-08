@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using StreamingPlatform.Dtos.Contracts;
 
 namespace StreamingPlatform;
@@ -23,9 +22,9 @@ public class AuthController : ControllerBase
     {
         try
         {
-            var user = await _authService.Register(newUser);
-            _logger.LogInformation($"User {user.UserName} registered successfully.");
-            return Ok(user);
+            var userToken = await _authService.Register(newUser);
+            _logger.LogInformation($"User {newUser.UserName} registered successfully.");
+            return Ok(userToken);
         }
         catch (Exception ex)
         {

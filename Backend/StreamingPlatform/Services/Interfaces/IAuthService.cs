@@ -1,9 +1,9 @@
 ﻿using StreamingPlatform.Dtos.Contracts;
-using StreamingPlatform.Models;
+using StreamingPlatform.Dtos.Responses;
 
 namespace StreamingPlatform;
 
 public interface IAuthService
 {
-    public Task<User> Register(NewUserContract newUser);
+    public Task<TokenResponseDto> Register(NewUserContract newUser);
 }

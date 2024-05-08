@@ -1,8 +1,5 @@
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.AspNetCore.Identity;
 using StreamingPlatform.Dao.Properties;
-using StreamingPlatform.Models.Enums;
 
 namespace StreamingPlatform.Models
 {
