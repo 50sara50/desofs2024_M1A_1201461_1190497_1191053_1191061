@@ -1,6 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Http.Timeouts;
 using Microsoft.AspNetCore.Mvc;
+using StreamingPlatform.Controllers.ResponseMapper;
+using StreamingPlatform.Controllers.Responses;
 using StreamingPlatform.Dtos.Contract;
 using StreamingPlatform.Dtos.Response;
 using StreamingPlatform.Services.Interfaces;
@@ -41,17 +43,20 @@ namespace StreamingPlatform.Controllers
             catch (ValidationException e)
             {
                 logger.LogError($"Validation error: {e.Message}");
-                return this.BadRequest($"Validation error: {e.Message}");
+                ErrorResponseObject errorResponseObject = MapResponse.BadRequest(e.Message);
+                return this.BadRequest(errorResponseObject);
             }
             catch (InvalidOperationException e)
             {
                 logger.LogError($"Error: {e.Message}");
-                return this.Conflict($"Error: {e.Message}");
+                ErrorResponseObject errorResponseObject = MapResponse.Conflict(e.Message);
+                return this.Conflict(errorResponseObject);
             }
             catch (Exception e)
             {
                 logger.LogError($"Error: {e.Message}");
-                return this.StatusCode(StatusCodes.Status500InternalServerError, $"Error: {e.Message}");
+                ErrorResponseObject errorResponseObject = MapResponse.InternalServerError();
+                return this.StatusCode(StatusCodes.Status500InternalServerError, errorResponseObject);
             }
         }
 
@@ -79,7 +84,8 @@ namespace StreamingPlatform.Controllers
                 PlanResponse? planResponse = await planService.GetPlan(planName);
                 if (planResponse == null)
                 {
-                    return this.NotFound("No plan with the specified name");
+                    ErrorResponseObject errorResponseObject = MapResponse.NotFound("No plan with the specified name");
+                    return this.NotFound(errorResponseObject);
                 }
 
                 return this.Ok(planResponse);
@@ -87,12 +93,14 @@ namespace StreamingPlatform.Controllers
             catch (Exception e)
             {
                 logger.LogError($"Error: {e.Message}");
-                return this.StatusCode(StatusCodes.Status500InternalServerError, $"Error: {e.Message}");
+                ErrorResponseObject errorResponseObject = MapResponse.InternalServerError();
+                return this.StatusCode(StatusCodes.Status500InternalServerError, errorResponseObject);
             }
         }
 
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [Produces("application/json")]
         [RequestTimeout(20)]
         [HttpGet]
@@ -102,7 +110,8 @@ namespace StreamingPlatform.Controllers
         /// </summary>
         /// <returns>
         /// A response with all the plans.
-        ///  Returns 200 (OK) along with the list of plans.        
+        ///  Returns 200 (OK) along with the list of plans
+        ///  Returns 400(BAD Request) if only one of the header values (page size or current Page is Provided).        
         ///  If an unexpected error occurs during the get, returns 500 (Internal Server Error) with error details.
         /// </returns>
         public async Task<IActionResult> GetPlans([FromHeader] int? pageSize, [FromHeader] int? currentPage)
@@ -112,7 +121,8 @@ namespace StreamingPlatform.Controllers
                 logger.LogInformation($"Getting plans");
                 if ((pageSize == null && currentPage != null) || (pageSize != null && currentPage == null))
                 {
-                    throw new ArgumentException("Both pageSize and currentPage must be provided");
+                    ErrorResponseObject errorResponseObject = MapResponse.BadRequest("Both pageSize and currentPage must be provided");
+                    return this.BadRequest(errorResponseObject);
                 }
 
                 if (pageSize == null && currentPage == null)
@@ -131,7 +141,8 @@ namespace StreamingPlatform.Controllers
             catch (Exception e)
             {
                 logger.LogError($"Error: {e.Message}");
-                return this.StatusCode(StatusCodes.Status500InternalServerError, $"Error: {e.Message}");
+                ErrorResponseObject errorResponseObject = MapResponse.InternalServerError();
+                return this.StatusCode(StatusCodes.Status500InternalServerError, errorResponseObject);
             }
         }
     }

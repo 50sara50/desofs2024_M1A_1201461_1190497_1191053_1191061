@@ -48,7 +48,7 @@ namespace StreamingPlatform.Services
                 planRepository.Create(plan);
                 await this.unitOfWork.SaveChangesAsync();
 
-                PlanResponse planResponse = new(plan.PlanName, plan.MontlyFee, plan.NumberOfMinutes, plan.Status);
+                PlanResponse planResponse = new(plan.PlanName, plan.MonthlyFee, plan.NumberOfMinutes, plan.Status);
                 return planResponse;
             }
             catch (ArgumentException e)
@@ -74,7 +74,7 @@ namespace StreamingPlatform.Services
         /// </exception>
         public async Task<PlanResponse?> GetPlan(string planName, bool isAdmin = false)
         {
-            if (string.IsNullOrWhiteSpace(planName))
+            if (string.IsNullOrEmpty(planName))
             {
                 throw new ArgumentException("Plan name cannot be null or empty");
             }
@@ -90,7 +90,7 @@ namespace StreamingPlatform.Services
                 plan = await planRepository.GetRecordAsync(p => p.PlanName == planName && p.Status == PlanStatus.Active);
             }
 
-            return plan == null ? null : new PlanResponse(plan.PlanName, plan.MontlyFee, plan.NumberOfMinutes, plan.Status);
+            return plan == null ? null : new PlanResponse(plan.PlanName, plan.MonthlyFee, plan.NumberOfMinutes, plan.Status);
         }
 
         /// <summary>
@@ -108,12 +108,12 @@ namespace StreamingPlatform.Services
 
             return new PagedResponseDTO<PlanResponse>
             {
-                Data = plans.Data.Select(p => new PlanResponse(p.PlanName, p.MontlyFee, p.NumberOfMinutes, p.Status)).ToList(),
+                Data = plans.Data.Select(p => new PlanResponse(p.PlanName, p.MonthlyFee, p.NumberOfMinutes, p.Status)).ToList(),
                 PageNumber = plans.PageNumber,
                 PageSize = plans.PageSize,
                 TotalRecords = plans.TotalRecords,
                 TotalPages = plans.TotalPages,
-                HasNextPage = plans.HasNextPage
+                HasNextPage = plans.HasNextPage,
             };
         }
 
@@ -127,7 +127,7 @@ namespace StreamingPlatform.Services
         {
             IGenericRepository<Plan> genericRepository = this.unitOfWork.Repository<Plan>();
             IEnumerable<Plan> plans = await genericRepository.GetAllRecordsAsync();
-            return plans.Select(p => new PlanResponse(p.PlanName, p.MontlyFee, p.NumberOfMinutes, p.Status));
+            return plans.Select(p => new PlanResponse(p.PlanName, p.MonthlyFee, p.NumberOfMinutes, p.Status));
         }
     }
 }

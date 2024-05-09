@@ -17,7 +17,7 @@ namespace StreamingPlatform.Models
         public Plan()
         {
             this.PlanName = string.Empty;
-            this.MontlyFee = 0;
+            this.MonthlyFee = 0;
             this.NumberOfMinutes = 0;
             this.Status = PlanStatus.Active;
         }
@@ -26,7 +26,7 @@ namespace StreamingPlatform.Models
         {
             this.PlanId = Guid.NewGuid();
             this.PlanName = planName;
-            this.MontlyFee = montlyFee;
+            this.MonthlyFee = montlyFee;
             this.NumberOfMinutes = numberOfMinutes;
             this.Status = PlanStatus.Active;
         }
@@ -48,7 +48,7 @@ namespace StreamingPlatform.Models
         /// Represents the monthly fee of the Plan.
         /// </summary>
         [Range(0, double.MaxValue, ErrorMessage = "Monthly fee must be greater than 0.")]
-        public double MontlyFee { get; set; }
+        public double MonthlyFee { get; set; }
 
         /// <summary>
         /// Represents the number of minutes of the Plan.
