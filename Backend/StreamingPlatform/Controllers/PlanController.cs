@@ -23,7 +23,7 @@ namespace StreamingPlatform.Controllers
         ///     If a plan with the same name already exists, returns 409 (Conflict) with an appropriate error message.
         ///     If an unexpected error occurs during plan creation, returns 500 (Internal Server Error) with error details.
         /// </returns>
-        [HttpPost("plan")]
+        [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
@@ -70,7 +70,7 @@ namespace StreamingPlatform.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [Produces("application/json")]
         [ResponseCache(VaryByHeader = "User-Agent", Duration = 60 * 60)] //assuming the plan details are not updated frequently
-        [HttpGet("plan/{planName}")]
+        [HttpGet("{planName}")]
         public async Task<IActionResult> GetPlanByName([FromRoute][Required] string planName)
         {
             try
@@ -95,7 +95,7 @@ namespace StreamingPlatform.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [Produces("application/json")]
         [RequestTimeout(20)]
-        [HttpGet("plans")]
+        [HttpGet]
 
         /// <summary>
         /// Gets all the plans in the system.
