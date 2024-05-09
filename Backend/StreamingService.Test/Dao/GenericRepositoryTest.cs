@@ -103,28 +103,28 @@ namespace StreamingService.Test.DaoTesting
         {
             Plan plan = new()
             {
-                MontlyFee = 10,
+                MonthlyFee = 10,
                 NumberOfMinutes = 100,
                 Status = PlanStatus.Active
             };
 
             Plan plan2 = new()
             {
-                MontlyFee = 20,
+                MonthlyFee = 20,
                 NumberOfMinutes = 200,
                 Status = PlanStatus.Active
             };
 
             Plan plan3 = new()
             {
-                MontlyFee = 30,
+                MonthlyFee = 30,
                 NumberOfMinutes = 300,
                 Status = PlanStatus.Active
             };
 
             Plan plan4 = new()
             {
-                MontlyFee = 40,
+                MonthlyFee = 40,
                 NumberOfMinutes = 400,
                 Status = PlanStatus.Inactive
             };
