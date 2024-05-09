@@ -22,13 +22,28 @@ public class AuthController : ControllerBase
     {
         try
         {
-            var userToken = await _authService.Register(newUser);
+            var registerMessage = await _authService.Register(newUser);
             _logger.LogInformation($"User {newUser.UserName} registered successfully.");
-            return Ok(userToken);
+            return Ok(registerMessage);
         }
         catch (Exception ex)
         {
             return BadRequest(ex.Message);
+        }
+    }
+
+    [HttpPost("login")]
+    public async Task<IActionResult> Login(UserLoginContract user)
+    {
+        try
+        {
+            var userToken = await _authService.Login(user);
+            _logger.LogInformation($"User {user.Email} logged in successfully");
+            return Ok(userToken);
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
         }
     }
 }

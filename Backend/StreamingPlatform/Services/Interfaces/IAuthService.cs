@@ -5,5 +5,7 @@ namespace StreamingPlatform;
 
 public interface IAuthService
 {
-    public Task<TokenResponseDto> Register(NewUserContract newUser);
+    public Task<GenericResponseDto> Register(NewUserContract newUser);
+
+    public Task<TokenResponseDto> Login(UserLoginContract user);
 }

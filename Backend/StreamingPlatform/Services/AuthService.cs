@@ -54,7 +54,7 @@ public class AuthService : IAuthService
             signingCredentials: signinCredentials);
     }
 
-    public async Task<TokenResponseDto> Register(NewUserContract newUser)
+    public async Task<GenericResponseDto> Register(NewUserContract newUser)
     {
         var userExists = await _userManager.FindByEmailAsync(newUser.Email);
         if (userExists != null)
@@ -85,6 +85,43 @@ public class AuthService : IAuthService
         }
 
         var token = GenerateJwtToken(user);
+        var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
+        return new GenericResponseDto($"User created successfully!");
+    }
+
+    public async Task<TokenResponseDto> Login(UserLoginContract userContract)
+    {
+        var user = await _userManager.FindByEmailAsync(userContract.Email);
+        if (user == null)
+        {
+            throw new Exception("User does not exist");
+        }
+
+        if (!await _userManager.CheckPasswordAsync(user, userContract.Password))
+        {
+            throw new Exception("Wrong Passsword");
+        }
+
+        var userRoles = await _userManager.GetRolesAsync(user);
+
+        var authClaims = new List<Claim>
+        {
+            new Claim(ClaimTypes.Name, user.UserName),
+            new Claim(JwtRegisteredClaimNames.Jti, user.Id)
+        };
+        
+        authClaims.AddRange(userRoles.Select(userRole => new Claim(ClaimTypes.Role, userRole)));
+
+        var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Key"]));
+        
+        var token = new JwtSecurityToken(
+            issuer: _configuration["JWT:Issuer"],
+            audience: _configuration["JWT:Issuer"],
+            expires: DateTime.Now.AddHours(1),
+            claims: authClaims,
+            signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256));
+
+        //var token = GenerateJwtToken(user);
         var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
         return new TokenResponseDto(tokenString, token.ValidTo);
     }
