@@ -47,6 +47,7 @@ namespace StreamingPlatform
 
             app.UseHttpsRedirection();
             app.UseResponseCaching();
+            app.UseResponseCaching();
             app.UseAuthorization();
             app.MapControllers();
             app.Run();
