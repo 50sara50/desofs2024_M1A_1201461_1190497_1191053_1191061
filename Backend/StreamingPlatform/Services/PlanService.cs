@@ -24,41 +24,30 @@ namespace StreamingPlatform.Services
         /// <exception cref="ServiceBaseException">Thrown for unexpected errors during plan creation.</exception>
         public async Task<PlanResponse> CreatePlan(CreatePlanContract planDto)
         {
-            try
+            var validationContext = new ValidationContext(planDto, serviceProvider: null, items: null);
+            var validationResults = new List<ValidationResult>();
+            bool isValid = Validator.TryValidateObject(planDto, validationContext, validationResults, validateAllProperties: true);
+
+            if (!isValid)
             {
-                var validationContext = new ValidationContext(planDto, serviceProvider: null, items: null);
-                var validationResults = new List<ValidationResult>();
-                bool isValid = Validator.TryValidateObject(planDto, validationContext, validationResults, validateAllProperties: true);
-
-                if (!isValid)
-                {
-                    var errorMessages = validationResults.Select(r => r.ErrorMessage);
-                    throw new ArgumentException(string.Join(" ", errorMessages));
-                }
-
-                IGenericRepository<Plan> planRepository = this.unitOfWork.Repository<Plan>();
-
-                Plan? existingPlan = await planRepository.GetRecordAsync(p => p.PlanName == planDto.PlanName);
-                if (existingPlan != null)
-                {
-                    throw new InvalidOperationException("Plan already exists");
-                }
-
-                Plan plan = new(planDto.PlanName, planDto.MonthlyFee, planDto.NumberOfMinutes);
-                planRepository.Create(plan);
-                await this.unitOfWork.SaveChangesAsync();
-
-                PlanResponse planResponse = new(plan.PlanName, plan.MonthlyFee, plan.NumberOfMinutes, plan.Status);
-                return planResponse;
+                var errorMessages = validationResults.Select(r => r.ErrorMessage);
+                throw new ArgumentException(string.Join(" ", errorMessages));
             }
-            catch (ArgumentException e)
+
+            IGenericRepository<Plan> planRepository = this.unitOfWork.Repository<Plan>();
+
+            Plan? existingPlan = await planRepository.GetRecordAsync(p => p.PlanName == planDto.PlanName);
+            if (existingPlan != null)
             {
-                throw new ValidationException($"Validation error: {e.Message}");
+                throw new InvalidOperationException("Plan already exists");
             }
-            catch (Exception e)
-            {
-                throw new ServiceBaseException($"Unexpected error while creating plan; {e.Message}");
-            }
+
+            Plan plan = new(planDto.PlanName, planDto.MonthlyFee, planDto.NumberOfMinutes);
+            planRepository.Create(plan);
+            await this.unitOfWork.SaveChangesAsync();
+
+            PlanResponse planResponse = new(plan.PlanName, plan.MonthlyFee, plan.NumberOfMinutes, plan.Status);
+            return planResponse;
         }
 
         /// <summary>

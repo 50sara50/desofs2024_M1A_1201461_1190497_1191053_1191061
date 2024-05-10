@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using StreamingPlatform.Dtos.Contracts;
 
 namespace StreamingPlatform;
 
@@ -17,17 +18,32 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("register")]
-    public async Task<IActionResult> Register(NewUserDto newUser)
+    public async Task<IActionResult> Register(NewUserContract newUser)
     {
         try
         {
-            var user = await _authService.Register(newUser);
-            _logger.LogInformation($"User {user.UserName} registered successfully.");
-            return Ok(user);
+            var registerMessage = await _authService.Register(newUser);
+            _logger.LogInformation($"User {newUser.UserName} registered successfully.");
+            return Ok(registerMessage);
         }
         catch (Exception ex)
         {
             return BadRequest(ex.Message);
+        }
+    }
+
+    [HttpPost("login")]
+    public async Task<IActionResult> Login(UserLoginContract user)
+    {
+        try
+        {
+            var userToken = await _authService.Login(user);
+            _logger.LogInformation($"User {user.Email} logged in successfully");
+            return Ok(userToken);
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
         }
     }
 }

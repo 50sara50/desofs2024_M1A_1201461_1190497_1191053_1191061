@@ -48,7 +48,7 @@ namespace StreamingPlatform.Controllers
             catch (InvalidOperationException e)
             {
                 logger.LogError($"Error: {e.Message}");
-                ErrorResponseObject errorResponseObject = MapResponse.Conflict("There is a conflict between the server resource state and the cliente state");
+                ErrorResponseObject errorResponseObject = MapResponse.Conflict(e.Message);
                 return this.Conflict(errorResponseObject);
             }
             catch (Exception e)

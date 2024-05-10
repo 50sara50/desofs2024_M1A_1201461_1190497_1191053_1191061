@@ -1,8 +1,11 @@
-﻿using StreamingPlatform.Models;
+﻿using StreamingPlatform.Dtos.Contracts;
+using StreamingPlatform.Dtos.Responses;
 
 namespace StreamingPlatform;
 
 public interface IAuthService
 {
-    public Task<User> Register(NewUserDto newUser);
+    public Task<GenericResponseDto> Register(NewUserContract newUser);
+
+    public Task<TokenResponseDto> Login(UserLoginContract user);
 }
