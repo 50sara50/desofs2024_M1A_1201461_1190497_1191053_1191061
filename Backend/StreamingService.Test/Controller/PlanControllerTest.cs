@@ -17,14 +17,14 @@ namespace StreamingService.Test.Controller
     public sealed class PlanControllerTest
     {
 #pragma warning disable CS8618 // This is initialized in the test setup method
-        private Mock<ILogger<AuthController>> _mockLogger;
+        private Mock<ILogger<PlanController>> _mockLogger;
         private Mock<IPlanService> _mockPlanService;
 #pragma warning restore CS8618
 
         [TestInitialize]
         public void Setup()
         {
-            _mockLogger = new Mock<ILogger<AuthController>>();
+            _mockLogger = new Mock<ILogger<PlanController>>();
             _mockPlanService = new Mock<IPlanService>();
         }
 

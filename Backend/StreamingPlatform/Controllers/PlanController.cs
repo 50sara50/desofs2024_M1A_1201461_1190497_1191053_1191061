@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Timeouts;
 using Microsoft.AspNetCore.Mvc;
 using StreamingPlatform.Controllers.ResponseMapper;
@@ -11,7 +12,7 @@ namespace StreamingPlatform.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class PlanController(ILogger<AuthController> logger, IPlanService planService) : ControllerBase
+    public class PlanController(ILogger<PlanController> logger, IPlanService planService) : ControllerBase
     {
         /// <summary>
         /// Creates a new plan based on the provided plan data.
@@ -31,6 +32,7 @@ namespace StreamingPlatform.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [Produces("application/json")]
         [Consumes("application/json")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreatePlan([FromBody] CreatePlanContract planDto)
         {
             try

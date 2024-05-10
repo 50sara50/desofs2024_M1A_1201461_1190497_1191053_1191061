@@ -18,15 +18,7 @@ namespace StreamingPlatform
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-            string? databaseConnectionString;
-            if (builder.Environment.IsDevelopment())
-            {
-                databaseConnectionString = builder.Configuration.GetConnectionString("StreamingServiceDB_DEV");
-            }
-            else
-            {
-                databaseConnectionString = builder.Configuration.GetConnectionString("StreamingServiceDB");
-            }
+            string? databaseConnectionString = builder.Configuration.GetConnectionString("StreamingServiceDB");
 
             // Add services to the container.
             builder.Services.AddControllers();
@@ -49,27 +41,27 @@ namespace StreamingPlatform
 
             // Authentication
             builder.Services.AddAuthentication(options =>
-                {
-                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                    options.DefaultSignInScheme = JwtBearerDefaults.AuthenticationScheme;
-                })
-                .AddJwtBearer(options =>
-                {
-                    options.SaveToken = true;
-                    options.RequireHttpsMetadata = false;
-                    options.TokenValidationParameters = new TokenValidationParameters
                     {
-                        ValidateIssuer = true,
-                        ValidateAudience = true,
-                        ValidIssuer = builder.Configuration["Jwt:Issuer"],
-                        ValidAudience = builder.Configuration["Jwt:Issuer"],
-                        IssuerSigningKey =
+                        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                        options.DefaultSignInScheme = JwtBearerDefaults.AuthenticationScheme;
+                    })
+                    .AddJwtBearer(options =>
+                    {
+                        options.SaveToken = true;
+                        options.RequireHttpsMetadata = false;
+                        options.TokenValidationParameters = new TokenValidationParameters
+                        {
+                            ValidateIssuer = true,
+                            ValidateAudience = true,
+                            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                            ValidAudience = builder.Configuration["Jwt:Issuer"],
+                            IssuerSigningKey =
 #pragma warning disable CS8604
                             new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
-#pragma warning restore CS8604 
-                    };
-                });
+#pragma warning restore CS8604
+                        };
+                    });
 
             builder.Services.AddScoped<IAuthService, AuthService>();
 

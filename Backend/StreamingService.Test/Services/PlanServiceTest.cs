@@ -179,8 +179,8 @@ namespace StreamingService.Test.Services
             var planDto2 = new CreatePlanContract { PlanName = "Test Plan", MonthlyFee = 10, NumberOfMinutes = -500 };
             IUnitOfWork unitOfWork = new UnitOfWork(context);
             PlanService planService = new(unitOfWork);
-            await Assert.ThrowsExceptionAsync<ValidationException>(async () => await planService.CreatePlan(planDto1));
-            await Assert.ThrowsExceptionAsync<ValidationException>(async () => await planService.CreatePlan(planDto2));
+            await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await planService.CreatePlan(planDto1));
+            await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await planService.CreatePlan(planDto2));
         }
 
         [TestMethod]
@@ -193,7 +193,7 @@ namespace StreamingService.Test.Services
             var planDto = new CreatePlanContract { PlanName = "", MonthlyFee = 10, NumberOfMinutes = 1000 };
             IUnitOfWork unitOfWork = new UnitOfWork(context);
             PlanService planService = new(unitOfWork);
-            await Assert.ThrowsExceptionAsync<ValidationException>(async () => await planService.CreatePlan(planDto));
+            await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await planService.CreatePlan(planDto));
         }
     }
 }
