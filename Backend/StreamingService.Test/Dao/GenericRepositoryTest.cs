@@ -13,7 +13,6 @@ namespace StreamingService.Test.DaoTesting
     {
         private StreamingDbContext? context;
 
-        private string TestPasswordPepper = PasswordEncryptor.GenerateSalt();
 
 
 
@@ -32,11 +31,6 @@ namespace StreamingService.Test.DaoTesting
             IConfigurationRoot configuration = builder.Build();
             string encryptionKey = configuration.GetValue<string>("Keys:SecureDataKey") ?? PasswordEncryptor.GenerateSalt();
             SecureDataEncryptionHelper.SetEncryptionKey(encryptionKey);
-            string? passwordPepper = configuration.GetValue<string?>("Keys:PasswordPepper");
-            if (passwordPepper != null)
-            {
-                TestPasswordPepper = passwordPepper;
-            }
         }
 
         [TestCleanup]
@@ -51,7 +45,7 @@ namespace StreamingService.Test.DaoTesting
         }
 
         [TestMethod]
-        public void GetAllRecordsTest()
+        public void GetRecordsTestWithPagination()
         {
             if (this.context == null)
             {
@@ -69,6 +63,298 @@ namespace StreamingService.Test.DaoTesting
         }
 
         [TestMethod]
+        public async Task GetRecordsTestWithPaginationAsync()
+        {
+            if (this.context == null)
+            {
+                Assert.Fail("Context is null");
+            }
+            UnitOfWork unitOfWork = new(this.context);
+            GenericRepository<Plan> planRepository = (GenericRepository<Plan>)unitOfWork.Repository<Plan>();
+            SetupMockData(planRepository, unitOfWork);
+            PagedResponseOffset<Plan> activePlans = await planRepository.GetRecordsAsync(x => x.Status == PlanStatus.Active, pageNumber: 1, numberOfRecords: 2);
+            PagedResponseOffset<Plan> inactivePlan = await planRepository.GetRecordsAsync(x => x.Status == PlanStatus.Inactive, pageNumber: 1, numberOfRecords: 3);
+            Assert.IsTrue(activePlans.Data.Count == 2);
+            Assert.IsTrue(inactivePlan.Data.Count == 1);
+        }
+
+        [TestMethod]
+        public void GetRecordsTest()
+        {
+            if (this.context == null)
+            {
+                Assert.Fail("Context is null");
+            }
+            UnitOfWork unitOfWork = new(this.context);
+            GenericRepository<Plan> planRepository = (GenericRepository<Plan>)unitOfWork.Repository<Plan>();
+            SetupMockData(planRepository, unitOfWork);
+            IEnumerable<Plan> activePlans = planRepository.GetRecords(x => x.Status == PlanStatus.Active);
+            IEnumerable<Plan> inactivePlans = planRepository.GetRecords(x => x.Status == PlanStatus.Inactive);
+            Assert.IsTrue(activePlans.Count() == 3);
+            Assert.IsTrue(inactivePlans.Count() == 1);
+        }
+
+        [TestMethod]
+        public async Task GetRecordsTestAsync()
+        {
+            if (this.context == null)
+            {
+                Assert.Fail("Context is null");
+            }
+            UnitOfWork unitOfWork = new(this.context);
+            GenericRepository<Plan> planRepository = (GenericRepository<Plan>)unitOfWork.Repository<Plan>();
+            SetupMockData(planRepository, unitOfWork);
+            IEnumerable<Plan> activePlans = await planRepository.GetRecordsAsync(x => x.Status == PlanStatus.Active);
+            IEnumerable<Plan> inactivePlans = await planRepository.GetRecordsAsync(x => x.Status == PlanStatus.Inactive);
+            Assert.IsTrue(activePlans.Count() == 3);
+            Assert.IsTrue(inactivePlans.Count() == 1);
+        }
+
+        [TestMethod]
+        public void GetAllRecords()
+        {
+            if (this.context == null)
+            {
+                Assert.Fail("Context is null");
+            }
+            UnitOfWork unitOfWork = new(this.context);
+            GenericRepository<Plan> planRepository = (GenericRepository<Plan>)unitOfWork.Repository<Plan>();
+            SetupMockData(planRepository, unitOfWork);
+            IEnumerable<Plan> allPlans = planRepository.GetAllRecords();
+            Assert.IsTrue(allPlans.Count() == 4);
+        }
+
+        [TestMethod]
+        public void GetAllRecordsWithPagination()
+        {
+            if (this.context == null)
+            {
+                Assert.Fail("Context is null");
+            }
+            UnitOfWork unitOfWork = new(this.context);
+            GenericRepository<Plan> planRepository = (GenericRepository<Plan>)unitOfWork.Repository<Plan>();
+            SetupMockData(planRepository, unitOfWork);
+            PagedResponseOffset<Plan> allPlans = planRepository.GetAllRecords(pageNumber: 1, numberOfRecords: 2);
+            Assert.IsTrue(allPlans.Data.Count == 2);
+            Assert.IsTrue(allPlans.TotalRecords == 4);
+            Assert.IsTrue(allPlans.TotalPages == 2);
+            Assert.IsTrue(allPlans.PageNumber == 1);
+            Assert.IsTrue(allPlans.HasNextPage);
+            Assert.IsTrue(allPlans.PageSize == 2);
+            Plan plan = allPlans.Data.First();
+            Assert.IsTrue(plan.MonthlyFee == 10);
+            Assert.IsTrue(plan.NumberOfMinutes == 100);
+            Assert.IsTrue(plan.Status == PlanStatus.Active);
+            Assert.IsTrue(plan.PlanName == "Premium");
+        }
+
+        [TestMethod]
+        public async Task GetAllRecordsAsync()
+        {
+            if (this.context == null)
+            {
+                Assert.Fail("Context is null");
+            }
+            UnitOfWork unitOfWork = new(this.context);
+            GenericRepository<Plan> planRepository = (GenericRepository<Plan>)unitOfWork.Repository<Plan>();
+            SetupMockData(planRepository, unitOfWork);
+            IEnumerable<Plan> allPlans = await planRepository.GetAllRecordsAsync();
+            Assert.IsTrue(allPlans.Count() == 4);
+        }
+
+        [TestMethod]
+        public async Task GetAllRecordsAsyncWithPagination()
+        {
+            if (this.context == null)
+            {
+                Assert.Fail("Context is null");
+            }
+            UnitOfWork unitOfWork = new(this.context);
+            GenericRepository<Plan> planRepository = (GenericRepository<Plan>)unitOfWork.Repository<Plan>();
+            SetupMockData(planRepository, unitOfWork);
+            PagedResponseOffset<Plan> allPlans = await planRepository.GetAllRecordsAsync(pageNumber: 1, numberOfRecords: 2);
+            Assert.IsTrue(allPlans.Data.Count == 2);
+            Assert.IsTrue(allPlans.TotalRecords == 4);
+            Assert.IsTrue(allPlans.TotalPages == 2);
+            Assert.IsTrue(allPlans.PageNumber == 1);
+            Assert.IsTrue(allPlans.HasNextPage);
+            Assert.IsTrue(allPlans.PageSize == 2);
+            Plan plan = allPlans.Data.First();
+            Assert.IsTrue(plan.MonthlyFee == 10);
+            Assert.IsTrue(plan.NumberOfMinutes == 100);
+            Assert.IsTrue(plan.Status == PlanStatus.Active);
+            Assert.IsTrue(plan.PlanName == "Premium");
+        }
+
+        [TestMethod]
+        public void GetRecordByIdTest()
+        {
+            if (this.context == null)
+            {
+                Assert.Fail("Context is null");
+            }
+            UnitOfWork unitOfWork = new(this.context);
+            GenericRepository<Plan> planRepository = (GenericRepository<Plan>)unitOfWork.Repository<Plan>();
+            Guid id = Guid.NewGuid();
+            Plan newPlan = new()
+            {
+                PlanId = id,
+                PlanName = "Premium",
+                MonthlyFee = 10,
+                NumberOfMinutes = 100,
+                Status = PlanStatus.Active
+            };
+            planRepository.Create(newPlan);
+            unitOfWork.SaveChanges();
+            Plan? plan = planRepository.GetRecordById(id);
+            Assert.IsNotNull(plan);
+            Assert.IsTrue(plan.MonthlyFee == 10);
+            Assert.IsTrue(plan.NumberOfMinutes == 100);
+            Assert.IsTrue(plan.Status == PlanStatus.Active);
+            Assert.IsTrue(plan.PlanName == "Premium");
+        }
+
+        [TestMethod]
+        public void GetRecordByIdDoesNotExistReturnNull()
+        {
+            if (this.context == null)
+            {
+                Assert.Fail("Context is null");
+            }
+            UnitOfWork unitOfWork = new(this.context);
+            GenericRepository<Plan> planRepository = (GenericRepository<Plan>)unitOfWork.Repository<Plan>();
+            Guid id = Guid.NewGuid();
+            Plan? plan = planRepository.GetRecordById(id);
+            Assert.IsNull(plan);
+        }
+
+        [TestMethod]
+        public async Task GetRecordByIdAsync()
+        {
+            if (this.context == null)
+            {
+                Assert.Fail("Context is null");
+            }
+            UnitOfWork unitOfWork = new(this.context);
+            GenericRepository<Plan> planRepository = (GenericRepository<Plan>)unitOfWork.Repository<Plan>();
+            Guid id = Guid.NewGuid();
+            Plan newPlan = new()
+            {
+                PlanId = id,
+                PlanName = "Premium",
+                MonthlyFee = 10,
+                NumberOfMinutes = 100,
+                Status = PlanStatus.Active
+            };
+            planRepository.Create(newPlan);
+            await unitOfWork.SaveChangesAsync();
+            Plan? plan = await planRepository.GetRecordByIdAsync(id);
+            Assert.IsNotNull(plan);
+            Assert.IsTrue(plan.MonthlyFee == 10);
+        }
+
+        [TestMethod]
+        public async Task GetRecordByIdAsyncDoesNotExistReturnNull()
+        {
+            if (this.context == null)
+            {
+                Assert.Fail("Context is null");
+            }
+            UnitOfWork unitOfWork = new(this.context);
+            GenericRepository<Plan> planRepository = (GenericRepository<Plan>)unitOfWork.Repository<Plan>();
+            Guid id = Guid.NewGuid();
+            Plan? plan = await planRepository.GetRecordByIdAsync(id);
+            Assert.IsNull(plan);
+        }
+
+        [TestMethod]
+        public void GetRecordByFilterExpression()
+        {
+            if (this.context == null)
+            {
+                Assert.Fail("Context is null");
+            }
+            UnitOfWork unitOfWork = new(this.context);
+            GenericRepository<Plan> planRepository = (GenericRepository<Plan>)unitOfWork.Repository<Plan>();
+            Guid id = Guid.NewGuid();
+            Plan newPlan = new()
+            {
+                PlanId = id,
+                PlanName = "Premium",
+                MonthlyFee = 10,
+                NumberOfMinutes = 100,
+                Status = PlanStatus.Active
+            };
+            planRepository.Create(newPlan);
+            unitOfWork.SaveChanges();
+            Plan? plan = planRepository.GetRecord(x => x.PlanName == "Premium");
+            Assert.IsNotNull(plan);
+            Assert.IsTrue(plan.Status == PlanStatus.Active);
+            Assert.IsTrue(plan.PlanId == id);
+            Assert.IsTrue(plan.PlanName == "Premium");
+            Assert.IsTrue(plan.MonthlyFee == 10);
+            Assert.IsTrue(plan.NumberOfMinutes == 100);
+        }
+
+        [TestMethod]
+        public void GetRecordByFilterExpressionThatDoesNotExistReturnNull()
+        {
+            if (this.context == null)
+            {
+                Assert.Fail("Context is null");
+            }
+            UnitOfWork unitOfWork = new(this.context);
+            GenericRepository<Plan> planRepository = (GenericRepository<Plan>)unitOfWork.Repository<Plan>();
+            Guid id = Guid.NewGuid();
+            Plan? plan = planRepository.GetRecord(x => x.PlanName == "Premium");
+            Assert.IsNull(plan);
+        }
+
+        [TestMethod]
+        public async Task GetRecordByFilterExpressionAsync()
+        {
+            if (this.context == null)
+            {
+                Assert.Fail("Context is null");
+            }
+            UnitOfWork unitOfWork = new(this.context);
+            GenericRepository<Plan> planRepository = (GenericRepository<Plan>)unitOfWork.Repository<Plan>();
+            Guid id = Guid.NewGuid();
+            Plan newPlan = new()
+            {
+                PlanId = id,
+                PlanName = "Premium",
+                MonthlyFee = 10,
+                NumberOfMinutes = 100,
+                Status = PlanStatus.Active
+            };
+            planRepository.Create(newPlan);
+            await unitOfWork.SaveChangesAsync();
+            Plan? plan = await planRepository.GetRecordAsync(x => x.PlanName == "Premium");
+            Assert.IsNotNull(plan);
+            Assert.IsTrue(plan.Status == PlanStatus.Active);
+            Assert.IsTrue(plan.PlanId == id);
+            Assert.IsTrue(plan.PlanName == "Premium");
+            Assert.IsTrue(plan.MonthlyFee == 10);
+            Assert.IsTrue(plan.NumberOfMinutes == 100);
+        }
+
+
+        [TestMethod]
+        public async Task GetRecordByFilterExpressionThatDoesNotExistReturnNullAsync()
+        {
+            if (this.context == null)
+            {
+                Assert.Fail("Context is null");
+            }
+            UnitOfWork unitOfWork = new(this.context);
+            GenericRepository<Plan> planRepository = (GenericRepository<Plan>)unitOfWork.Repository<Plan>();
+            Guid id = Guid.NewGuid();
+            Plan? plan = await planRepository.GetRecordAsync(x => x.PlanName == "Premium");
+            Assert.IsNull(plan);
+        }
+
+        [TestMethod]
         public void CreateTest()
         {
 
@@ -76,33 +362,139 @@ namespace StreamingService.Test.DaoTesting
             {
                 Assert.Fail("Context is null");
             }
-            string userPassword = Faker.Lorem.Sentence().Trim();
-            UnitOfWork unitOfWork = new(this.context);
-            GenericRepository<User> userRepository = (GenericRepository<User>)unitOfWork.Repository<User>();
-            string address = Faker.Address.StreetAddress();
-            Guid userId = Guid.NewGuid();
 
-            User user = new()
+            UnitOfWork unitOfWork = new(this.context);
+            GenericRepository<Plan> planRepository = (GenericRepository<Plan>)unitOfWork.Repository<Plan>();
+            Plan plan = new()
             {
-                Id = userId,
-                UserName = "test",
-                Email = Faker.Internet.Email(),
-                Password = new Password(userPassword, TestPasswordPepper),
-                Address = address,
+                PlanName = "Test Plan",
+                MonthlyFee = 50,
+                NumberOfMinutes = 500,
+                Status = PlanStatus.Active
             };
-            userRepository.Create(user);
+            planRepository.Create(plan);
             unitOfWork.SaveChanges();
-            List<User> users = userRepository.GetAllRecords().ToList();
-            Assert.IsTrue(users.Count == 1);
-            Assert.IsTrue(users[0].UserName == user.UserName);
-            Assert.IsTrue(users[0].Email == user.Email);
-            Assert.IsTrue(users[0].Address == address);
+            IEnumerable<Plan> allPlans = planRepository.GetAllRecords();
+            Assert.IsTrue(allPlans.Count() == 1);
         }
 
-        private void SetupMockData(GenericRepository<Plan> repository, UnitOfWork unitOfWork)
+        [TestMethod]
+        public void UpdateEntity()
+        {
+            if (this.context == null)
+            {
+                Assert.Fail("Context is null");
+            }
+
+            UnitOfWork unitOfWork = new(this.context);
+            GenericRepository<Plan> planRepository = (GenericRepository<Plan>)unitOfWork.Repository<Plan>();
+            Guid guid = Guid.NewGuid();
+            Plan plan = new()
+            {
+                PlanId = guid,
+                PlanName = "Premium",
+                MonthlyFee = 10,
+                NumberOfMinutes = 100,
+                Status = PlanStatus.Active
+            };
+            planRepository.Create(plan);
+            unitOfWork.SaveChanges();
+            Plan? createdPlan = planRepository.GetRecordById(guid);
+            Assert.IsNotNull(createdPlan);
+            Assert.IsTrue(createdPlan.Status == PlanStatus.Active);
+            Assert.IsTrue(createdPlan.PlanId == guid);
+            Assert.IsTrue(createdPlan.PlanName == "Premium");
+            Assert.IsTrue(createdPlan.MonthlyFee == 10);
+            Assert.IsTrue(createdPlan.NumberOfMinutes == 100);
+            plan.PlanName = "Updated Plan";
+            plan.MonthlyFee = 100;
+            plan.NumberOfMinutes = 1000;
+            plan.Status = PlanStatus.Inactive;
+            planRepository.Update(plan);
+            unitOfWork.SaveChanges();
+            Plan? updatedPlan = planRepository.GetRecordById(guid);
+            Assert.IsNotNull(updatedPlan);
+            Assert.IsTrue(updatedPlan.Status == PlanStatus.Inactive);
+            Assert.IsTrue(updatedPlan.PlanId == guid);
+            Assert.IsTrue(updatedPlan.PlanName == "Updated Plan");
+            Assert.IsTrue(updatedPlan.MonthlyFee == 100);
+            Assert.IsTrue(updatedPlan.NumberOfMinutes == 1000);
+        }
+
+        [TestMethod]
+        public void DeleteEntityById()
+        {
+            if (this.context == null)
+            {
+                Assert.Fail("Context is null");
+            }
+
+            UnitOfWork unitOfWork = new(this.context);
+            GenericRepository<Plan> planRepository = (GenericRepository<Plan>)unitOfWork.Repository<Plan>();
+            Guid guid = Guid.NewGuid();
+            Plan plan = new()
+            {
+                PlanId = guid,
+                PlanName = "Premium",
+                MonthlyFee = 10,
+                NumberOfMinutes = 100,
+                Status = PlanStatus.Active
+            };
+            planRepository.Create(plan);
+            unitOfWork.SaveChanges();
+            Plan? createdPlan = planRepository.GetRecordById(guid);
+            Assert.IsNotNull(createdPlan);
+            Assert.IsTrue(createdPlan.Status == PlanStatus.Active);
+            Assert.IsTrue(createdPlan.PlanId == guid);
+            Assert.IsTrue(createdPlan.PlanName == "Premium");
+            Assert.IsTrue(createdPlan.MonthlyFee == 10);
+            Assert.IsTrue(createdPlan.NumberOfMinutes == 100);
+            planRepository.Delete(guid);
+            unitOfWork.SaveChanges();
+            Plan? deletedPlan = planRepository.GetRecordById(guid);
+            Assert.IsNull(deletedPlan);
+        }
+
+        [TestMethod]
+        public void DeleteEntity()
+        {
+            if (this.context == null)
+            {
+                Assert.Fail("Context is null");
+            }
+
+            UnitOfWork unitOfWork = new(this.context);
+            GenericRepository<Plan> planRepository = (GenericRepository<Plan>)unitOfWork.Repository<Plan>();
+            Guid guid = Guid.NewGuid();
+            Plan plan = new()
+            {
+                PlanId = guid,
+                PlanName = "Premium",
+                MonthlyFee = 10,
+                NumberOfMinutes = 100,
+                Status = PlanStatus.Active
+            };
+            planRepository.Create(plan);
+            unitOfWork.SaveChanges();
+            Plan? createdPlan = planRepository.GetRecordById(guid);
+            Assert.IsNotNull(createdPlan);
+            Assert.IsTrue(createdPlan.Status == PlanStatus.Active);
+            Assert.IsTrue(createdPlan.PlanId == guid);
+            Assert.IsTrue(createdPlan.PlanName == "Premium");
+            Assert.IsTrue(createdPlan.MonthlyFee == 10);
+            Assert.IsTrue(createdPlan.NumberOfMinutes == 100);
+            planRepository.Delete(createdPlan);
+            unitOfWork.SaveChanges();
+            Plan? deletedPlan = planRepository.GetRecordById(guid);
+            Assert.IsNull(deletedPlan);
+        }
+
+
+        private static void SetupMockData(GenericRepository<Plan> repository, UnitOfWork unitOfWork)
         {
             Plan plan = new()
             {
+                PlanName = "Premium",
                 MonthlyFee = 10,
                 NumberOfMinutes = 100,
                 Status = PlanStatus.Active
@@ -110,6 +502,7 @@ namespace StreamingService.Test.DaoTesting
 
             Plan plan2 = new()
             {
+                PlanName = "Free",
                 MonthlyFee = 20,
                 NumberOfMinutes = 200,
                 Status = PlanStatus.Active
@@ -117,6 +510,7 @@ namespace StreamingService.Test.DaoTesting
 
             Plan plan3 = new()
             {
+                PlanName = "Diamond",
                 MonthlyFee = 30,
                 NumberOfMinutes = 300,
                 Status = PlanStatus.Active
@@ -124,6 +518,7 @@ namespace StreamingService.Test.DaoTesting
 
             Plan plan4 = new()
             {
+                PlanName = "Inactive",
                 MonthlyFee = 40,
                 NumberOfMinutes = 400,
                 Status = PlanStatus.Inactive
