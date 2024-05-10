@@ -1,10 +1,11 @@
 using Microsoft.EntityFrameworkCore;
 using StreamingPlatform.Dao;
+using StreamingPlatform.Dao.Interfaces;
 using StreamingPlatform.Models;
 
 namespace StreamingPlatform.Dao.Repositories
 {
-    public class UserRepository
+    public class UserRepository : IUserRepository
     {
         private readonly StreamingDbContext _context;
 
@@ -26,6 +27,15 @@ namespace StreamingPlatform.Dao.Repositories
                            x => id.Equals(x.Id))
                        .FirstOrDefaultAsync() ??
                    throw new InvalidOperationException($"There is no user with the id '${id}'.");
+        }
+
+        /// <summary>
+        /// Returns all existing users.
+        /// </summary>
+        /// <returns></returns>
+        public async Task<IEnumerable<User>> GetAll()
+        {
+            return await _context.Users.ToListAsync();
         }
 
         /// <summary>

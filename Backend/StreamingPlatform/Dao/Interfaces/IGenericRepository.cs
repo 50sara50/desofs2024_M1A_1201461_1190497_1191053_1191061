@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using StreamingPlatform.Models;
 
 namespace StreamingPlatform.Dao.Interfaces
 {
@@ -9,8 +10,6 @@ namespace StreamingPlatform.Dao.Interfaces
     public interface IGenericRepository<TEntity>
         where TEntity : class
     {
-        IEnumerable<TEntity> GetAllRecords(bool tracked = false);
-
         Task<IEnumerable<TEntity>> GetAllRecordsAsync(bool tracked = false);
 
         List<TEntity> GetRecords(Expression<Func<TEntity, bool>> expression, bool tracked = false, int? numberOfRecords = null, int? pageNumber = null);

@@ -1,6 +1,7 @@
 ﻿using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using StreamingPlatform.Dao.Interfaces;
+using StreamingPlatform.Models;
 
 namespace StreamingPlatform.Dao.Repositories
 {

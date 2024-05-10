@@ -30,7 +30,7 @@ namespace StreamingPlatform.Dao
         public DbSet<User> Users { get; set; }
 
         public DbSet<Subscription> Subscriptions { get; set; }
-
+        
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.UseEncryption();
@@ -42,6 +42,11 @@ namespace StreamingPlatform.Dao
                     password.Property(p => p.Salt).HasColumnName("Salt");
                 });
             });
+
+            modelBuilder.Entity<Playlist>()
+                .HasMany(p => p.Songs)
+                .WithMany(s => s.Playlists)
+                .UsingEntity<SongsPlaylists>();
         }
     }
 }

@@ -35,14 +35,20 @@ namespace StreamingPlatform.Models
         /// The album the song belongs to.
         /// </summary>
 		public Guid? AlbumId { get; set; }
-
+        
+        /// <summary>
+        /// Playlists where the song was included.
+        /// </summary>
+		public ICollection<Playlist> Playlists { get; set; } 
+        
 		public Song()
 		{
 			this.Title = string.Empty;
 			this.ArtistId = Guid.NewGuid();
 			this.Duration = new TimeSpan(0, 0, 0);
 			this.AlbumId = null;
-		}
+			this.Playlists = new List<Playlist>();
+        }
 
 		public Song(Guid id, string title, Guid artistId, TimeSpan duration, Guid albumId)
 		{

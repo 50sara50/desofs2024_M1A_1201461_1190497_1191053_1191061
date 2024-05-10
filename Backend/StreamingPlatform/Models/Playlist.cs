@@ -1,5 +1,5 @@
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.AspNetCore.Components.Web;
 
 namespace StreamingPlatform.Models
 {
@@ -12,6 +12,7 @@ namespace StreamingPlatform.Models
         /// <summary>
         /// The playlist's unique identifier.
         /// </summary>
+        [Key]
         public Guid Id { get; set; }
         
         /// <summary>
@@ -20,19 +21,19 @@ namespace StreamingPlatform.Models
         public string Title { get; set; }
         
         /// <summary>
-        /// The songs in the playlist.
-        /// </summary>
-        public List<Song> SongList { get; set; }
-        
-        /// <summary>
         /// The unique identifier of the owner of the playlist.
         /// </summary>
         public Guid UserId { get; set; }
-
+        
+        /// <summary>
+        /// The songs in the playlist.
+        /// </summary>
+        public ICollection<Song> Songs { get; set; }
+        
         public Playlist()
         {
             this.Title = string.Empty;
-            this.SongList = new List<Song>();
+            this.Songs = new List<Song>();
             this.UserId = new Guid();
         }
 
@@ -40,7 +41,7 @@ namespace StreamingPlatform.Models
         {
             this.Id = id;
             this.Title = title;
-            this.SongList = new List<Song>();
+            this.Songs = new List<Song>();
             this.UserId = userId;
         }
 
@@ -50,13 +51,13 @@ namespace StreamingPlatform.Models
         /// <param name="song"></param>
         public void AddSong(Song song)
         {
-            if (this.SongList.Contains(song))
+            if (this.Songs.Contains(song))
             {
                 throw new Exception($"This song has already been added to the playlist '${this.Title}'");
             }
             else
             {
-                this.SongList.Add(song);
+                this.Songs.Add(song);
             }
         }
 
@@ -67,9 +68,9 @@ namespace StreamingPlatform.Models
         /// <exception cref="Exception"></exception>
         public void RemoveSong(Song song)
         {
-            if (this.SongList.Contains(song))
+            if (this.Songs.Contains(song))
             {
-                this.SongList.Remove(song);
+                this.Songs.Remove(song);
             }
             else
             {

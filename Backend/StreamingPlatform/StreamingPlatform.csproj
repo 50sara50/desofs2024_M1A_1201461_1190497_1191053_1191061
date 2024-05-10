@@ -34,4 +34,8 @@
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Compile Remove="Models\SongsInPlaylists.cs" />
+	</ItemGroup>
+
 </Project>

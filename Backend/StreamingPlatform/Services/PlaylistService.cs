@@ -1,18 +1,14 @@
 using StreamingPlatform.Dao;
+using StreamingPlatform.Dao.Interfaces;
 using StreamingPlatform.Dao.Repositories;
 using StreamingPlatform.Dtos;
 using StreamingPlatform.Models;
 
 namespace StreamingPlatform
 {
-    public class PlaylistService : IPlaylistService
+    public class PlaylistService(IUnitOfWork unitOfWork) : IPlaylistService
     {
-        private readonly StreamingDbContext _context;
-
-        public PlaylistService(StreamingDbContext context)
-        {
-            _context = context;
-        }
+        private readonly IUnitOfWork unitOfWork = unitOfWork;
         
         /// <summary>
         /// Adds new playlist to user's account.
@@ -21,10 +17,12 @@ namespace StreamingPlatform
         /// <returns></returns>
         public async Task<PlaylistResponseDto> AddPlaylist(NewPlaylistContract newPlaylistContract)
         {
-            var repository = new GenericRepository<Playlist>(_context);
-            var newPlaylist = new Playlist(Guid.NewGuid(), newPlaylistContract.Title,
-                Guid.Parse(newPlaylistContract.UserId));
+            IGenericRepository<Playlist> repository = this.unitOfWork.Repository<Playlist>();
+            Playlist newPlaylist = new (Guid.NewGuid(), newPlaylistContract.Title, Guid.NewGuid());
             repository.Create(newPlaylist);
+            await this.unitOfWork.SaveChangesAsync();
+            
+            //TODO: create mapper
             return new PlaylistResponseDto(newPlaylist.Id.ToString(), newPlaylist.Title, newPlaylist.UserId.ToString(), new List<string>());
         }
 
