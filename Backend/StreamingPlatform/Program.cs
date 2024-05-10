@@ -14,21 +14,14 @@ namespace StreamingPlatform
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-            var databaseConnectionString = builder.Configuration.GetConnectionString("MariaDB");
+            var databaseConnectionString = builder.Configuration.GetConnectionString("StreamingServiceDB");
 
             // Add services to the container.
             builder.Services.AddControllers().AddJsonOptions(
                 options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
-
-            var serverVersion = new MariaDbServerVersion(new Version(11, 2, 2));
-            builder.Services
-                .AddDbContext<StreamingDbContext>(options =>
-                    options.UseMySql(databaseConnectionString, serverVersion))
-                .AddDbContext<AuthDbContext>(options =>
-                    options.UseMySql(databaseConnectionString, serverVersion));
-            //builder.Services.AddDbContext<StreamingDbContext>(options => options.UseInMemoryDatabase("StreamingServiceDB"));
-            //builder.Services.AddDbContext<AuthDbContext>(options => options.UseInMemoryDatabase("StreamingServiceDB"));
-            //builder.Services.AddDbContext<StreamingDbContext>(options => options.UseSqlServer(databaseConnectionString));
+            
+            builder.Services.AddDbContext<StreamingDbContext>(options => options.UseSqlServer(databaseConnectionString))
+                .AddDbContext<AuthDbContext>(options => options.UseSqlServer(databaseConnectionString));
 
             // Identity
             builder.Services.AddIdentity<User, IdentityRole>()
