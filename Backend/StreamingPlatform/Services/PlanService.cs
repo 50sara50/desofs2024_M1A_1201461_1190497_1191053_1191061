@@ -61,7 +61,7 @@ namespace StreamingPlatform.Services
         /// <exception cref="ArgumentException">
         ///     Thrown if the provided plan name is null, empty, or contains only whitespace characters.
         /// </exception>
-        public async Task<PlanResponse?> GetPlan(string planName, bool isAdmin = false)
+        public async Task<PlanResponse?> GetPlan(string planName, bool isAdmin)
         {
             if (string.IsNullOrEmpty(planName))
             {
@@ -87,13 +87,23 @@ namespace StreamingPlatform.Services
         /// </summary>
         /// <param name="pageSize">The number of plans to include per page.</param>
         /// <param name="currentPage">The current page number of the paginated results.</param>
+        /// <param name="isAdmin">Indicates whether the caller is an administrator (default is false).</param>
         /// <returns>
         ///     A <see cref="PagedResponseOffsetDto{PlanResponse}"/> object containing the paginated list of plan details.
         /// </returns>
-        public async Task<PagedResponseDTO<PlanResponse>> GetPlans(int pageSize, int currentPage)
+        public async Task<PagedResponseDTO<PlanResponse>> GetPlans(int pageSize, int currentPage, bool isAdmin)
         {
+            PagedResponseOffset<Plan> plans;
             IGenericRepository<Plan> genericRepository = this.unitOfWork.Repository<Plan>();
-            PagedResponseOffset<Plan> plans = await genericRepository.GetAllRecordsAsync(pageSize, currentPage);
+
+            if (isAdmin)
+            {
+                plans = await genericRepository.GetAllRecordsAsync(pageSize, currentPage);
+            }
+            else
+            {
+                plans = await genericRepository.GetRecordsAsync(p => p.Status == PlanStatus.Active, pageSize, currentPage);
+            }
 
             return new PagedResponseDTO<PlanResponse>
             {
@@ -109,13 +119,24 @@ namespace StreamingPlatform.Services
         /// <summary>
         /// Retrieves a list of all plans.
         /// </summary>
+        /// <param name="isAdmin">Indicates whether the caller is an administrator (default is false).</param>
         /// <returns>
         ///     An enumerable collection of <see cref="PlanResponse"/> objects representing the details of all plans.
         /// </returns>
-        public async Task<IEnumerable<PlanResponse>> GetPlans()
+        public async Task<IEnumerable<PlanResponse>> GetPlans(bool isAdmin)
         {
             IGenericRepository<Plan> genericRepository = this.unitOfWork.Repository<Plan>();
-            IEnumerable<Plan> plans = await genericRepository.GetAllRecordsAsync();
+            IEnumerable<Plan> plans;
+
+            if (isAdmin)
+            {
+                plans = await genericRepository.GetAllRecordsAsync();
+            }
+            else
+            {
+                plans = await genericRepository.GetRecordsAsync(p => p.Status == PlanStatus.Active);
+            }
+
             return plans.Select(p => new PlanResponse(p.PlanName, p.MonthlyFee, p.NumberOfMinutes, p.Status));
         }
     }

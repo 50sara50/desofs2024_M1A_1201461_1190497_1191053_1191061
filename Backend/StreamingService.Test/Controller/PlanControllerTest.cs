@@ -10,6 +10,7 @@ using StreamingPlatform;
 using System.ComponentModel.DataAnnotations;
 using StreamingPlatform.Models.Enums;
 using StreamingPlatform.Controllers.Responses;
+using System.Security.Claims;
 
 namespace StreamingService.Test.Controller
 {
@@ -19,6 +20,7 @@ namespace StreamingService.Test.Controller
 #pragma warning disable CS8618 // This is initialized in the test setup method
         private Mock<ILogger<PlanController>> _mockLogger;
         private Mock<IPlanService> _mockPlanService;
+        private ControllerContext _adminContext;
 #pragma warning restore CS8618
 
         [TestInitialize]
@@ -26,6 +28,21 @@ namespace StreamingService.Test.Controller
         {
             _mockLogger = new Mock<ILogger<PlanController>>();
             _mockPlanService = new Mock<IPlanService>();
+            ClaimsIdentity userClaims = new(new Claim[]
+           {
+            new(ClaimTypes.Role, "Admin")
+           });
+
+            var userPrincipal = new ClaimsPrincipal(userClaims);
+
+            DefaultHttpContext adminContext = new()
+            {
+                User = userPrincipal
+            };
+            _adminContext = new ControllerContext
+            {
+                HttpContext = adminContext
+            };
         }
 
         [TestMethod]
@@ -85,11 +102,15 @@ namespace StreamingService.Test.Controller
         [TestMethod]
         public async Task GetPlanByNameExistingPlanReturnsPlan()
         {
-            // Arrange
+
             string planName = "MyPlan";
             PlanResponse planResponse = new(planName, 10, 100, PlanStatus.Active);
-            _mockPlanService.Setup(service => service.GetPlan(planName, false)).Returns(Task.FromResult<PlanResponse?>(planResponse));
-            PlanController controller = new(_mockLogger.Object, _mockPlanService.Object);
+            _mockPlanService.Setup(service => service.GetPlan(planName, true)).Returns(Task.FromResult<PlanResponse?>(planResponse));
+
+            PlanController controller = new(_mockLogger.Object, _mockPlanService.Object)
+            {
+                ControllerContext = _adminContext
+            };
             IActionResult result = await controller.GetPlanByName(planName);
 
             Assert.IsInstanceOfType(result, typeof(OkObjectResult));
@@ -97,13 +118,16 @@ namespace StreamingService.Test.Controller
             Assert.AreEqual(planResponse, ((OkObjectResult)result).Value);
         }
 
+
         [TestMethod]
         public async Task GetPlanByNameNonexistentPlanReturnsNotFound()
         {
             string planName = "MyPlan";
-            _mockPlanService.Setup(service => service.GetPlan(planName, false)).Returns(Task.FromResult<PlanResponse?>(null));
-            PlanController controller = new(_mockLogger.Object, _mockPlanService.Object);
-
+            _mockPlanService.Setup(service => service.GetPlan(planName, true)).Returns(Task.FromResult<PlanResponse?>(null));
+            PlanController controller = new(_mockLogger.Object, _mockPlanService.Object)
+            {
+                ControllerContext = _adminContext
+            };
             IActionResult result = await controller.GetPlanByName(planName);
 
             Assert.IsInstanceOfType(result, typeof(NotFoundObjectResult));
@@ -115,11 +139,14 @@ namespace StreamingService.Test.Controller
         }
 
         [TestMethod]
-        public async Task GetPlanByName_UnexpectedError_ReturnsInternalServerError()
+        public async Task GetPlanByNameUnexpectedErrorReturnsInternalServerError()
         {
             string planName = "MyPlan";
-            _mockPlanService.Setup(service => service.GetPlan(planName, false)).Throws<Exception>();
-            PlanController controller = new(_mockLogger.Object, _mockPlanService.Object);
+            _mockPlanService.Setup(service => service.GetPlan(planName, true)).Throws<Exception>();
+            PlanController controller = new(_mockLogger.Object, _mockPlanService.Object)
+            {
+                ControllerContext = _adminContext
+            };
             IActionResult result = await controller.GetPlanByName(planName);
             Assert.IsInstanceOfType(result, typeof(ObjectResult));
             Assert.AreEqual(StatusCodes.Status500InternalServerError, ((ObjectResult)result).StatusCode);
@@ -129,9 +156,11 @@ namespace StreamingService.Test.Controller
         public async Task GetPlansNoPagingReturnsAllPlans()
         {
             IEnumerable<PlanResponse> plans = [new("MyPlan", 10, 100, PlanStatus.Active)];
-            _mockPlanService.Setup(service => service.GetPlans()).Returns(Task.FromResult(plans.AsEnumerable()));
-            PlanController controller = new(_mockLogger.Object, _mockPlanService.Object);
-
+            _mockPlanService.Setup(service => service.GetPlans(true)).Returns(Task.FromResult(plans.AsEnumerable()));
+            PlanController controller = new(_mockLogger.Object, _mockPlanService.Object)
+            {
+                ControllerContext = _adminContext
+            };
             IActionResult result = await controller.GetPlans(null, null);
 
             Assert.IsInstanceOfType(result, typeof(OkObjectResult));
@@ -155,10 +184,12 @@ namespace StreamingService.Test.Controller
                 HasNextPage = true,
                 Data = [new("MyPlan", 10, 100, PlanStatus.Active)]
             };
-            _mockPlanService.Setup(service => service.GetPlans(pageSize, currentPage)).Returns(Task.FromResult<PagedResponseDTO<PlanResponse>>(response));
-            PlanController controller = new(_mockLogger.Object, _mockPlanService.Object);
+            _mockPlanService.Setup(service => service.GetPlans(pageSize, currentPage, true)).Returns(Task.FromResult<PagedResponseDTO<PlanResponse>>(response));
+            PlanController controller = new(_mockLogger.Object, _mockPlanService.Object)
+            {
+                ControllerContext = _adminContext
+            };
             IActionResult result = await controller.GetPlans(pageSize, currentPage);
-
             Assert.IsInstanceOfType(result, typeof(OkObjectResult));
             Assert.AreEqual(StatusCodes.Status200OK, ((OkObjectResult)result).StatusCode);
             PagedResponseDTO<PlanResponse>? responsePlans = (PagedResponseDTO<PlanResponse>?)((OkObjectResult)result).Value;
@@ -202,7 +233,7 @@ namespace StreamingService.Test.Controller
         {
             int pageSize = 10;
             int currentPage = 2;
-            _mockPlanService.Setup(service => service.GetPlans(pageSize, currentPage)).Throws<Exception>();
+            _mockPlanService.Setup(service => service.GetPlans(pageSize, currentPage, false)).Throws<Exception>();
             PlanController controller = new(_mockLogger.Object, _mockPlanService.Object);
 
             IActionResult result = await controller.GetPlans(pageSize, currentPage);
