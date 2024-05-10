@@ -44,7 +44,7 @@ namespace StreamingPlatform.Dao.Repositories
         /// Saves the changes made to the database asynchronously.
         /// </summary>
         /// <returns></returns>
-        public async void SaveChangesAsync()
+        public async Task SaveChangesAsync()
         {
             await this.context.SaveChangesAsync();
         }

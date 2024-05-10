@@ -5,7 +5,11 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using StreamingPlatform.Dao;
+using StreamingPlatform.Dao.Interfaces;
+using StreamingPlatform.Dao.Repositories;
 using StreamingPlatform.Models;
+using StreamingPlatform.Services;
+using StreamingPlatform.Services.Interfaces;
 
 namespace StreamingPlatform
 {
@@ -14,12 +18,27 @@ namespace StreamingPlatform
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-            var databaseConnectionString = builder.Configuration.GetConnectionString("StreamingServiceDB");
+            string? databaseConnectionString;
+            if (builder.Environment.IsDevelopment())
+            {
+                databaseConnectionString = builder.Configuration.GetConnectionString("StreamingServiceDB_DEV");
+            }
+            else
+            {
+                databaseConnectionString = builder.Configuration.GetConnectionString("StreamingServiceDB");
+            }
 
             // Add services to the container.
+            builder.Services.AddControllers();
+            builder.Services.AddControllers().AddJsonOptions(
+             options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+            builder.Services.AddDbContext<StreamingDbContext>(options => options.UseSqlServer(databaseConnectionString));
+            builder.Services.AddScoped<IPlanService, PlanService>();
+            builder.Services.AddResponseCaching();
+            builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
             builder.Services.AddControllers().AddJsonOptions(
                 options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
-            
+
             builder.Services.AddDbContext<StreamingDbContext>(options => options.UseSqlServer(databaseConnectionString))
                 .AddDbContext<AuthDbContext>(options => options.UseSqlServer(databaseConnectionString));
 
@@ -46,7 +65,9 @@ namespace StreamingPlatform
                         ValidIssuer = builder.Configuration["Jwt:Issuer"],
                         ValidAudience = builder.Configuration["Jwt:Issuer"],
                         IssuerSigningKey =
+#pragma warning disable CS8604
                             new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
+#pragma warning restore CS8604 
                     };
                 });
 
@@ -66,6 +87,7 @@ namespace StreamingPlatform
             }
 
             app.UseHttpsRedirection();
+            app.UseResponseCaching();
 
             app.UseAuthentication();
             app.UseAuthorization();
