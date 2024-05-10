@@ -32,7 +32,7 @@ namespace StreamingPlatform.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [Produces("application/json")]
         [Consumes("application/json")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles ="Admin")]
         public async Task<IActionResult> CreatePlan([FromBody] CreatePlanContract planDto)
         {
             try
@@ -81,8 +81,9 @@ namespace StreamingPlatform.Controllers
         {
             try
             {
+                bool canAccessInactivePlans = this.User.IsInRole("Admin");
                 logger.LogInformation($"Getting plan {planName}");
-                PlanResponse? planResponse = await planService.GetPlan(planName);
+                PlanResponse? planResponse = await planService.GetPlan(planName, canAccessInactivePlans);
                 if (planResponse == null)
                 {
                     ErrorResponseObject errorResponseObject = MapResponse.NotFound("No plan with the specified name");
@@ -126,15 +127,16 @@ namespace StreamingPlatform.Controllers
                     return this.BadRequest(errorResponseObject);
                 }
 
+                bool canAccessInactivePlans = this.User.IsInRole("Admin"); //Ideally we would do this with claims but for simplicity we are using roles
                 if (pageSize == null && currentPage == null)
                 {
-                    IEnumerable<PlanResponse> plans = await planService.GetPlans();
+                    IEnumerable<PlanResponse> plans = await planService.GetPlans(canAccessInactivePlans);
                     return this.Ok(plans);
                 }
                 else
                 {
 #pragma warning disable CS8629 // We are sure that pageSize and currentPage are not null
-                    PagedResponseDTO<PlanResponse> paginatedPlans = await planService.GetPlans(pageSize.Value, currentPage.Value);
+                    PagedResponseDTO<PlanResponse> paginatedPlans = await planService.GetPlans(pageSize.Value, currentPage.Value, canAccessInactivePlans);
                     return this.Ok(paginatedPlans);
 #pragma warning restore CS8629 // Possible null reference argument.
                 }

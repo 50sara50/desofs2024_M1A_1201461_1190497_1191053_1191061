@@ -102,7 +102,7 @@ namespace StreamingPlatform.Dao.Repositories
         /// <returns>A PagedResponseOffset containing the requested page of data and total record count.</returns>
         public virtual PagedResponseOffset<TEntity> GetRecords(Expression<Func<TEntity, bool>> filter, int numberOfRecords, int pageNumber, bool tracked = false)
         {
-            int totalNumberOfRecords = this.dbSet.AsNoTracking().Count();
+            int totalNumberOfRecords = this.dbSet.AsNoTracking().Count(filter);
 
             IQueryable<TEntity> query = this.dbSet.Where(filter).AsNoTracking();
             if (tracked)
@@ -160,7 +160,7 @@ namespace StreamingPlatform.Dao.Repositories
         /// </returns>
         public virtual async Task<PagedResponseOffset<TEntity>> GetRecordsAsync(Expression<Func<TEntity, bool>> filter, int numberOfRecords, int pageNumber, bool tracked = false)
         {
-            int totalNumberOfRecords = await this.dbSet.AsNoTracking().CountAsync();
+            int totalNumberOfRecords = await this.dbSet.AsNoTracking().CountAsync(filter);
             IQueryable<TEntity> query = this.dbSet.Where(filter).AsNoTracking();
             if (tracked)
             {

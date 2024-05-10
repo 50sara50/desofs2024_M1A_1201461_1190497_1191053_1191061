@@ -19,7 +19,7 @@ namespace StreamingPlatform.Services.Interfaces
         /// Retrieves details of a streaming plan by its name.
         /// </summary>
         /// <param name="planName">The name of the plan to retrieve.</param>
-        /// <param name="isAdmin">Optional flag indicating if the request is coming from an admin (default false).
+        /// <param name="isAdmin"> flag indicating if the request is coming from an admin.
         /// Admins may have access to additional plan details.</param>
         /// <returns>A task that resolves to a DTO containing details of the requested plan, or null if not found.</returns>
         public Task<PlanResponse?> GetPlan(string planName, bool isAdmin = false);
@@ -29,13 +29,15 @@ namespace StreamingPlatform.Services.Interfaces
         /// </summary>
         /// <param name="pageSize">The number of plans to include in each page.</param>
         /// <param name="currentPage">The current page number (starting from 1).</param>
+        /// <param name="isAdmin"> flag indicating if the request is coming from an admin .
         /// <returns>A task that resolves to a DTO containing a list of plan details and pagination information.</returns>
-        public Task<PagedResponseDTO<PlanResponse>> GetPlans(int pageSize, int currentPage);
+        public Task<PagedResponseDTO<PlanResponse>> GetPlans(int pageSize, int currentPage, bool isAdmin);
 
         /// <summary>
         /// Retrieves a list of all streaming plans.
+        /// <paramref name="isAdmin"/>Optional flag indicating if the request is coming from an admin (default false).
         /// </summary>
         /// <returns>A task that resolves to an IEnumerable containing details of all available plans.</returns>
-        public Task<IEnumerable<PlanResponse>> GetPlans();
+        public Task<IEnumerable<PlanResponse>> GetPlans(bool isAdmin);
     }
 }
