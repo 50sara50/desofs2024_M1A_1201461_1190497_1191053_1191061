@@ -42,13 +42,13 @@ namespace StreamingPlatform.Controllers
             catch (ValidationException e)
             {
                 logger.LogError($"Validation error: {e.Message}");
-                ErrorResponseObject errorResponseObject = MapResponse.BadRequest(e.Message);
+                ErrorResponseObject errorResponseObject = MapResponse.BadRequest("Invalid data for a plan");
                 return this.BadRequest(errorResponseObject);
             }
             catch (InvalidOperationException e)
             {
                 logger.LogError($"Error: {e.Message}");
-                ErrorResponseObject errorResponseObject = MapResponse.Conflict(e.Message);
+                ErrorResponseObject errorResponseObject = MapResponse.Conflict("There is a conflict between the server resource state and the cliente state");
                 return this.Conflict(errorResponseObject);
             }
             catch (Exception e)
