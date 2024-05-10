@@ -9,9 +9,6 @@ using StreamingPlatform.Services.Interfaces;
 using StreamingPlatform;
 using System.ComponentModel.DataAnnotations;
 using StreamingPlatform.Models.Enums;
-using StreamingPlatform.Models;
-using Microsoft.AspNetCore.Http.HttpResults;
-using StreamingPlatform.Dao.Helper;
 using StreamingPlatform.Controllers.Responses;
 
 namespace StreamingService.Test.Controller
@@ -19,8 +16,10 @@ namespace StreamingService.Test.Controller
     [TestClass]
     public sealed class PlanControllerTest
     {
+#pragma warning disable CS8618 // This is initialized in the test setup method
         private Mock<ILogger<AuthController>> _mockLogger;
         private Mock<IPlanService> _mockPlanService;
+#pragma warning restore CS8618
 
         [TestInitialize]
         public void Setup()

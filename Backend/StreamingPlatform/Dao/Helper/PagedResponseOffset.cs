@@ -25,5 +25,4 @@
 
         public List<T> Data { get; init; }
     }
-
 }

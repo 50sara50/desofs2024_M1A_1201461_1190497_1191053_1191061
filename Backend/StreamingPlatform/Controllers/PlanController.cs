@@ -13,7 +13,6 @@ namespace StreamingPlatform.Controllers
     [Route("[controller]")]
     public class PlanController(ILogger<AuthController> logger, IPlanService planService) : ControllerBase
     {
-
         /// <summary>
         /// Creates a new plan based on the provided plan data.
         /// </summary>

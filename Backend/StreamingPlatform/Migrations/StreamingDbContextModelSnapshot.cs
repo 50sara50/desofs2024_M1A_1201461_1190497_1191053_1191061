@@ -7,7 +7,6 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using StreamingPlatform.Dao;
 
 #nullable disable
-
 namespace StreamingPlatform.Migrations
 {
     [DbContext(typeof(StreamingDbContext))]

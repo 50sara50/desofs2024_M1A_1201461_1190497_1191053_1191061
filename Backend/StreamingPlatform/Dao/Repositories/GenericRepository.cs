@@ -121,7 +121,6 @@ namespace StreamingPlatform.Dao.Repositories
         /// <returns>the list of records retrieved from the database</returns>
         public virtual IEnumerable<TEntity> GetRecords(Expression<Func<TEntity, bool>> filter, bool tracked = false)
         {
-
             IQueryable<TEntity> query = this.dbSet.Where(filter).AsNoTracking();
             if (tracked)
             {
@@ -269,7 +268,6 @@ namespace StreamingPlatform.Dao.Repositories
         /// <returns>The paginated IQueryable query.</returns>
         protected IQueryable<TEntity> ApplyPagination(int numberOfRecords, int pageNumber, IQueryable<TEntity> query)
         {
-
             int recordsToSkip = (pageNumber - 1) * numberOfRecords;
             query = query.Skip(recordsToSkip).Take(numberOfRecords);
             return query;
@@ -283,7 +281,6 @@ namespace StreamingPlatform.Dao.Repositories
         /// <param name="currentPage">The current page number.</param>
         /// <param name="totalNumberOfRecords">The total number of records in the database.</param>
         /// <returns>A task representing the asynchronous operation that returns the paged response object.</returns>
-
         private async Task<PagedResponseOffset<TEntity>> GetPagedResponseAsync(IQueryable<TEntity> query, int pageSize, int currentPage, int totalNumberOfRecords)
         {
             query = this.ApplyPagination(pageSize, currentPage, query);
