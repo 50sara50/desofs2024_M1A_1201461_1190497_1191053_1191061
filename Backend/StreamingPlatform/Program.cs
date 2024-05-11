@@ -33,8 +33,7 @@ namespace StreamingPlatform
              options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
             builder.Services.AddDbContext<StreamingDbContext>(options => options.UseSqlServer(databaseConnectionString));
             builder.Services.AddScoped<IPlanService, PlanService>();
-            builder.Services.AddResponseCaching();
-            builder.Services.AddOutputCache();
+            AddOutPutCaching(builder);
             builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
             builder.Services.AddControllers().AddJsonOptions(
                 options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
@@ -90,14 +89,17 @@ namespace StreamingPlatform
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseRateLimiter();
-
-            app.UseHttpsRedirection();
-            app.UseResponseCaching();
             app.UseOutputCache();
+            app.UseHttpsRedirection();
 
             app.MapControllers();
             app.Run();
         }
+
+        /// <summary>
+        /// Adds rate limiting functionality to the application based on user identity or IP address.
+        /// </summary>
+        /// <param name="builder">The WebApplicationBuilder instance used to configure the application services.</param>
 
         private static void AddRateLimiting(WebApplicationBuilder builder)
         {
@@ -142,6 +144,25 @@ namespace StreamingPlatform
             });
         }
 
+        private static void AddOutPutCaching(WebApplicationBuilder builder)
+        {
+            builder.Services.AddOutputCache(options =>
+            {
+                options.AddPolicy(
+                    "evict",
+                    builder =>
+                {
+                    builder.With(c => c.HttpContext.Request.Path.ToString().Contains("api/plan"))
+                    .Tag("tag-plan");
+                });
+            });
+        }
+
+        /// <summary>
+        /// Configures the response sent when a request is rejected due to exceeding rate limits.
+        /// </summary>
+        /// <param name="ratelimiter">The RateLimiterOptions instance for configuring rejection behavior.</param>
+        /// <param name="retryAfter">The retry-after period in seconds to include in the response.</param>
         private static void DefineOnRejectResponse(RateLimiterOptions ratelimiter, double retryAfter)
         {
             ratelimiter.OnRejected = async (context, token) =>
