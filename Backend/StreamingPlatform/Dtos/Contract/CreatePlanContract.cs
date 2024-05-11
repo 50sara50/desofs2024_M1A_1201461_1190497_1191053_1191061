@@ -14,6 +14,7 @@ namespace StreamingPlatform.Dtos.Contract
         /// otherwise it will throw a validation error with the specified error message.
         /// </summary>
         [Required(ErrorMessage = "Plan name is required.")]
+        [MaxLength(50, ErrorMessage = "Plan name is too long. Max length is 50 characters.")]
         required public string PlanName { get; set; }
 
         /// <summary>

@@ -24,15 +24,18 @@ namespace StreamingPlatform.Controllers
         ///     If the input data is invalid, returns 400 (Bad Request) with validation error details.
         ///     If a plan with the same name already exists, returns 409 (Conflict) with an appropriate error message.
         ///     If an unexpected error occurs during plan creation, returns 500 (Internal Server Error) with error details.
+        ///     If the user is not authorized to create a plan, returns 401 (Unauthorized).
         /// </returns>
         [HttpPost]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status409Conflict)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [Authorize(Roles = "Admin")]
         [Produces("application/json")]
+        [ProducesResponseType(typeof(PlanResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponseObject), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorResponseObject), StatusCodes.Status409Conflict)]
+        [ProducesResponseType(typeof(ErrorResponseObject), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(ErrorResponseObject), StatusCodes.Status401Unauthorized)]
         [Consumes("application/json")]
-        [Authorize(Roles ="Admin")]
+
         public async Task<IActionResult> CreatePlan([FromBody] CreatePlanContract planDto)
         {
             try
@@ -71,11 +74,11 @@ namespace StreamingPlatform.Controllers
         /// If no plan with the specified name exists, returns 404 (Not Found).
         /// If an unexpected error occurs during the get, returns 500 (Internal Server Error) with error details.
         /// </returns>
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [Produces("application/json")]
-        [ResponseCache(VaryByHeader = "User-Agent", Duration = 60 * 60)] //assuming the plan details are not updated frequently
+        [ProducesResponseType(typeof(PlanResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponseObject), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorResponseObject), StatusCodes.Status500InternalServerError)]
+        [ResponseCache(Duration = 60 * 60, Location = ResponseCacheLocation.Client)]
         [HttpGet("{planName}")]
         public async Task<IActionResult> GetPlanByName([FromRoute][Required] string planName)
         {
@@ -100,12 +103,14 @@ namespace StreamingPlatform.Controllers
             }
         }
 
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [Produces("application/json")]
-        [RequestTimeout(20)]
         [HttpGet]
+        [RequestTimeout(20)]
+        [ResponseCache(Duration = 120, Location = ResponseCacheLocation.Any, VaryByQueryKeys = new string[] { "pageSize", "currentPage" })]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(IEnumerable<PlanResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(PagedResponseDTO<PlanResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponseObject), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorResponseObject), StatusCodes.Status500InternalServerError)]
 
         /// <summary>
         /// Gets all the plans in the system.
