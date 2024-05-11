@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Timeouts;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using StreamingPlatform.Controllers.ResponseMapper;
 using StreamingPlatform.Controllers.Responses;
 using StreamingPlatform.Dtos.Contract;
@@ -34,6 +35,7 @@ namespace StreamingPlatform.Controllers
         [ProducesResponseType(typeof(ErrorResponseObject), StatusCodes.Status409Conflict)]
         [ProducesResponseType(typeof(ErrorResponseObject), StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(typeof(ErrorResponseObject), StatusCodes.Status401Unauthorized)]
+        [EnableRateLimiting("fixed-by-user-id")]
         [Consumes("application/json")]
 
         public async Task<IActionResult> CreatePlan([FromBody] CreatePlanContract planDto)
@@ -80,6 +82,7 @@ namespace StreamingPlatform.Controllers
         [ProducesResponseType(typeof(ErrorResponseObject), StatusCodes.Status500InternalServerError)]
         [ResponseCache(Duration = 60 * 60, Location = ResponseCacheLocation.Client)]
         [HttpGet("{planName}")]
+        [EnableRateLimiting("fixed-by-ip")]
         public async Task<IActionResult> GetPlanByName([FromRoute][Required] string planName)
         {
             try
@@ -105,13 +108,12 @@ namespace StreamingPlatform.Controllers
 
         [HttpGet]
         [RequestTimeout(20)]
-        [ResponseCache(Duration = 120, Location = ResponseCacheLocation.Any, VaryByQueryKeys = new string[] { "pageSize", "currentPage" })]
         [Produces("application/json")]
         [ProducesResponseType(typeof(IEnumerable<PlanResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(PagedResponseDTO<PlanResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponseObject), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorResponseObject), StatusCodes.Status500InternalServerError)]
-
+        [EnableRateLimiting("fixed-by-ip")]
         /// <summary>
         /// Gets all the plans in the system.
         /// </summary>
