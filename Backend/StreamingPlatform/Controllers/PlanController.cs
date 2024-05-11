@@ -13,6 +13,7 @@ namespace StreamingPlatform.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    [EnableRateLimiting("fixed-by-user-id-or-ip")]
     public class PlanController(ILogger<PlanController> logger, IPlanService planService) : ControllerBase
     {
         /// <summary>
@@ -26,6 +27,7 @@ namespace StreamingPlatform.Controllers
         ///     If a plan with the same name already exists, returns 409 (Conflict) with an appropriate error message.
         ///     If an unexpected error occurs during plan creation, returns 500 (Internal Server Error) with error details.
         ///     If the user is not authorized to create a plan, returns 401 (Unauthorized).
+        ///     If the user has exceeded the rate limit returns 429 (Too Many Requests).
         /// </returns>
         [HttpPost]
         [Authorize(Roles = "Admin")]
@@ -35,7 +37,7 @@ namespace StreamingPlatform.Controllers
         [ProducesResponseType(typeof(ErrorResponseObject), StatusCodes.Status409Conflict)]
         [ProducesResponseType(typeof(ErrorResponseObject), StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(typeof(ErrorResponseObject), StatusCodes.Status401Unauthorized)]
-        [EnableRateLimiting("fixed-by-user-id")]
+        [ProducesResponseType(typeof(ErrorResponseObject), StatusCodes.Status429TooManyRequests)]
         [Consumes("application/json")]
 
         public async Task<IActionResult> CreatePlan([FromBody] CreatePlanContract planDto)
@@ -75,14 +77,15 @@ namespace StreamingPlatform.Controllers
         /// If successful, returns 200 (OK) along with the created plan details.
         /// If no plan with the specified name exists, returns 404 (Not Found).
         /// If an unexpected error occurs during the get, returns 500 (Internal Server Error) with error details.
+        /// If the user has exceeded the rate limit, returns 429 (Too Many Requests).
         /// </returns>
         [Produces("application/json")]
         [ProducesResponseType(typeof(PlanResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponseObject), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorResponseObject), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(ErrorResponseObject), StatusCodes.Status429TooManyRequests)]
         [ResponseCache(Duration = 60 * 60, Location = ResponseCacheLocation.Client)]
         [HttpGet("{planName}")]
-        [EnableRateLimiting("fixed-by-ip")]
         public async Task<IActionResult> GetPlanByName([FromRoute][Required] string planName)
         {
             try
@@ -113,7 +116,7 @@ namespace StreamingPlatform.Controllers
         [ProducesResponseType(typeof(PagedResponseDTO<PlanResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponseObject), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorResponseObject), StatusCodes.Status500InternalServerError)]
-        [EnableRateLimiting("fixed-by-ip")]
+        [ProducesResponseType(typeof(ErrorResponseObject), StatusCodes.Status429TooManyRequests)]
         /// <summary>
         /// Gets all the plans in the system.
         /// </summary>
@@ -122,6 +125,7 @@ namespace StreamingPlatform.Controllers
         ///  Returns 200 (OK) along with the list of plans
         ///  Returns 400(BAD Request) if only one of the header values (page size or current Page is Provided).        
         ///  If an unexpected error occurs during the get, returns 500 (Internal Server Error) with error details.
+        ///  If the user has exceeded the rate limit, returns 429 (Too Many Requests).
         /// </returns>
         public async Task<IActionResult> GetPlans([FromHeader] int? pageSize, [FromHeader] int? currentPage)
         {

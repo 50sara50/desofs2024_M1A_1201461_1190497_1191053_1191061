@@ -107,8 +107,17 @@ namespace StreamingPlatform
 
             builder.Services.AddRateLimiter(rateLimiter =>
             {
-                rateLimiter.AddPolicy("fixed-by-ip", context =>
+                rateLimiter.AddPolicy("fixed-by-user-id-or-ip", context =>
                 {
+                    if (context.User.Identity?.IsAuthenticated == true)
+                    {
+                        return RateLimitPartition.GetFixedWindowLimiter(context.User.Identity.Name, _ => new FixedWindowRateLimiterOptions
+                        {
+                            Window = TimeSpan.FromSeconds(fixedWindowRateLimiterConfig.Window),
+                            PermitLimit = fixedWindowRateLimiterConfig.PermitLimit,
+                        });
+                    }
+
                     string? clientIpAddress = context.Request.Headers["X-Forwarded-For"].FirstOrDefault();
 
                     if (string.IsNullOrEmpty(clientIpAddress))
@@ -130,19 +139,6 @@ namespace StreamingPlatform
                     });
                 });
                 DefineOnRejectResponse(rateLimiter, tokenBucketRateLimiterConfig.ReplenishmentPeriod);
-            });
-
-            builder.Services.AddRateLimiter(rateLimiter =>
-            {
-                rateLimiter.AddPolicy(
-                   "fixed-by-user-id",
-                   context => RateLimitPartition.GetFixedWindowLimiter(context.User.Identity?.Name, _ =>
-                   new FixedWindowRateLimiterOptions
-                   {
-                       Window = TimeSpan.FromSeconds(fixedWindowRateLimiterConfig.Window),
-                       PermitLimit = fixedWindowRateLimiterConfig.PermitLimit,
-                   }));
-                DefineOnRejectResponse(rateLimiter, fixedWindowRateLimiterConfig.Window);
             });
         }
 
