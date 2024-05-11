@@ -47,18 +47,23 @@ namespace StreamingPlatform.Models
         /// <summary>
         /// Represents the monthly fee of the Plan.
         /// </summary>
+        /// 
+        [Required(ErrorMessage = "Monthly fee is required.")]
         [Range(0, double.MaxValue, ErrorMessage = "Monthly fee must be greater than 0.")]
         public double MonthlyFee { get; set; }
 
         /// <summary>
         /// Represents the number of minutes of the Plan.
         /// </summary>
+        [Required(ErrorMessage = "Number of minutes is required.")]
         [Range(0, int.MaxValue, ErrorMessage = "Number of minutes must be greater than 0.")]
         public int NumberOfMinutes { get; set; }
 
         /// <summary>
         /// Represents the status of the Plan. Can be Active or Inactive.
         /// </summary>
+        [Required(ErrorMessage = "Status is required.")]
+        [EnumDataType(typeof(PlanStatus), ErrorMessage = "Invalid status.")]
         public PlanStatus Status { get; set; }
 
     }
