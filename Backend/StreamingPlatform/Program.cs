@@ -26,19 +26,17 @@ namespace StreamingPlatform
         {
             var builder = WebApplication.CreateBuilder(args);
             string? databaseConnectionString = builder.Configuration.GetConnectionString("StreamingServiceDB");
-
-            // Add services to the container.
-            builder.Services.AddControllers();
+            
             builder.Services.AddControllers().AddJsonOptions(
              options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
-            builder.Services.AddDbContext<StreamingDbContext>(options => options.UseSqlServer(databaseConnectionString));
+            
+            // Add services to the container.
             builder.Services.AddScoped<IPlanService, PlanService>();
             AddOutPutCaching(builder);
             builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
-            builder.Services.AddControllers().AddJsonOptions(
-                options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 
-            builder.Services.AddDbContext<StreamingDbContext>(options => options.UseSqlServer(databaseConnectionString))
+            builder.Services
+                .AddDbContext<StreamingDbContext>(options => options.UseSqlServer(databaseConnectionString))
                 .AddDbContext<AuthDbContext>(options => options.UseSqlServer(databaseConnectionString));
 
             // Identity
