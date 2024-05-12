@@ -25,7 +25,7 @@ namespace StreamingPlatform
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-            string? databaseConnectionString = builder.Configuration.GetConnectionString("StreamingServiceDB");
+            var databaseConnectionString = builder.Configuration.GetConnectionString("StreamingServiceDB");
             
             builder.Services.AddControllers().AddJsonOptions(
              options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
@@ -35,9 +35,18 @@ namespace StreamingPlatform
             AddOutPutCaching(builder);
             builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 
-            builder.Services
-                .AddDbContext<StreamingDbContext>(options => options.UseSqlServer(databaseConnectionString))
-                .AddDbContext<AuthDbContext>(options => options.UseSqlServer(databaseConnectionString));
+            if (builder.Environment.IsDevelopment())
+            {
+                builder.Services
+                    .AddDbContext<StreamingDbContext>(options => options.UseInMemoryDatabase("StreamingDB"))
+                    .AddDbContext<AuthDbContext>(options => options.UseInMemoryDatabase("StreamingDB"));
+            }
+            else
+            {
+                builder.Services
+                    .AddDbContext<StreamingDbContext>(options => options.UseSqlServer(databaseConnectionString))
+                    .AddDbContext<AuthDbContext>(options => options.UseSqlServer(databaseConnectionString));
+            }
 
             // Identity
             builder.Services.AddIdentity<User, IdentityRole>()
