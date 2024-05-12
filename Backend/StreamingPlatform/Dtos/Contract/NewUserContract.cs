@@ -27,13 +27,16 @@ public class NewUserContract
 
     /// <summary>
     /// The user's password.
+    /// The password must contain at least one uppercase letter, one lowercase letter,
+    /// one number, one special character and 12 characters long minimum.
     /// </summary>
     [Required(ErrorMessage = "Password is required")]
 
     // ASVS#2.1.1
-    [MinLength(12, ErrorMessage = "Password is too short. Min length is 8 characters.")]
+    [MinLength(12, ErrorMessage = "Password is too short. Min length is 12 characters.")]
 
     // ASVS#2.1.2 
+    
     [MaxLength(128, ErrorMessage = "Password is too long. Max length is 128 characters.")]
     [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{12,}$", ErrorMessage = "Password must contain at least one uppercase letter, one lowercase letter, one number and one special character.")]
     public string Password
