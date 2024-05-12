@@ -108,5 +108,20 @@ namespace StreamingPlatform.Controllers.ResponseMapper
                 Message = message,
             };
         }
+
+        /// <summary>
+        /// Creates an error response object with a "ToManyRequests" code and a custom message.
+        /// Used to indicate that the request failed due to too many requests being made in a short period of time.
+        /// </summary>
+        /// <param name="retryAfter">The number of seconds the client should wait before retrying the request.</param>
+        /// <returns>An ErrorResponseObject instance with the specified code and message.</returns>
+        public static ErrorResponseObject TooManyRequests()
+        {
+            return new ErrorResponseObject
+            {
+                Code = "ToManyRequests",
+                Message = "Too many requests. Please try again later.",
+            };
+        }
     }
 }
