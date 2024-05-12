@@ -11,6 +11,7 @@ using System.ComponentModel.DataAnnotations;
 using StreamingPlatform.Models.Enums;
 using StreamingPlatform.Controllers.Responses;
 using System.Security.Claims;
+using Microsoft.AspNetCore.OutputCaching;
 
 namespace StreamingService.Test.Controller
 {
@@ -43,6 +44,7 @@ namespace StreamingService.Test.Controller
             {
                 HttpContext = adminContext
             };
+
         }
 
         [TestMethod]
@@ -53,8 +55,8 @@ namespace StreamingService.Test.Controller
             PlanResponse planResponse = new(planDto.PlanName, planDto.MonthlyFee, planDto.NumberOfMinutes, PlanStatus.Active);
             _mockPlanService.Setup(service => service.CreatePlan(planDto)).Returns(Task.FromResult(planResponse));
             PlanController controller = new(_mockLogger.Object, _mockPlanService.Object);
-
-            IActionResult result = await controller.CreatePlan(planDto);
+            var mockCacheStore = new Mock<IOutputCacheStore>();
+            IActionResult result = await controller.CreatePlan(planDto, mockCacheStore.Object);
             Assert.IsInstanceOfType(result, typeof(OkObjectResult));
             Assert.AreEqual(StatusCodes.Status200OK, ((OkObjectResult)result).StatusCode);
             Assert.AreEqual(planResponse, ((OkObjectResult)result).Value);
@@ -66,8 +68,8 @@ namespace StreamingService.Test.Controller
             CreatePlanContract planDto = new() { PlanName = "New Plan", MonthlyFee = -1, NumberOfMinutes = -1 };
             _mockPlanService.Setup(service => service.CreatePlan(planDto)).Throws<ValidationException>();
             PlanController controller = new(_mockLogger.Object, _mockPlanService.Object);
-
-            IActionResult result = await controller.CreatePlan(planDto);
+            var mockCacheStore = new Mock<IOutputCacheStore>();
+            IActionResult result = await controller.CreatePlan(planDto, mockCacheStore.Object);
 
             Assert.IsInstanceOfType(result, typeof(BadRequestObjectResult));
             Assert.AreEqual(StatusCodes.Status400BadRequest, ((BadRequestObjectResult)result).StatusCode);
@@ -79,8 +81,8 @@ namespace StreamingService.Test.Controller
             CreatePlanContract planDto = new() { PlanName = "New Plan", MonthlyFee = 15, NumberOfMinutes = 1500 };
             _mockPlanService.Setup(service => service.CreatePlan(planDto)).Throws<InvalidOperationException>();
             PlanController controller = new(_mockLogger.Object, _mockPlanService.Object);
-
-            IActionResult result = await controller.CreatePlan(planDto);
+            var mockCacheStore = new Mock<IOutputCacheStore>();
+            IActionResult result = await controller.CreatePlan(planDto, mockCacheStore.Object);
 
             Assert.IsInstanceOfType(result, typeof(ConflictObjectResult));
             Assert.AreEqual(StatusCodes.Status409Conflict, ((ConflictObjectResult)result).StatusCode);
@@ -93,7 +95,8 @@ namespace StreamingService.Test.Controller
             _mockPlanService.Setup(service => service.CreatePlan(planDto)).Throws<Exception>();
             PlanController controller = new(_mockLogger.Object, _mockPlanService.Object);
 
-            IActionResult result = await controller.CreatePlan(planDto);
+            var mockCacheStore = new Mock<IOutputCacheStore>();
+            IActionResult result = await controller.CreatePlan(planDto, mockCacheStore.Object);
 
             Assert.IsInstanceOfType(result, typeof(ObjectResult));
             Assert.AreEqual(StatusCodes.Status500InternalServerError, ((ObjectResult)result).StatusCode);
