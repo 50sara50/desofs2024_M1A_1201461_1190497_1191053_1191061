@@ -2,7 +2,7 @@
 using System.Text.RegularExpressions;
 using StreamingPlatform.Models.Enums;
 
-namespace StreamingPlatform.Dtos.Contracts;
+namespace StreamingPlatform.Dtos.Contract;
 
 public class NewUserContract
 {

@@ -1,5 +1,5 @@
-﻿using StreamingPlatform.Dtos.Contracts;
-using StreamingPlatform.Dtos.Responses;
+﻿using StreamingPlatform.Dtos.Contract;
+using StreamingPlatform.Dtos.Response;
 
 namespace StreamingPlatform;
 

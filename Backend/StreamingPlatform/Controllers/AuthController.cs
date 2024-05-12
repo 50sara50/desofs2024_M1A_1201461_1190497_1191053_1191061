@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using StreamingPlatform.Dtos.Contracts;
+using StreamingPlatform.Dtos.Contract;
 
 namespace StreamingPlatform;
 
