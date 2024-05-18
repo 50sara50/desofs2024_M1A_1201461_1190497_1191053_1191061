@@ -19,7 +19,7 @@ namespace StreamingPlatform.Models
         /// <summary>
         /// The unique identifier of the plan.
         /// </summary>
-        public Guid PlanId { get; set; }
+        public Guid PlanId { get; set; } 
         
         /// <summary>
         /// The subscription's creation date.
