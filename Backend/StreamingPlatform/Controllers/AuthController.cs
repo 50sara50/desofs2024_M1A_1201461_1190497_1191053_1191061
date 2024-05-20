@@ -62,4 +62,22 @@ public class AuthController : ControllerBase
             return this.BadRequest(errorResponseObject);
         }
     }
+
+    [HttpGet("check-password")]
+    [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
+    [ProducesResponseType(typeof(GenericResponseDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponseObject), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> CheckPassword(string password)
+    {
+        try
+        {
+            var result = await this._authService.PasswordBreached(password);
+            return this.Ok(result);
+        }
+        catch (ServiceBaseException ex)
+        {
+            ErrorResponseObject errorResponseObject = MapResponse.BadRequest(ex.Message);
+            return this.BadRequest(errorResponseObject);
+        }
+    }
 }
