@@ -7,6 +7,7 @@ using StreamingPlatform.Dtos.Contract;
 using StreamingPlatform.Dtos.Response;
 using StreamingPlatform.Models;
 using StreamingPlatform.Models.Enums;
+using StreamingPlatform.Services.Exceptions;
 using JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames;
 
 namespace StreamingPlatform;
@@ -94,12 +95,12 @@ public class AuthService : IAuthService
         var user = await _userManager.FindByEmailAsync(userContract.Email);
         if (user == null)
         {
-            throw new Exception("User does not exist");
+            throw new ServiceBaseException("User does not exist");
         }
 
         if (!await _userManager.CheckPasswordAsync(user, userContract.Password))
         {
-            throw new Exception("Wrong Passsword");
+            throw new ServiceBaseException("Wrong Passsword");
         }
 
         var userRoles = await _userManager.GetRolesAsync(user);
