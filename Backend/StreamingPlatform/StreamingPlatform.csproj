@@ -36,6 +36,7 @@
 
 	<ItemGroup>
 	  <Compile Remove="Models\SongsInPlaylists.cs" />
+	  <Compile Remove="Models\SongsPlaylists.cs" />
 	</ItemGroup>
 
 </Project>

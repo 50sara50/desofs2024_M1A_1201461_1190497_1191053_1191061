@@ -39,7 +39,9 @@ namespace StreamingPlatform.Models
         /// <summary>
         /// Playlists where the song was included.
         /// </summary>
-		public ICollection<Playlist> Playlists { get; set; } 
+		// public ICollection<Playlist> Playlists { get; set; }
+
+        public ICollection<SongPlaylist> SongPlaylists { get; set; } 
         
 		public Song()
 		{
@@ -47,7 +49,9 @@ namespace StreamingPlatform.Models
 			this.ArtistId = Guid.NewGuid();
 			this.Duration = new TimeSpan(0, 0, 0);
 			this.AlbumId = null;
-			this.Playlists = new List<Playlist>();
+            this.SongPlaylists = new List<SongPlaylist>();
+
+			// this.Playlists = new List<Playlist>();
         }
 
 		public Song(Guid id, string title, Guid artistId, TimeSpan duration, Guid albumId)
@@ -57,6 +61,8 @@ namespace StreamingPlatform.Models
 			this.ArtistId = artistId;
 			this.Duration = duration;
 			this.AlbumId = albumId;
+            this.SongPlaylists = new List<SongPlaylist>();
+
 		}
 	}
 }

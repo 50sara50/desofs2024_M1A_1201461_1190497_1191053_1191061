@@ -11,11 +11,13 @@ namespace StreamingPlatform
         {
             var builder = WebApplication.CreateBuilder(args);
             var databaseConnectionString = builder.Configuration.GetConnectionString("StreamingServiceDB");
-            //var serverVersion = new MariaDbServerVersion(new Version(11, 2, 2));
+            var serverVersion = new MariaDbServerVersion(new Version(11, 2, 2));
             
             // Add services to the container.
             builder.Services.AddControllers();
-            builder.Services.AddDbContext<StreamingDbContext>(options => options.UseSqlServer(databaseConnectionString));
+            // builder.Services.AddDbContext<StreamingDbContext>(options => options.UseSqlServer(databaseConnectionString));
+
+            builder.Services.AddDbContext<StreamingDbContext>(options => options.UseMySql(databaseConnectionString, serverVersion));
 
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             builder.Services.AddScoped<IPlaylistService, PlaylistService>();

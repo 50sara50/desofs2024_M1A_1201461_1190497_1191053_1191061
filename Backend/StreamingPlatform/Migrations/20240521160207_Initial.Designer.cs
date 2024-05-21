@@ -12,8 +12,8 @@ using StreamingPlatform.Dao;
 namespace StreamingPlatform.Migrations
 {
     [DbContext(typeof(StreamingDbContext))]
-    [Migration("20240507235340_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20240521160207_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -96,18 +96,28 @@ namespace StreamingPlatform.Migrations
                     b.Property<TimeSpan>("Duration")
                         .HasColumnType("time(6)");
 
-                    b.Property<Guid?>("PlaylistId")
-                        .HasColumnType("char(36)");
-
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("longtext");
 
                     b.HasKey("Id");
 
+                    b.ToTable("Songs");
+                });
+
+            modelBuilder.Entity("StreamingPlatform.Models.SongPlaylist", b =>
+                {
+                    b.Property<Guid>("SongId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<Guid>("PlaylistId")
+                        .HasColumnType("char(36)");
+
+                    b.HasKey("SongId", "PlaylistId");
+
                     b.HasIndex("PlaylistId");
 
-                    b.ToTable("Songs");
+                    b.ToTable("SongPlaylists");
                 });
 
             modelBuilder.Entity("StreamingPlatform.Models.Subscription", b =>
@@ -172,11 +182,23 @@ namespace StreamingPlatform.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("StreamingPlatform.Models.Song", b =>
+            modelBuilder.Entity("StreamingPlatform.Models.SongPlaylist", b =>
                 {
-                    b.HasOne("StreamingPlatform.Models.Playlist", null)
-                        .WithMany("SongList")
-                        .HasForeignKey("PlaylistId");
+                    b.HasOne("StreamingPlatform.Models.Playlist", "Playlist")
+                        .WithMany("SongPlaylists")
+                        .HasForeignKey("PlaylistId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("StreamingPlatform.Models.Song", "Song")
+                        .WithMany("SongPlaylists")
+                        .HasForeignKey("SongId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Playlist");
+
+                    b.Navigation("Song");
                 });
 
             modelBuilder.Entity("StreamingPlatform.Models.User", b =>
@@ -210,7 +232,12 @@ namespace StreamingPlatform.Migrations
 
             modelBuilder.Entity("StreamingPlatform.Models.Playlist", b =>
                 {
-                    b.Navigation("SongList");
+                    b.Navigation("SongPlaylists");
+                });
+
+            modelBuilder.Entity("StreamingPlatform.Models.Song", b =>
+                {
+                    b.Navigation("SongPlaylists");
                 });
 #pragma warning restore 612, 618
         }
