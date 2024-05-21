@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using StreamingPlatform.Dao.Properties;
+using StreamingPlatform.Models.Enums;
 
 namespace StreamingPlatform.Models
 {
@@ -16,25 +17,29 @@ namespace StreamingPlatform.Models
             this.Artist = null;
             this.Album = null;
             this.SavedPath = string.Empty;
+            this.FileType = FileType.MP3;
         }
 
-        public Song(Guid id, string title, User artist, Album? album)
+        public Song(Guid id, string title, User artist, Album? album, FileType type)
         {
             this.Id = id;
             this.Title = title;
             this.Artist = artist;
             this.Album = album;
             this.SavedPath = string.Empty;
+            this.FileType = type;
         }
 
-        public Song(Guid id, string title, User artist, Album? album, string savedPath)
+        public Song(Guid id, string title, User artist, Album? album, string savedPath, FileType type)
         {
             this.Id = id;
             this.Title = title;
             this.Artist = artist;
             this.Album = album;
             this.SavedPath = savedPath;
+            this.FileType = type;
         }
+
 
         /// <summary>
         /// The song's unique identifier.
@@ -45,6 +50,8 @@ namespace StreamingPlatform.Models
         /// <summary>
         /// The song's title.
         /// </summary>
+        [Required(ErrorMessage = "Title is required")]
+        [MaxLength(50, ErrorMessage = "Title is too long. Max length is 50 characters.")]
         public string Title { get; set; }
 
         /// <summary>
@@ -56,9 +63,15 @@ namespace StreamingPlatform.Models
         /// </summary>
         public Album? Album { get; set; }
 
-        [SecureProperty]
-        public string SavedPath { get; set; }
+        /// <summary>
+        /// The type of file the song is.
+        [EnumDataType(typeof(FileType))]
+        [Required(ErrorMessage = "FileType is required")]
+        public FileType FileType { get; set; }
 
+        [SecureProperty]
+        [Required(ErrorMessage = "SavedPath is required")]
+        public string SavedPath { get; set; }
 
         public override bool Equals(object? obj)
         {

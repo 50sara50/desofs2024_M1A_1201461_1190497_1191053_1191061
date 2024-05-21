@@ -77,8 +77,45 @@ namespace StreamingPlatform.Controllers
                 ErrorResponseObject errorResponseObject = MapResponse.InternalServerError("An unexpected error occurred");
                 return this.StatusCode(StatusCodes.Status500InternalServerError, errorResponseObject);
             }
-
         }
 
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(SongResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponseObject), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorResponseObject), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(ErrorResponseObject), StatusCodes.Status401Unauthorized)]
+
+        public async Task<IActionResult> DownloadSong([FromQuery][Required] string songName, [FromQuery][Required] string artistName, [FromQuery] string? albumName)
+        {
+            // ensure that at least song name and artist name are provided
+            if (string.IsNullOrEmpty(songName) || string.IsNullOrEmpty(artistName))
+            {
+                logger.LogInformation("Song name and artist name are required");
+                ErrorResponseObject errorResponseObject = MapResponse.BadRequest("Song name and artist name are required");
+                return this.BadRequest(errorResponseObject);
+            }
+
+            try
+            {
+                DownloadSongResponse music = await songService.DownloadSong(songName, artistName, albumName);
+
+                // return the file for download
+                return this.File(music.Data, music.FileType);
+            }
+            catch (InvalidOperationException e)
+            {
+                logger.LogError($"Error: {e.Message}");
+                ErrorResponseObject errorResponseObject = MapResponse.NotFound("Song not found");
+                return this.NotFound(errorResponseObject);
+            }
+            catch (Exception e)
+            {
+                logger.LogError($"Error: {e.Message}");
+                ErrorResponseObject errorResponseObject = MapResponse.InternalServerError("An unexpected error occurred");
+                return this.StatusCode(StatusCodes.Status500InternalServerError, errorResponseObject);
+            }
+        }
     }
 }

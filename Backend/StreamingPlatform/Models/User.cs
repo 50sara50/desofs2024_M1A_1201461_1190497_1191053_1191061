@@ -20,9 +20,22 @@ namespace StreamingPlatform.Models
             this.Songs = [];
         }
 
-        public User(string username, string email, string name, int age, string address, string pepper)
+        public User(string username, string email, string name, int age, string address)
         {
             this.Id = Guid.NewGuid().ToString();
+            this.UserName = username;
+            this.Email = email;
+            this.Name = name;
+            this.Age = age;
+            this.Address = address;
+            this.CreateOn = DateTime.Now;
+            this.Albums = [];
+            this.Songs = [];
+        }
+
+        public User(string id, string username, string email, string name, int age, string address)
+        {
+            this.Id = id;
             this.UserName = username;
             this.Email = email;
             this.Name = name;
@@ -64,9 +77,9 @@ namespace StreamingPlatform.Models
         /// </summary>
         public DateTime CreateOn { get; set; }
 
-        public List<Song> Songs { get; set; }
+        public ICollection<Song> Songs { get; set; }
 
-        public List<Album> Albums { get; set; }
+        public ICollection<Album> Albums { get; set; }
 
         public void AddSong(Song song)
         {

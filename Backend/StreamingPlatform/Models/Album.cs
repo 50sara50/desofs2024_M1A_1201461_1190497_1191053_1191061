@@ -26,7 +26,7 @@ public class Album
 
     public User? Artist { get; set; }
 
-    public List<Song> SongList { get; set; }
+    public ICollection<Song> SongList { get; set; }
 
     public void AddSong(Song song)
     {

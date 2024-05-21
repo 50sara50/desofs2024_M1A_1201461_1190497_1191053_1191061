@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Linq.Expressions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.VisualBasic.FileIO;
 using StreamingPlatform.Dao.Interfaces;
@@ -6,6 +7,8 @@ using StreamingPlatform.Dao.Repositories;
 using StreamingPlatform.Dtos.Contract;
 using StreamingPlatform.Dtos.Response;
 using StreamingPlatform.Models;
+using StreamingPlatform.Models.Enums;
+using StreamingPlatform.Models.Enums.Mappers;
 using StreamingPlatform.Services.Interfaces;
 
 namespace StreamingPlatform.Services
@@ -40,8 +43,8 @@ namespace StreamingPlatform.Services
                 album = await albumRepository.GetRecordAsync(a => a.Id == albumId) ?? throw new InvalidOperationException("Album does not exist.");
             }
 
-            User user = await this.userManager.FindByNameAsync(userName ?? string.Empty) ?? throw new InvalidOperationException("User does not exist.");
-
+            IGenericRepository<User> userRepository = this.unitOfWork.Repository<User>();
+            User user = await userRepository.GetRecordAsync(u => u.UserName == userName) ?? throw new InvalidOperationException("User does not exist.");
             using MemoryStream stream = new();
             music.CopyTo(stream);
             byte[] fileData = stream.ToArray();
@@ -61,12 +64,41 @@ namespace StreamingPlatform.Services
 
             string fileName = Path.Combine(userDirectory, music.FileName);
             await File.WriteAllBytesAsync(fileName, fileData);
-            Song song = new(Guid.NewGuid(), songDto.Title, user, album, fileName);
+            string fileExtension = Path.GetExtension(fileName);
+            FileType fileType = FileTypeMapper.ExtensionToFilePath(fileExtension) ?? throw new InvalidOperationException("Invalid file type.");
+            Song song = new(Guid.NewGuid(), songDto.Title, user, album, fileName, fileType);
             IGenericRepository<Song> songRepository = this.unitOfWork.Repository<Song>();
             songRepository.Create(song);
-            List<Song> songs = user.Songs.ToList();
             await this.unitOfWork.SaveChangesAsync();
             return new SongResponse(song.Title, song.Artist?.Name, song.Album?.Title);
+        }
+
+        public async Task<DownloadSongResponse> DownloadSong(string songName, string artistName, string? albumName)
+        {
+            IGenericRepository<Song> songRepository = this.unitOfWork.Repository<Song>();
+            Expression<Func<Song, bool>> expression;
+
+            if (albumName != null)
+            {
+                expression = s => s.Title == songName && s.Artist!.Name == artistName && s.Album != null && s.Album.Title == albumName;
+            }
+            else
+            {
+                expression = s => s.Title == songName && s.Artist!.Name == artistName;
+            }
+
+            Song? song = await songRepository.GetRecordAsync(expression);
+            if (song == null)
+            {
+                throw new InvalidOperationException("Song does not exist.");
+            }
+
+            // read the file and return it
+            string filePath = song.SavedPath;
+            byte[] fileData = await File.ReadAllBytesAsync(filePath);
+            FileType fileType = song.FileType;
+            string? fileExtension = FileTypeMapper.FileTypeToExtension(song.FileType) ?? throw new InvalidOperationException("Invalid file type.");
+            return new DownloadSongResponse(songName, fileExtension, fileData);
         }
     }
 }
