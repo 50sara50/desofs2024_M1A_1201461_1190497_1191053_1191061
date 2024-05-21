@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using StreamingPlatform.Configurations.Mapper;
 using StreamingPlatform.Configurations.Models;
@@ -16,6 +18,7 @@ using StreamingPlatform.Dao.Repositories;
 using StreamingPlatform.Models;
 using StreamingPlatform.Services;
 using StreamingPlatform.Services.Interfaces;
+using StreamingPlatform.Utils;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace StreamingPlatform
@@ -26,20 +29,15 @@ namespace StreamingPlatform
         {
             var builder = WebApplication.CreateBuilder(args);
             var databaseConnectionString = builder.Configuration.GetConnectionString("StreamingServiceDB");
-            
+
             builder.Services.AddControllers().AddJsonOptions(
              options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
-            
-            // Add services to the container.
-            builder.Services.AddScoped<IPlanService, PlanService>();
-            AddOutPutCaching(builder);
-            builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 
             if (builder.Environment.IsDevelopment())
             {
                 builder.Services
-                    .AddDbContext<StreamingDbContext>(options => options.UseInMemoryDatabase("StreamingDB"))
-                    .AddDbContext<AuthDbContext>(options => options.UseInMemoryDatabase("StreamingDB"));
+                    .AddDbContext<StreamingDbContext>(options => options.UseSqlServer(databaseConnectionString))
+                    .AddDbContext<AuthDbContext>(options => options.UseSqlServer(databaseConnectionString));
             }
             else
             {
@@ -53,6 +51,7 @@ namespace StreamingPlatform
                 .AddEntityFrameworkStores<AuthDbContext>()
                 .AddDefaultTokenProviders();
             AddRateLimiting(builder);
+            AddOutPutCaching(builder);
 
             // Authentication
             builder.Services.AddAuthentication(options =>
@@ -79,6 +78,12 @@ namespace StreamingPlatform
                     });
 
             builder.Services.AddScoped<IAuthService, AuthService>();
+            // Add services to the container.
+            builder.Services.AddScoped<IPlanService, PlanService>();
+            builder.Services.AddScoped<ISongService, SongService>();
+            builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
+            string encryptionKey = builder.Configuration.GetValue<string>("Keys:SecureDataKey") ?? throw new InvalidOperationException("SecureDataKey is not set in the configuration file.");
+            SecureDataEncryptionHelper.SetEncryptionKey(encryptionKey);
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
@@ -98,6 +103,13 @@ namespace StreamingPlatform
             app.UseRateLimiter();
             app.UseOutputCache();
             app.UseHttpsRedirection();
+
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(
+                Path.Combine(builder.Environment.WebRootPath, "Songs")),
+                RequestPath = "/Songs",
+            });
 
             app.MapControllers();
             app.Run();

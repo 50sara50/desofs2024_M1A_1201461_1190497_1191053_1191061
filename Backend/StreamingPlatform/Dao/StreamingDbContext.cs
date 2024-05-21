@@ -34,7 +34,8 @@ namespace StreamingPlatform.Dao
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            //modelBuilder.UseEncryption();
+            modelBuilder.UseEncryption();
+
             // modelBuilder.Entity<User>(entity =>
             // {
             //     entity.OwnsOne(u => u.Password, password =>

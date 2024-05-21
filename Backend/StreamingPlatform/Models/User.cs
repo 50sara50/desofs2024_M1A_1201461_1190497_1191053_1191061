@@ -16,6 +16,8 @@ namespace StreamingPlatform.Models
             this.Age = 0;
             this.Address = string.Empty;
             this.CreateOn = DateTime.Now;
+            this.Albums = [];
+            this.Songs = [];
         }
 
         public User(string username, string email, string name, int age, string address, string pepper)
@@ -27,6 +29,8 @@ namespace StreamingPlatform.Models
             this.Age = age;
             this.Address = address;
             this.CreateOn = DateTime.Now;
+            this.Albums = [];
+            this.Songs = [];
         }
 
         /// <summary>
@@ -59,5 +63,29 @@ namespace StreamingPlatform.Models
         /// The user's registration date.
         /// </summary>
         public DateTime CreateOn { get; set; }
+
+        public List<Song> Songs { get; set; }
+
+        public List<Album> Albums { get; set; }
+
+        public void AddSong(Song song)
+        {
+            if (this.Songs.Contains(song))
+            {
+                throw new Exception($"This song has already been added to the user '${this.Name}'");
+            }
+
+            this.Songs.Add(song);
+        }
+
+        public void AddAlbum(Album album)
+        {
+            if (this.Albums.Contains(album))
+            {
+                throw new Exception($"This album has already been added to the user '${this.Name}'");
+            }
+
+            this.Albums.Add(album);
+        }
     }
 }
