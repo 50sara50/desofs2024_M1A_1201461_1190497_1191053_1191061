@@ -118,12 +118,28 @@ public class AuthService : IAuthService
         return new GenericResponseDto("Password is safe to use.");
     }
 
+    public async Task<GenericResponseDto> ChangePassword(ChangePasswordContract changePassword)
+    {
+        var user = await _userManager.FindByEmailAsync(changePassword.Email);
+        if (user == null)
+        {
+            throw new ServiceBaseException("User does not exist");
+        }
+        
+        var result = await _userManager.ChangePasswordAsync(user, changePassword.OldPassword, changePassword.NewPassword);
+        if (!result.Succeeded)
+        {
+            throw new ServiceBaseException("Failed to change password. Please check your old password and try again.");
+        }
+        return new GenericResponseDto("Successfully changed password!");
+    }
+
     public async Task<GenericResponseDto> Register(NewUserContract newUser)
     {
         var userExists = await _userManager.FindByEmailAsync(newUser.Email);
         if (userExists != null)
         {
-            throw new Exception("User already exists!");
+            throw new ServiceBaseException("User already exists!");
         }
 
         var user = new User
@@ -138,18 +154,16 @@ public class AuthService : IAuthService
         var result = await _userManager.CreateAsync(user, newUser.Password);
         if (!result.Succeeded)
         {
-            throw new Exception("User creation failed! Please check user details and try again.");
+            throw new ServiceBaseException("User creation failed! Please check user details and try again.");
         }
 
         await CreateRole(newUser.Role);
         var roleResult = await _userManager.AddToRoleAsync(user, newUser.Role.ToString());
         if (!roleResult.Succeeded)
         {
-            throw new Exception("Failed to assign role to user.");
+            throw new ServiceBaseException("Failed to assign role to user.");
         }
-
-        var token = GenerateJwtToken(user);
-        var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
+        
         return new GenericResponseDto($"User created successfully!");
     }
 
