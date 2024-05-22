@@ -16,6 +16,7 @@ using StreamingPlatform.Dao.Repositories;
 using StreamingPlatform.Models;
 using StreamingPlatform.Services;
 using StreamingPlatform.Services.Interfaces;
+using ExceptionHandlerMiddleware = StreamingPlatform.Controllers.Middleware.ExceptionHandlerMiddleware;
 
 namespace StreamingPlatform
 {
@@ -101,6 +102,8 @@ namespace StreamingPlatform
                 app.UseSwaggerUI();
             }
 
+            // ASVS.7.4.1
+            app.UseMiddleware<ExceptionHandlerMiddleware>();
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseRateLimiter();
