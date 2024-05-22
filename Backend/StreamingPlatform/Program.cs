@@ -16,7 +16,6 @@ using StreamingPlatform.Dao.Repositories;
 using StreamingPlatform.Models;
 using StreamingPlatform.Services;
 using StreamingPlatform.Services.Interfaces;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace StreamingPlatform
 {
@@ -25,6 +24,15 @@ namespace StreamingPlatform
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            // LOGGING
+            builder.Logging.ClearProviders().AddConsole(options =>
+                    {
+                        options.IncludeScopes = builder.Configuration.GetValue<bool>("Logging:Console:IncludeScopes");
+                        options.TimestampFormat = builder.Configuration.GetValue<string>("Logging:Console:FormatterOptions:TimestampFormat");
+                        options.UseUtcTimestamp = builder.Configuration.GetValue<bool>("Logging:Console:FormatterOptions:UseUtcTimestamp");
+                    });
+                
             var databaseConnectionString = builder.Configuration.GetConnectionString("StreamingServiceDB");
             
             builder.Services.AddControllers().AddJsonOptions(
