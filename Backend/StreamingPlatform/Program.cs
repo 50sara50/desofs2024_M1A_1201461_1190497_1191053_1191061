@@ -41,6 +41,8 @@ namespace StreamingPlatform
             
             // Add services to the container.
             builder.Services.AddScoped<IPlanService, PlanService>();
+            builder.Services.AddScoped<IPlaylistService, PlaylistService>();
+
             AddOutPutCaching(builder);
             builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 
