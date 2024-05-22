@@ -1,0 +1,1 @@
+File to structure the folder that will contain the yaml files needed for the deployment
