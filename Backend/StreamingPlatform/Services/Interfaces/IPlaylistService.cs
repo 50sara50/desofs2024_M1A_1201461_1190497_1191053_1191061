@@ -10,6 +10,6 @@ namespace StreamingPlatform.Services.Interfaces
 
         public Task<NewPlaylistContract> AddSongToPlaylist(AddSongToPlaylistContract dto);
 
-        public Task<IEnumerable<NewPlaylistContract>> GetUserPlaylist(string userId);
+        public Task<IEnumerable<PlaylistResponseDto>> GetUserPlaylist(string userId);
     }
 }

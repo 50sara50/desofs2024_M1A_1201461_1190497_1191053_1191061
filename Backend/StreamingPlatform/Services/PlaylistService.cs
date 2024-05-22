@@ -43,7 +43,7 @@ namespace StreamingPlatform
         public async Task<PlaylistResponseDto> GetPlaylistById(string id)
         {
             IGenericRepository<Playlist> repository = this.unitOfWork.Repository<Playlist>();
-            var playlist = await (repository.GetRecordByIdAsync(id.ToString()) ?? throw new ValidationException("Invalid playlist id."));
+            var playlist = await (repository.GetRecordByIdAsync(new Guid(id)) ?? throw new ValidationException("Invalid playlist id."));
             return new PlaylistResponseDto(playlist.Id.ToString(), playlist.Title, playlist.UserId.ToString(), new List<string>());
         }
 
@@ -60,9 +60,24 @@ namespace StreamingPlatform
         /// Gets user's playlists.
         /// </summary>
         /// <returns></returns>
-        public Task<IEnumerable<NewPlaylistContract>> GetUserPlaylist(string userId)
+        public async Task<IEnumerable<PlaylistResponseDto>> GetUserPlaylist(string userId)
         {
-            throw new NotImplementedException();
+            //verify if user exists
+            var user = await this.userManager.FindByIdAsync(userId) ?? throw new ValidationException("Invalid user id.");
+            
+            IGenericRepository<Playlist> repository = this.unitOfWork.Repository<Playlist>();
+            var playlists = await repository.GetRecordsAsync(p => p.UserId.ToString().Equals(userId)) 
+                ?? throw new Exception("That user doe not have any playlists.");
+            
+            //TODO: create mapper
+            var results = new List<PlaylistResponseDto>();
+            foreach (var playlist in playlists)
+            {
+                results.Add(new PlaylistResponseDto(playlist.Id.ToString(), playlist.Title,
+                    playlist.UserId.ToString(), new List<string>()));
+            }
+
+            return results;
         }
     }
 }

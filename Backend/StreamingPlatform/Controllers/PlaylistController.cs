@@ -7,6 +7,9 @@ namespace StreamingPlatform.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public class PlaylistController(ILogger<AuthController> logger, IPlaylistService playlistService) : ControllerBase
     {
 
@@ -96,16 +99,28 @@ namespace StreamingPlatform.Controllers
         /// <returns></returns>
         /// <exception cref="NotImplementedException"></exception>
         [HttpGet("GetUserPlaylists")]
-        public async Task<IEnumerable<PlaylistResponseDto>> GetUserPlaylists([FromQuery] string userId)
+        public async Task<IActionResult> GetUserPlaylists([FromQuery] string userId)
         {
             try
             {
-                throw new NotImplementedException();
+                var results = await playlistService.GetUserPlaylist(userId);
+                logger.LogInformation(@"Success");
+                return this.Ok(results);
+            }
+            catch (ValidationException v)
+            {
+                logger.LogError($"Validation exception: ${v.Message}.");
+                return this.BadRequest(v.Message);
+            }
+            catch (InvalidOperationException i)
+            {
+                logger.LogError($"Invalid operation exceptions: ${i.Message}.");
+                return this.Conflict(i.Message);
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
-                throw;
+                logger.LogError($"Exception: ${e.Message}.");
+                return this.StatusCode(StatusCodes.Status500InternalServerError, e.Message);
             }
         }
     }

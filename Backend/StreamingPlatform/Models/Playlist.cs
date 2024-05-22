@@ -25,13 +25,7 @@ namespace StreamingPlatform.Models
         /// </summary>
         public Guid UserId { get; set; }
         
-        /// <summary>
-        /// The songs in the playlist.
-        /// </summary>
-        // public ICollection<Song> Songs { get;}
-        
         public ICollection<SongPlaylist> SongPlaylists { get; set; }
-
         
         public Playlist()
         {
@@ -49,40 +43,6 @@ namespace StreamingPlatform.Models
             // this.Songs = new List<Song>();
             this.UserId = userId;
             this.SongPlaylists = new List<SongPlaylist>();
-
         }
-
-        /// <summary>
-        /// Adds a new song to the playlist
-        /// </summary>
-        /// <param name="song"></param>
-        // public void AddSong(Song song)
-        // {
-        //     if (this.Songs.Contains(song))
-        //     {
-        //         throw new Exception($"This song has already been added to the playlist '${this.Title}'");
-        //     }
-        //     else
-        //     {
-        //         this.Songs.Add(song);
-        //     }
-        // }
-
-        /// <summary>
-        /// Removes a song from the playlist.
-        /// </summary>
-        /// <param name="song"></param>
-        /// <exception cref="Exception"></exception>
-        // public void RemoveSong(Song song)
-        // {
-        //     if (this.Songs.Contains(song))
-        //     {
-        //         this.Songs.Remove(song);
-        //     }
-        //     else
-        //     {
-        //         throw new Exception($"This song was already removed from the playlist. '${this.Title}'");
-        //     }
-        // }
     }
 }
