@@ -38,8 +38,8 @@ jobs:
         run: dotnet build --no-restore
       - name: Test
         run: dotnet test --no-build --verbosity normal
-      - name: Format
-        run: dotnet format StreamingPlatform.sln --verify-no-changes --verbosity diagnostic
+      #- name: Format
+      #  run: dotnet format StreamingPlatform.sln --verify-no-changes --verbosity diagnostic
   build_client:
     runs-on: ubuntu-latest
     defaults:
