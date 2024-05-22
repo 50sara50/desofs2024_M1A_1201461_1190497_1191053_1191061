@@ -8,7 +8,7 @@ namespace StreamingPlatform.Services.Interfaces
 
         public Task<PlaylistResponseDto> GetPlaylistById(string id);
 
-        public Task<NewPlaylistContract> AddSongToPlaylist(AddSongToPlaylistContract dto);
+        public Task<PlaylistResponseDto> AddSongToPlaylist(AddSongToPlaylistContract dto);
 
         public Task<IEnumerable<PlaylistResponseDto>> GetUserPlaylist(string userId);
     }
