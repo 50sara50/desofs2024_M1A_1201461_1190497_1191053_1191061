@@ -5,5 +5,6 @@
         MP3,
         M4A,
         WAV,
+        TXT,
     }
 }

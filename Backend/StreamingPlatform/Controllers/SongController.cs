@@ -1,4 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Net;
+using System.Net.Mime;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using StreamingPlatform.Controllers.ResponseMapper;
@@ -18,8 +20,9 @@ namespace StreamingPlatform.Controllers
         [HttpPost]
         [Authorize(Roles = "Admin")]
         [Produces("application/json")]
+        [Consumes("multipart/form-data")]
         [ProducesResponseType(typeof(PlanResponse), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ErrorResponseObject), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorResponseObject), StatusCodes.Status415UnsupportedMediaType)]
         [ProducesResponseType(typeof(ErrorResponseObject), StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(typeof(ErrorResponseObject), StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> CreateSong([FromForm] CreateSongContract songDto, [FromForm] IFormFile music)
@@ -27,8 +30,8 @@ namespace StreamingPlatform.Controllers
             if (music == null || music.Length == 0)
             {
                 logger.LogInformation($"No file was uploaded");
-                ErrorResponseObject errorResponseObject = MapResponse.BadRequest("No file was uploaded");
-                return this.BadRequest(errorResponseObject);
+                ErrorResponseObject errorResponseObject = MapResponse.UnsportedMediaType("No file was uploaded");
+                return this.StatusCode(StatusCodes.Status415UnsupportedMediaType, errorResponseObject);
             }
 
             // get the file extension
@@ -38,8 +41,8 @@ namespace StreamingPlatform.Controllers
             if (fileType == null)
             {
                 logger.LogInformation($"Invalid file type. App only allows mp3, m4A and wav files");
-                ErrorResponseObject errorResponseObject = MapResponse.BadRequest("Invalid file type. App only allows mp3, m4A and wav files");
-                return this.BadRequest(errorResponseObject);
+                ErrorResponseObject errorResponseObject = MapResponse.UnsportedMediaType("Invalid file type. App only allows mp3, m4A and wav files");
+                return this.StatusCode(StatusCodes.Status415UnsupportedMediaType, errorResponseObject);
             }
 
             long fileSize = music.Length;
@@ -63,6 +66,12 @@ namespace StreamingPlatform.Controllers
             {
                 logger.LogError($"Error: {e.Message}");
                 ErrorResponseObject errorResponseObject = MapResponse.BadRequest("Invalid song data");
+                return this.BadRequest(errorResponseObject);
+            }
+            catch (InvalidDataException e)
+            {
+                logger.LogError($"Error: {e.Message}");
+                ErrorResponseObject errorResponseObject = MapResponse.BadRequest("File provided was identified as a virus or malware");
                 return this.BadRequest(errorResponseObject);
             }
             catch (InvalidOperationException e)
@@ -100,9 +109,16 @@ namespace StreamingPlatform.Controllers
             try
             {
                 DownloadSongResponse music = await songService.DownloadSong(songName, artistName, albumName);
+                string fileExtension = music.FileType.Replace("audio/", string.Empty);
+                ContentDisposition contentDisposition = new()
+                {
+                    FileName = music.Name,
+                    Inline = false,
+                };
 
-                // return the file for download
-                return this.File(music.Data, music.FileType);
+                this.Response.Headers.Append("Content-Disposition", contentDisposition.ToString());
+
+                return this.File(music.Data, music.FileType, $"{music.Name}.");
             }
             catch (InvalidOperationException e)
             {

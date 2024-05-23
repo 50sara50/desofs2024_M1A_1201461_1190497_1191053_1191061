@@ -4,6 +4,7 @@ using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.FileProviders;
@@ -29,7 +30,6 @@ namespace StreamingPlatform
         {
             var builder = WebApplication.CreateBuilder(args);
             var databaseConnectionString = builder.Configuration.GetConnectionString("StreamingServiceDB");
-
             builder.Services.AddControllers().AddJsonOptions(
              options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 
@@ -109,7 +109,15 @@ namespace StreamingPlatform
                 FileProvider = new PhysicalFileProvider(
                 Path.Combine(builder.Environment.WebRootPath, "Songs")),
                 RequestPath = "/Songs",
-            });
+                ContentTypeProvider = new FileExtensionContentTypeProvider()
+                {
+                    Mappings = { [".mp3"] = "audio/mpeg", [".wav"] = "audio/wave", [".m4a"] = "audio/mp4", [".txt"] = "text/plain",
+ },
+                },
+                ServeUnknownFileTypes = false,
+            }).UseAuthentication().UseAuthorization();
+
+
 
             app.MapControllers();
             app.Run();

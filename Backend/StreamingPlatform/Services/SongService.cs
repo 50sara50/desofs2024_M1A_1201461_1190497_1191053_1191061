@@ -1,7 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Linq.Expressions;
+using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.VisualBasic.FileIO;
+using nClam;
 using StreamingPlatform.Dao.Interfaces;
 using StreamingPlatform.Dao.Repositories;
 using StreamingPlatform.Dtos.Contract;
@@ -13,12 +15,13 @@ using StreamingPlatform.Services.Interfaces;
 
 namespace StreamingPlatform.Services
 {
-    public class SongService(IUnitOfWork unitOfWork, UserManager<User> userManager) : ISongService
+    public class SongService(IUnitOfWork unitOfWork, IConfiguration configuration) : ISongService
     {
 
         private readonly IUnitOfWork unitOfWork = unitOfWork;
 
-        private readonly UserManager<User> userManager = userManager;
+        private readonly IConfiguration configuration = configuration;
+
 
         public async Task<SongResponse> CreateSong(CreateSongContract songDto, IFormFile music, string? userName)
         {
@@ -32,6 +35,14 @@ namespace StreamingPlatform.Services
                 throw new ValidationException(string.Join(" ", errorMessages));
             }
 
+            // Validate filename characters and length
+            if (!IsValidFilename(music.FileName))
+            {
+                throw new InvalidDataException("Invalid filename characters or length.");
+            }
+
+            // Sanitize filename to prevent path traversal
+            string sanitizedFilename = Path.GetInvalidFileNameChars().Aggregate(music.FileName, (current, c) => current.Replace(c.ToString(), "-"));
             Guid? albumId = songDto.AlbumId;
 
             Album? album = null;
@@ -43,12 +54,21 @@ namespace StreamingPlatform.Services
                 album = await albumRepository.GetRecordAsync(a => a.Id == albumId) ?? throw new InvalidOperationException("Album does not exist.");
             }
 
-            IGenericRepository<User> userRepository = this.unitOfWork.Repository<User>();
-            User user = await userRepository.GetRecordAsync(u => u.UserName == userName) ?? throw new InvalidOperationException("User does not exist.");
             using MemoryStream stream = new();
             music.CopyTo(stream);
             byte[] fileData = stream.ToArray();
 
+            string clamIp = this.configuration.GetValue<string>("Client:ClamIP") ?? throw new Exception("Cannot scan file for virus. ClamAV IP not found.");
+            ClamClient clam = new(clamIp, 3310);
+            await clam.PingAsync();
+            ClamScanResult scanResult = await clam.SendAndScanFileAsync(fileData);
+            if (scanResult.Result != ClamScanResults.Clean)
+            {
+                throw new InvalidDataException("Virus detected in file.");
+            }
+
+            IGenericRepository<User> userRepository = this.unitOfWork.Repository<User>();
+            User user = await userRepository.GetRecordAsync(u => u.UserName == userName) ?? throw new InvalidOperationException("User does not exist.");
             // create a directory with musics of the user and album if it does not exist
             string userDirectory = Path.Combine("wwwroot", "Songs", user.Id.ToString());
             if (album != null)
@@ -62,7 +82,9 @@ namespace StreamingPlatform.Services
                 Directory.CreateDirectory(userDirectory);
             }
 
-            string fileName = Path.Combine(userDirectory, music.FileName);
+            Guid songId = Guid.NewGuid();
+            string validatedFileName = $"{songId}{sanitizedFilename}";
+            string fileName = Path.Combine(userDirectory, validatedFileName);
             await File.WriteAllBytesAsync(fileName, fileData);
             string fileExtension = Path.GetExtension(fileName);
             FileType fileType = FileTypeMapper.ExtensionToFilePath(fileExtension) ?? throw new InvalidOperationException("Invalid file type.");
@@ -99,6 +121,27 @@ namespace StreamingPlatform.Services
             FileType fileType = song.FileType;
             string? fileExtension = FileTypeMapper.FileTypeToExtension(song.FileType) ?? throw new InvalidOperationException("Invalid file type.");
             return new DownloadSongResponse(songName, fileExtension, fileData);
+        }
+
+        private static bool IsValidFilename(string fileName)
+        {
+            if (string.IsNullOrEmpty(fileName))
+            {
+                return false;
+            }
+
+            var invalidChars = Path.GetInvalidFileNameChars();
+            if (fileName.IndexOfAny(invalidChars) >= 0)
+            {
+                return false;
+            }
+
+            if (fileName.Length > 255)
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }
