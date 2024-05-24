@@ -21,6 +21,7 @@ using StreamingPlatform.Services;
 using StreamingPlatform.Services.Interfaces;
 using StreamingPlatform.Utils;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using ExceptionHandlerMiddleware = StreamingPlatform.Controllers.Middleware.ExceptionHandlerMiddleware;
 
 namespace StreamingPlatform
 {
@@ -29,9 +30,25 @@ namespace StreamingPlatform
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            // LOGGING
+            builder.Logging.ClearProviders().AddConsole(options =>
+                    {
+                        options.IncludeScopes = builder.Configuration.GetValue<bool>("Logging:Console:IncludeScopes");
+                        options.TimestampFormat = builder.Configuration.GetValue<string>("Logging:Console:FormatterOptions:TimestampFormat");
+                        options.UseUtcTimestamp = builder.Configuration.GetValue<bool>("Logging:Console:FormatterOptions:UseUtcTimestamp");
+                    });
+                
             var databaseConnectionString = builder.Configuration.GetConnectionString("StreamingServiceDB");
             builder.Services.AddControllers().AddJsonOptions(
-             options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+             options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));  
+            // Add services to the container.
+            builder.Services.AddScoped<IPlanService, PlanService>();
+            builder.Services.AddScoped<IPlaylistService, PlaylistService>();
+            builder.Services.AddScoped<ISongService, SongService>();
+
+            AddOutPutCaching(builder);
+            builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 
             if (builder.Environment.IsDevelopment())
             {
@@ -98,6 +115,8 @@ namespace StreamingPlatform
                 app.UseSwaggerUI();
             }
 
+            // ASVS.7.4.1
+            app.UseMiddleware<ExceptionHandlerMiddleware>();
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseRateLimiter();

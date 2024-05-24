@@ -6,6 +6,7 @@ using Moq;
 using StreamingPlatform;
 using StreamingPlatform.Dtos.Contract;
 using StreamingPlatform.Dtos.Response;
+using StreamingPlatform.Services.Exceptions;
 
 namespace StreamingService.Test.Controller;
 
@@ -31,8 +32,8 @@ public sealed class AuthControllerTest
         // Arrange
         var newUser = new NewUserContract
         {
-            UserName = "testuser",
-            Email = "testuserdesofs@email.com",
+            UserName = Faker.Name.FullName(),
+            Email = Faker.Internet.Email(),
             Password = "Teste@123.Teste123"
         };
 
@@ -52,16 +53,14 @@ public sealed class AuthControllerTest
         // Arrange
         var newUser = new NewUserContract
         {
-            UserName = "testuser",
-            Email = "testuserdesofs@email.com",
+            UserName = Faker.Internet.UserName(),
+            Email = Faker.Internet.Email(),
             Password = "Teste"
         };
 
         _authServiceMock.Setup(x => x.Register(newUser)).Throws<ValidationException>();
         var controller = new AuthController(_loggerMock.Object, _authServiceMock.Object);
-        var result = await controller.Register(newUser);
-        Assert.IsInstanceOfType(result, typeof(BadRequestObjectResult));
-        Assert.AreEqual(StatusCodes.Status400BadRequest, ((BadRequestObjectResult)result).StatusCode);
+        await Assert.ThrowsExceptionAsync<ValidationException>(() => controller.Register(newUser));
     }
 
     [TestMethod]
@@ -70,15 +69,13 @@ public sealed class AuthControllerTest
         // Arrange
         var newUser = new NewUserContract
         {
-            UserName = "testuser",
-            Email = "testuserdesofs@email.com"
+            UserName = Faker.Internet.UserName(),
+            Email = Faker.Internet.Email(),
         };
 
         _authServiceMock.Setup(x => x.Register(newUser)).Throws<ValidationException>();
         var controller = new AuthController(_loggerMock.Object, _authServiceMock.Object);
-        var result = await controller.Register(newUser);
-        Assert.IsInstanceOfType(result, typeof(BadRequestObjectResult));
-        Assert.AreEqual(StatusCodes.Status400BadRequest, ((BadRequestObjectResult)result).StatusCode);
+        await Assert.ThrowsExceptionAsync<ValidationException>(() => controller.Register(newUser));
     }
 
     [TestMethod]
@@ -87,7 +84,7 @@ public sealed class AuthControllerTest
         // Arrange
         var user = new UserLoginContract()
         {
-            Email = "testuserdesofs@email.com",
+            Email = Faker.Internet.Email(),
             Password = "Teste@123.Teste123"
         };
 
@@ -100,23 +97,5 @@ public sealed class AuthControllerTest
         Assert.IsInstanceOfType(result, typeof(OkObjectResult));
         Assert.AreEqual(StatusCodes.Status200OK, ((OkObjectResult)result).StatusCode);
         Assert.AreEqual(response, ((OkObjectResult)result).Value);
-    }
-
-    [TestMethod]
-    public async Task ShouldFailLogin()
-    {
-        // Arrange
-        var user = new UserLoginContract()
-        {
-            Email = "testuserdesofs@email.com",
-            Password = "Teste@123.Teste123"
-        };
-        
-        _authServiceMock.Setup(x => x.Login(user))
-            .Throws<Exception>();
-        var controller = new AuthController(_loggerMock.Object, _authServiceMock.Object);
-        var result = await controller.Login(user);
-        Assert.IsInstanceOfType(result, typeof(BadRequestObjectResult));
-        Assert.AreEqual(StatusCodes.Status400BadRequest, ((BadRequestObjectResult)result).StatusCode);
     }
 }

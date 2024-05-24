@@ -9,6 +9,7 @@ using StreamingPlatform.Dtos.Response;
 using StreamingPlatform.Models;
 using StreamingPlatform.Models.Enums;
 using StreamingPlatform.Models.Enums.Mappers;
+using StreamingPlatform.Models;
 using StreamingPlatform.Services.Interfaces;
 
 namespace StreamingPlatform.Services
@@ -19,6 +20,13 @@ namespace StreamingPlatform.Services
         private readonly IUnitOfWork unitOfWork = unitOfWork;
 
         private readonly IConfiguration configuration = configuration;
+        
+         public async Task<SongResponseDto> GetSongById(string id)
+        {
+            IGenericRepository<Song> repository = this.unitOfWork.Repository<Song>();
+            Song song = await repository.GetRecordByIdAsync(new Guid(id));
+            return new SongResponseDto(song.Title, song.ArtistId.ToString(), song.Duration.ToString(), song.AlbumId.ToString());
+        }
 
         /// <summary>
         /// Stores a song in the database and saves the music file in the file system.

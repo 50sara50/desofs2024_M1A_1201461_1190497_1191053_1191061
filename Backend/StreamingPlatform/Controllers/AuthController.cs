@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using StreamingPlatform.Controllers.ResponseMapper;
 using StreamingPlatform.Controllers.Responses;
 using StreamingPlatform.Dtos.Contract;
@@ -55,6 +56,25 @@ public class AuthController : ControllerBase
             var userToken = await this._authService.Login(user);
             this._logger.LogInformation($"User {user.Email} logged in successfully");
             return this.Ok(userToken);
+        }
+        catch (ServiceBaseException ex)
+        {
+            ErrorResponseObject errorResponseObject = MapResponse.BadRequest(ex.Message);
+            return this.BadRequest(errorResponseObject);
+        }
+    }
+    
+    [Authorize]
+    [HttpPost("change-password")]
+    [Consumes("application/json")]
+    [Produces("application/json")]
+    [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
+    public async Task<IActionResult> ChangePassword(ChangePasswordContract changePasswordContract)
+    {
+        try
+        {
+            var result = await this._authService.ChangePassword(changePasswordContract);
+            return this.Ok(result);
         }
         catch (ServiceBaseException ex)
         {

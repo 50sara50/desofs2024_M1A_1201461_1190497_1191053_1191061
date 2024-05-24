@@ -18,6 +18,8 @@ namespace StreamingPlatform.Models
             this.Album = null;
             this.SavedPath = string.Empty;
             this.FileType = FileType.MP3;
+            this.SongPlaylists = new List<SongPlaylist>();
+
         }
 
         public Song(Guid id, string title, User artist, Album? album, FileType type)
@@ -28,6 +30,8 @@ namespace StreamingPlatform.Models
             this.Album = album;
             this.SavedPath = string.Empty;
             this.FileType = type;
+            this.SongPlaylists = new List<SongPlaylist>();
+
         }
 
         public Song(Guid id, string title, User artist, Album? album, string savedPath, FileType type)
@@ -38,8 +42,9 @@ namespace StreamingPlatform.Models
             this.Album = album;
             this.SavedPath = savedPath;
             this.FileType = type;
-        }
+            this.SongPlaylists = new List<SongPlaylist>();
 
+        }
 
         /// <summary>
         /// The song's unique identifier.
