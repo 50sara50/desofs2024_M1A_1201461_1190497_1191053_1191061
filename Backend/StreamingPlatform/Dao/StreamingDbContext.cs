@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using StreamingPlatform.Dao.Helper;
 using StreamingPlatform.Models;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace StreamingPlatform.Dao
 {
@@ -35,7 +36,8 @@ namespace StreamingPlatform.Dao
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.UseEncryption();
-
+            modelBuilder.Entity<User>().HasMany(u => u.Albums).WithOne(a => a.Artist);
+            modelBuilder.Entity<User>().HasMany(u => u.Songs).WithOne(s => s.Artist);
             // modelBuilder.Entity<User>(entity =>
             // {
             //     entity.OwnsOne(u => u.Password, password =>

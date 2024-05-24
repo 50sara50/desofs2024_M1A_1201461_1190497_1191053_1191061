@@ -38,6 +38,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Folder Include="Songs\" />
 	  <Folder Include="wwwroot\Songs\" />
 	</ItemGroup>
 </Project>

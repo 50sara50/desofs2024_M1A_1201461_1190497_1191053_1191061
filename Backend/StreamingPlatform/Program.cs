@@ -108,7 +108,7 @@ namespace StreamingPlatform
             {
                 FileProvider = new PhysicalFileProvider(
                 Path.Combine(builder.Environment.WebRootPath, "Songs")),
-                RequestPath = "/Songs",
+                RequestPath = "/song",
                 ContentTypeProvider = new FileExtensionContentTypeProvider()
                 {
                     Mappings = { [".mp3"] = "audio/mpeg", [".wav"] = "audio/wave", [".m4a"] = "audio/mp4", [".txt"] = "text/plain",
@@ -116,8 +116,6 @@ namespace StreamingPlatform
                 },
                 ServeUnknownFileTypes = false,
             }).UseAuthentication().UseAuthorization();
-
-
 
             app.MapControllers();
             app.Run();

@@ -19,12 +19,15 @@ namespace StreamingPlatform.Controllers
     {
         [HttpPost]
         [Authorize(Roles = "Admin")]
-        [Produces("application/json")]
         [Consumes("multipart/form-data")]
         [ProducesResponseType(typeof(PlanResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponseObject), StatusCodes.Status415UnsupportedMediaType)]
         [ProducesResponseType(typeof(ErrorResponseObject), StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(typeof(ErrorResponseObject), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ErrorResponseObject), StatusCodes.Status400BadRequest)]
+        /// <summary>
+        /// Creates a new song and stores it in the database.
+        /// </summary>
         public async Task<IActionResult> CreateSong([FromForm] CreateSongContract songDto, [FromForm] IFormFile music)
         {
             if (music == null || music.Length == 0)
