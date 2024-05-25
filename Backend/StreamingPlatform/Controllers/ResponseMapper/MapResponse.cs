@@ -123,5 +123,14 @@ namespace StreamingPlatform.Controllers.ResponseMapper
                 Message = "Too many requests. Please try again later.",
             };
         }
+
+        public static ErrorResponseObject UnsportedMediaType(string message)
+        {
+            return new ErrorResponseObject
+            {
+                Code = "UnsportedMediaType",
+                Message = message,
+            };
+        }
     }
 }

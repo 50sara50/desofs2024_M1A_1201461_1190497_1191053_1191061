@@ -4,7 +4,9 @@ using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using StreamingPlatform.Configurations.Mapper;
 using StreamingPlatform.Configurations.Models;
@@ -16,6 +18,7 @@ using StreamingPlatform.Dao.Repositories;
 using StreamingPlatform.Models;
 using StreamingPlatform.Services;
 using StreamingPlatform.Services.Interfaces;
+using StreamingPlatform.Utils;
 using ExceptionHandlerMiddleware = StreamingPlatform.Controllers.Middleware.ExceptionHandlerMiddleware;
 
 namespace StreamingPlatform
@@ -33,12 +36,11 @@ namespace StreamingPlatform
                         options.TimestampFormat = builder.Configuration.GetValue<string>("Logging:Console:FormatterOptions:TimestampFormat");
                         options.UseUtcTimestamp = builder.Configuration.GetValue<bool>("Logging:Console:FormatterOptions:UseUtcTimestamp");
                     });
-                
+
             var databaseConnectionString = builder.Configuration.GetConnectionString("StreamingServiceDB");
-            
             builder.Services.AddControllers().AddJsonOptions(
              options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
-            
+
             // Add services to the container.
             builder.Services.AddScoped<IPlanService, PlanService>();
             builder.Services.AddScoped<IPlaylistService, PlaylistService>();
@@ -50,8 +52,8 @@ namespace StreamingPlatform
             if (builder.Environment.IsDevelopment())
             {
                 builder.Services
-                    .AddDbContext<StreamingDbContext>(options => options.UseInMemoryDatabase("StreamingDB"))
-                    .AddDbContext<AuthDbContext>(options => options.UseInMemoryDatabase("StreamingDB"));
+                    .AddDbContext<StreamingDbContext>(options => options.UseSqlServer(databaseConnectionString))
+                    .AddDbContext<AuthDbContext>(options => options.UseSqlServer(databaseConnectionString));
             }
             else
             {
@@ -65,6 +67,7 @@ namespace StreamingPlatform
                 .AddEntityFrameworkStores<AuthDbContext>()
                 .AddDefaultTokenProviders();
             AddRateLimiting(builder);
+            AddOutPutCaching(builder);
 
             // Authentication
             builder.Services.AddAuthentication(options =>
@@ -92,6 +95,13 @@ namespace StreamingPlatform
 
             builder.Services.AddScoped<IAuthService, AuthService>();
 
+            // Add services to the container.
+            builder.Services.AddScoped<IPlanService, PlanService>();
+            builder.Services.AddScoped<ISongService, SongService>();
+            builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
+            string encryptionKey = builder.Configuration.GetValue<string>("Keys:SecureDataKey") ?? throw new InvalidOperationException("SecureDataKey is not set in the configuration file.");
+            SecureDataEncryptionHelper.SetEncryptionKey(encryptionKey);
+
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
@@ -112,6 +122,19 @@ namespace StreamingPlatform
             app.UseRateLimiter();
             app.UseOutputCache();
             app.UseHttpsRedirection();
+
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(
+                Path.Combine(builder.Environment.WebRootPath, "Songs")),
+                RequestPath = "/song",
+                ContentTypeProvider = new FileExtensionContentTypeProvider()
+                {
+                    Mappings = { [".mp3"] = "audio/mpeg", [".wav"] = "audio/wave", [".m4a"] = "audio/mp4", [".txt"] = "text/plain",
+ },
+                },
+                ServeUnknownFileTypes = false,
+            }).UseAuthentication().UseAuthorization();
 
             app.MapControllers();
             app.Run();
