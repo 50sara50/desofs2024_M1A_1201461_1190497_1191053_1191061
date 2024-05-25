@@ -3,27 +3,14 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace StreamingPlatform.Migrations
+namespace StreamingPlatform.Migrations.StreamingDb
 {
     /// <inheritdoc />
-    public partial class MyInitialStructure : Migration
+    public partial class StreamingDbContextTables : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
-                name: "Albums",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ArtistId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Albums", x => x.Id);
-                });
-
             migrationBuilder.CreateTable(
                 name: "Plans",
                 columns: table => new
@@ -44,7 +31,8 @@ namespace StreamingPlatform.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -97,25 +85,77 @@ namespace StreamingPlatform.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Songs",
+                name: "Albums",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ArtistId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Duration = table.Column<TimeSpan>(type: "time", nullable: false),
+                    ArtistId = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Albums", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Albums_Users_ArtistId",
+                        column: x => x.ArtistId,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Songs",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    ArtistId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     AlbumId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    PlaylistId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                    FileType = table.Column<int>(type: "int", nullable: false),
+                    SavedPath = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Songs", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Songs_Playlists_PlaylistId",
-                        column: x => x.PlaylistId,
-                        principalTable: "Playlists",
+                        name: "FK_Songs_Albums_AlbumId",
+                        column: x => x.AlbumId,
+                        principalTable: "Albums",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Songs_Users_ArtistId",
+                        column: x => x.ArtistId,
+                        principalTable: "Users",
                         principalColumn: "Id");
                 });
+
+            migrationBuilder.CreateTable(
+                name: "SongPlaylists",
+                columns: table => new
+                {
+                    SongId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    PlaylistId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SongPlaylists", x => new { x.SongId, x.PlaylistId });
+                    table.ForeignKey(
+                        name: "FK_SongPlaylists_Playlists_PlaylistId",
+                        column: x => x.PlaylistId,
+                        principalTable: "Playlists",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_SongPlaylists_Songs_SongId",
+                        column: x => x.SongId,
+                        principalTable: "Songs",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Albums_ArtistId",
+                table: "Albums",
+                column: "ArtistId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Plans_PlanName",
@@ -124,31 +164,44 @@ namespace StreamingPlatform.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Songs_PlaylistId",
-                table: "Songs",
+                name: "IX_SongPlaylists_PlaylistId",
+                table: "SongPlaylists",
                 column: "PlaylistId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Songs_AlbumId",
+                table: "Songs",
+                column: "AlbumId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Songs_ArtistId",
+                table: "Songs",
+                column: "ArtistId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Albums");
-
-            migrationBuilder.DropTable(
                 name: "Plans");
 
             migrationBuilder.DropTable(
-                name: "Songs");
+                name: "SongPlaylists");
 
             migrationBuilder.DropTable(
                 name: "Subscriptions");
 
             migrationBuilder.DropTable(
-                name: "Users");
+                name: "Playlists");
 
             migrationBuilder.DropTable(
-                name: "Playlists");
+                name: "Songs");
+
+            migrationBuilder.DropTable(
+                name: "Albums");
+
+            migrationBuilder.DropTable(
+                name: "Users");
         }
     }
 }

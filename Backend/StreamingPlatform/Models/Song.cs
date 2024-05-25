@@ -63,6 +63,7 @@ namespace StreamingPlatform.Models
         /// The artist that created the song.
         /// </summary>
         public User? Artist { get; set; }
+
         /// <summary>
         /// The album the song belongs to.
         /// </summary>
@@ -77,6 +78,8 @@ namespace StreamingPlatform.Models
         [SecureProperty]
         [Required(ErrorMessage = "SavedPath is required")]
         public string SavedPath { get; set; }
+
+        public ICollection<SongPlaylist> SongPlaylists { get; set; }
 
         public override bool Equals(object? obj)
         {
