@@ -1,7 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Linq.Expressions;
-using System.Text.RegularExpressions;
-using Microsoft.AspNetCore.Identity;
 using nClam;
 using StreamingPlatform.Dao.Interfaces;
 using StreamingPlatform.Dtos.Contract;
@@ -9,7 +7,6 @@ using StreamingPlatform.Dtos.Response;
 using StreamingPlatform.Models;
 using StreamingPlatform.Models.Enums;
 using StreamingPlatform.Models.Enums.Mappers;
-using StreamingPlatform.Models;
 using StreamingPlatform.Services.Interfaces;
 
 namespace StreamingPlatform.Services
@@ -20,12 +17,14 @@ namespace StreamingPlatform.Services
         private readonly IUnitOfWork unitOfWork = unitOfWork;
 
         private readonly IConfiguration configuration = configuration;
-        
-         public async Task<SongResponseDto> GetSongById(string id)
+
+        public async Task<SongResponseDto> GetSongById(string id)
         {
             IGenericRepository<Song> repository = this.unitOfWork.Repository<Song>();
-            Song song = await repository.GetRecordByIdAsync(new Guid(id));
-            return new SongResponseDto(song.Title, song.ArtistId.ToString(), song.Duration.ToString(), song.AlbumId.ToString());
+            Song? song = await repository.GetRecordByIdAsync(new Guid(id));
+            return song == null
+                ? throw new InvalidOperationException("Song does not exist.")
+                : new SongResponseDto(song.Title, song.Artist?.Name, song.Album?.Title);
         }
 
         /// <summary>

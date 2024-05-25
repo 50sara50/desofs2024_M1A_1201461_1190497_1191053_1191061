@@ -8,8 +8,7 @@ namespace StreamingPlatform.Services.Interfaces
         public Task<SongResponse> CreateSong(CreateSongContract songDto, IFormFile music, string? userName);
 
         public Task<DownloadSongResponse> DownloadSong(string songName, string artistName, string? albumName);
-        public Task<SongResponseDto> GetSongById(string id);
 
+        public Task<SongResponseDto> GetSongById(string id);
     }
 }
-

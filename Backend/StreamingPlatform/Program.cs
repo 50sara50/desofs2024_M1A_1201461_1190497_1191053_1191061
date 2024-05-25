@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using StreamingPlatform.Configurations.Mapper;
@@ -20,7 +19,6 @@ using StreamingPlatform.Models;
 using StreamingPlatform.Services;
 using StreamingPlatform.Services.Interfaces;
 using StreamingPlatform.Utils;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 using ExceptionHandlerMiddleware = StreamingPlatform.Controllers.Middleware.ExceptionHandlerMiddleware;
 
 namespace StreamingPlatform
@@ -38,10 +36,11 @@ namespace StreamingPlatform
                         options.TimestampFormat = builder.Configuration.GetValue<string>("Logging:Console:FormatterOptions:TimestampFormat");
                         options.UseUtcTimestamp = builder.Configuration.GetValue<bool>("Logging:Console:FormatterOptions:UseUtcTimestamp");
                     });
-                
+
             var databaseConnectionString = builder.Configuration.GetConnectionString("StreamingServiceDB");
             builder.Services.AddControllers().AddJsonOptions(
-             options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));  
+             options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+
             // Add services to the container.
             builder.Services.AddScoped<IPlanService, PlanService>();
             builder.Services.AddScoped<IPlaylistService, PlaylistService>();
@@ -95,6 +94,7 @@ namespace StreamingPlatform
                     });
 
             builder.Services.AddScoped<IAuthService, AuthService>();
+
             // Add services to the container.
             builder.Services.AddScoped<IPlanService, PlanService>();
             builder.Services.AddScoped<ISongService, SongService>();
