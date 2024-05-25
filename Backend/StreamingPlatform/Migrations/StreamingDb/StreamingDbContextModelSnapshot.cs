@@ -3,20 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using StreamingPlatform.Dao;
 
 #nullable disable
 
-namespace StreamingPlatform.Migrations
+namespace StreamingPlatform.Migrations.StreamingDb
 {
     [DbContext(typeof(StreamingDbContext))]
-    [Migration("20240510174406_MyInitialStructure")]
-    partial class MyInitialStructure
+    partial class StreamingDbContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -31,14 +28,16 @@ namespace StreamingPlatform.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("ArtistId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("ArtistId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ArtistId");
 
                     b.ToTable("Albums");
                 });
@@ -81,6 +80,9 @@ namespace StreamingPlatform.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id");
 
                     b.ToTable("Playlists");
@@ -95,24 +97,43 @@ namespace StreamingPlatform.Migrations
                     b.Property<Guid?>("AlbumId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("ArtistId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("ArtistId")
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<TimeSpan>("Duration")
-                        .HasColumnType("time");
+                    b.Property<int>("FileType")
+                        .HasColumnType("int");
 
-                    b.Property<Guid?>("PlaylistId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Title")
+                    b.Property<string>("SavedPath")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("AlbumId");
+
+                    b.HasIndex("ArtistId");
+
+                    b.ToTable("Songs");
+                });
+
+            modelBuilder.Entity("StreamingPlatform.Models.SongPlaylist", b =>
+                {
+                    b.Property<Guid>("SongId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("PlaylistId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("SongId", "PlaylistId");
 
                     b.HasIndex("PlaylistId");
 
-                    b.ToTable("Songs");
+                    b.ToTable("SongPlaylists");
                 });
 
             modelBuilder.Entity("StreamingPlatform.Models.Subscription", b =>
@@ -207,16 +228,69 @@ namespace StreamingPlatform.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("StreamingPlatform.Album", b =>
+                {
+                    b.HasOne("StreamingPlatform.Models.User", "Artist")
+                        .WithMany("Albums")
+                        .HasForeignKey("ArtistId");
+
+                    b.Navigation("Artist");
+                });
+
             modelBuilder.Entity("StreamingPlatform.Models.Song", b =>
                 {
-                    b.HasOne("StreamingPlatform.Models.Playlist", null)
+                    b.HasOne("StreamingPlatform.Album", "Album")
                         .WithMany("SongList")
-                        .HasForeignKey("PlaylistId");
+                        .HasForeignKey("AlbumId");
+
+                    b.HasOne("StreamingPlatform.Models.User", "Artist")
+                        .WithMany("Songs")
+                        .HasForeignKey("ArtistId");
+
+                    b.Navigation("Album");
+
+                    b.Navigation("Artist");
+                });
+
+            modelBuilder.Entity("StreamingPlatform.Models.SongPlaylist", b =>
+                {
+                    b.HasOne("StreamingPlatform.Models.Playlist", "Playlist")
+                        .WithMany("SongPlaylists")
+                        .HasForeignKey("PlaylistId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("StreamingPlatform.Models.Song", "Song")
+                        .WithMany("SongPlaylists")
+                        .HasForeignKey("SongId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Playlist");
+
+                    b.Navigation("Song");
+                });
+
+            modelBuilder.Entity("StreamingPlatform.Album", b =>
+                {
+                    b.Navigation("SongList");
                 });
 
             modelBuilder.Entity("StreamingPlatform.Models.Playlist", b =>
                 {
-                    b.Navigation("SongList");
+                    b.Navigation("SongPlaylists");
+                });
+
+            modelBuilder.Entity("StreamingPlatform.Models.Song", b =>
+                {
+                    b.Navigation("SongPlaylists");
+                });
+
+            modelBuilder.Entity("StreamingPlatform.Models.User", b =>
+                {
+                    b.Navigation("Albums");
+
+                    b.Navigation("Songs");
                 });
 #pragma warning restore 612, 618
         }

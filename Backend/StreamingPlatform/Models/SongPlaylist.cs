@@ -1,4 +1,6 @@
+using Microsoft.EntityFrameworkCore;
 using System;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace StreamingPlatform.Models
@@ -7,13 +9,15 @@ namespace StreamingPlatform.Models
     /// Intermediary class that represents the many-to-many relationship between songs and playlists.
     /// </summary>
     [Table("SongPlaylists")]
+    [PrimaryKey(nameof(SongId), nameof(PlaylistId))]
+
     public class SongPlaylist
     {
         public Guid SongId { get; set; }
 
-        public Song Song { get; set; } 
+        public Song Song { get; set; }
 
-        public Guid PlaylistId { get; set; } 
+        public Guid PlaylistId { get; set; }
 
         public Playlist Playlist { get; set; }
 
