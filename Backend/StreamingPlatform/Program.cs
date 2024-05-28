@@ -43,22 +43,23 @@ namespace StreamingPlatform
             builder.Services.AddScoped<IPlanService, PlanService>();
             builder.Services.AddScoped<IPlaylistService, PlaylistService>();
             builder.Services.AddScoped<ISongService, SongService>();
+            builder.Services.AddScoped<ISubscriptionService, SubscriptionService>();
 
             AddOutPutCaching(builder);
             builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 
-            if (builder.Environment.IsDevelopment())
-            {
-                builder.Services
-                    .AddDbContext<StreamingDbContext>(options => options.UseInMemoryDatabase("StreamingDB"))
-                    .AddDbContext<AuthDbContext>(options => options.UseInMemoryDatabase("StreamingDB"));
-            }
-            else
-            {
+            // if (builder.Environment.IsDevelopment())
+            // {
+            //     builder.Services
+            //         .AddDbContext<StreamingDbContext>(options => options.UseInMemoryDatabase("StreamingDB"))
+            //         .AddDbContext<AuthDbContext>(options => options.UseInMemoryDatabase("StreamingDB"));
+            // }
+            // else
+            // {
                 builder.Services
                     .AddDbContext<StreamingDbContext>(options => options.UseSqlServer(databaseConnectionString))
                     .AddDbContext<AuthDbContext>(options => options.UseSqlServer(databaseConnectionString));
-            }
+            // }
 
             // Identity
             builder.Services.AddIdentity<User, IdentityRole>()

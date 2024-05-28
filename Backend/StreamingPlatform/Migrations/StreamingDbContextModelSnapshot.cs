@@ -78,6 +78,9 @@ namespace StreamingPlatform.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id");
 
                     b.ToTable("Playlists");
@@ -98,18 +101,28 @@ namespace StreamingPlatform.Migrations
                     b.Property<TimeSpan>("Duration")
                         .HasColumnType("time");
 
-                    b.Property<Guid?>("PlaylistId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
+                    b.ToTable("Songs");
+                });
+
+            modelBuilder.Entity("StreamingPlatform.Models.SongPlaylist", b =>
+                {
+                    b.Property<Guid>("SongId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("PlaylistId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("SongId", "PlaylistId");
+
                     b.HasIndex("PlaylistId");
 
-                    b.ToTable("Songs");
+                    b.ToTable("SongPlaylists");
                 });
 
             modelBuilder.Entity("StreamingPlatform.Models.Subscription", b =>
@@ -124,14 +137,15 @@ namespace StreamingPlatform.Migrations
                     b.Property<Guid>("PlanId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime?>("RenewDate")
+                    b.Property<DateTime>("RenewDate")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -204,16 +218,33 @@ namespace StreamingPlatform.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("StreamingPlatform.Models.Song", b =>
+            modelBuilder.Entity("StreamingPlatform.Models.SongPlaylist", b =>
                 {
-                    b.HasOne("StreamingPlatform.Models.Playlist", null)
-                        .WithMany("SongList")
-                        .HasForeignKey("PlaylistId");
+                    b.HasOne("StreamingPlatform.Models.Playlist", "Playlist")
+                        .WithMany("SongPlaylists")
+                        .HasForeignKey("PlaylistId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("StreamingPlatform.Models.Song", "Song")
+                        .WithMany("SongPlaylists")
+                        .HasForeignKey("SongId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Playlist");
+
+                    b.Navigation("Song");
                 });
 
             modelBuilder.Entity("StreamingPlatform.Models.Playlist", b =>
                 {
-                    b.Navigation("SongList");
+                    b.Navigation("SongPlaylists");
+                });
+
+            modelBuilder.Entity("StreamingPlatform.Models.Song", b =>
+                {
+                    b.Navigation("SongPlaylists");
                 });
 #pragma warning restore 612, 618
         }
