@@ -10,6 +10,7 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using StreamingPlatform.Configurations.Mapper;
 using StreamingPlatform.Configurations.Models;
+using StreamingPlatform.Controllers.Extensions;
 using StreamingPlatform.Controllers.ResponseMapper;
 using StreamingPlatform.Controllers.Responses;
 using StreamingPlatform.Dao;
@@ -117,6 +118,7 @@ namespace StreamingPlatform
 
             // ASVS.7.4.1
             app.UseMiddleware<ExceptionHandlerMiddleware>();
+            app.UseInputSanitization();
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseRateLimiter();

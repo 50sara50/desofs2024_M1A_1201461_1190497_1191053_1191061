@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using StreamingPlatform.Utils.Validation;
+using System.ComponentModel.DataAnnotations;
 
 namespace StreamingPlatform.Dtos.Contract
 {
@@ -15,6 +16,7 @@ namespace StreamingPlatform.Dtos.Contract
         /// </summary>
         [Required(ErrorMessage = "Plan name is required.")]
         [MaxLength(50, ErrorMessage = "Plan name is too long. Max length is 50 characters.")]
+        [NoHtmlAllowed(ErrorMessage = "HTML tags are not allowed in plan name.")]
         required public string PlanName { get; set; }
 
         /// <summary>

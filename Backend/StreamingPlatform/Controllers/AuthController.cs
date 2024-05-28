@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using StreamingPlatform.Controllers.ResponseMapper;
 using StreamingPlatform.Controllers.Responses;
 using StreamingPlatform.Dtos.Contract;
@@ -28,6 +29,7 @@ public class AuthController : ControllerBase
     [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
     [ProducesResponseType(typeof(GenericResponseDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponseObject), StatusCodes.Status400BadRequest)]
+    [EnableRateLimiting("fixed-by-user-id-or-ip")]
     public async Task<IActionResult> Register(NewUserContract newUser)
     {
         try
@@ -49,6 +51,8 @@ public class AuthController : ControllerBase
     [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
     [ProducesResponseType(typeof(TokenResponseDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponseObject), StatusCodes.Status400BadRequest)]
+    [EnableRateLimiting("fixed-by-user-id-or-ip")]
+
     public async Task<IActionResult> Login(UserLoginContract user)
     {
         try
@@ -63,7 +67,7 @@ public class AuthController : ControllerBase
             return this.BadRequest(errorResponseObject);
         }
     }
-    
+
     [Authorize]
     [HttpPost("change-password")]
     [Consumes("application/json")]
