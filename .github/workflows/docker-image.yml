@@ -1,0 +1,41 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Login to DockerHub
+      run: echo ${{ secrets.DOCKERHUB_TOKEN }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+    
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v2
+      with:
+        context: .
+        push: false
+        tags: davide2707clemente/desofs:latest
+
+    - name: Scan Docker image with Docker Scout
+      uses: docker/scout-action@v1
+      with:
+        image: davide2707clemente/desofs:latest
+
+    - name: Push Docker image
+      if: success()
+      uses: docker/build-push-action@v2
+      with:
+        context: .
+        push: true
+        tags: davide2707clemente/desofs:latest
+
+      
+
+    
