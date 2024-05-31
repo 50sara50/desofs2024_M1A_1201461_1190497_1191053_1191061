@@ -32,7 +32,8 @@ jobs:
       uses: docker/scout-action@v1
       with:
         image: davide2707clemente/desofs:latest
-
+        command: cves
+        
     - name: Push Docker image
       if: success()
       uses: docker/build-push-action@v2
