@@ -1,0 +1,51 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+      
+    - name: Login to DockerHub
+      uses: docker/login-action@v3
+      with:
+        username: ${{secrets.DOCKERHUB_USERNAME}}
+        password: ${{secrets.DOCKERHUB_TOKEN}}     
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v2
+      with:
+        context: ./Backend/StreamingPlatform
+        push: false
+        tags: davide2707clemente/desofs:latest
+
+    - name: Scan Docker image with Docker Scout
+      uses: docker/scout-action@v1
+      with:
+        image: davide2707clemente/desofs:latest
+        command: cves
+        summary: true
+        format: markdown
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        write-comment: true
+        
+    - name: Push Docker image
+      if: success()
+      uses: docker/build-push-action@v2
+      with:
+        context: ./Backend/StreamingPlatform
+        push: true
+        tags: davide2707clemente/desofs:latest
+
+      
+
+    
