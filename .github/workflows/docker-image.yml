@@ -21,7 +21,7 @@ jobs:
     - name: Build and push Docker image
       uses: docker/build-push-action@v2
       with:
-        context: .
+        context: ./Backend/StreamingPlatform
         push: false
         tags: davide2707clemente/desofs:latest
 
@@ -34,7 +34,7 @@ jobs:
       if: success()
       uses: docker/build-push-action@v2
       with:
-        context: .
+        context: ./Backend/StreamingPlatform
         push: true
         tags: davide2707clemente/desofs:latest
 
