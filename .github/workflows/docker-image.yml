@@ -40,7 +40,7 @@ jobs:
         
     - name: Push Docker image
       if: success()
-      uses: docker/build-push-action@v5
+      uses: docker/build-push-action@v4
       with:
         context: ./Backend/StreamingPlatform
         push: true
