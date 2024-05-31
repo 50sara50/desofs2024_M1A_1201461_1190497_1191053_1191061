@@ -33,6 +33,8 @@ jobs:
       with:
         image: davide2707clemente/desofs:latest
         command: cves
+        sbom: true
+        provenance: true
         summary: true
         format: markdown
         github-token: ${{ secrets.GITHUB_TOKEN }}
