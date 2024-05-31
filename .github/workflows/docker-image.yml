@@ -33,8 +33,6 @@ jobs:
       with:
         image: davide2707clemente/desofs:latest
         command: cves
-        sbom: true
-        provenance: true
         summary: true
         format: markdown
         github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -47,6 +45,8 @@ jobs:
         context: ./Backend/StreamingPlatform
         push: true
         tags: davide2707clemente/desofs:latest
+        sbom: true
+        provenance: true
 
       
 
