@@ -32,11 +32,11 @@ namespace StreamingPlatform
 
             // LOGGING
             builder.Logging.ClearProviders().AddConsole(options =>
-                    {
-                        options.IncludeScopes = builder.Configuration.GetValue<bool>("Logging:Console:IncludeScopes");
-                        options.TimestampFormat = builder.Configuration.GetValue<string>("Logging:Console:FormatterOptions:TimestampFormat");
-                        options.UseUtcTimestamp = builder.Configuration.GetValue<bool>("Logging:Console:FormatterOptions:UseUtcTimestamp");
-                    });
+            {
+                options.IncludeScopes = builder.Configuration.GetValue<bool>("Logging:Console:IncludeScopes");
+                options.TimestampFormat = builder.Configuration.GetValue<string>("Logging:Console:FormatterOptions:TimestampFormat");
+                options.UseUtcTimestamp = builder.Configuration.GetValue<bool>("Logging:Console:FormatterOptions:UseUtcTimestamp");
+            });
 
             var databaseConnectionString = builder.Configuration.GetConnectionString("StreamingServiceDB");
             builder.Services.AddControllers().AddJsonOptions(
@@ -69,6 +69,7 @@ namespace StreamingPlatform
                 .AddDefaultTokenProviders();
             AddRateLimiting(builder);
             AddOutPutCaching(builder);
+            AddHst(builder);
 
             // Authentication
             builder.Services.AddAuthentication(options =>
@@ -118,13 +119,13 @@ namespace StreamingPlatform
 
             // ASVS.7.4.1
             app.UseMiddleware<ExceptionHandlerMiddleware>();
-            app.UseInputSanitization();
+            //app.UseInputSanitization();
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseRateLimiter();
             app.UseOutputCache();
             app.UseHttpsRedirection();
-
+            app.UseHsts();
             app.UseStaticFiles(new StaticFileOptions
             {
                 FileProvider = new PhysicalFileProvider(
@@ -132,14 +133,29 @@ namespace StreamingPlatform
                 RequestPath = "/song",
                 ContentTypeProvider = new FileExtensionContentTypeProvider()
                 {
-                    Mappings = { [".mp3"] = "audio/mpeg", [".wav"] = "audio/wave", [".m4a"] = "audio/mp4", [".txt"] = "text/plain",
- },
+                    Mappings = { [".mp3"] = "audio/mpeg", [".wav"] = "audio/wave", [".m4a"] = "audio/mp4", [".txt"] = "text/plain" },
                 },
                 ServeUnknownFileTypes = false,
             }).UseAuthentication().UseAuthorization();
 
+            //ensures that the browser interprets the content type correctly and does not interpret it as a different mime type
+            app.Use(async (context, next) =>
+            {
+                context.Response.Headers.Append("X-Content-Type-Options", "nosniff");
+                await next();
+            });
+
             app.MapControllers();
             app.Run();
+        }
+
+        private static void AddHst(WebApplicationBuilder builder)
+        {
+            builder.Services.AddHsts(options =>
+            {
+                options.IncludeSubDomains = true;
+                options.MaxAge = TimeSpan.FromDays(365);
+            });
         }
 
         /// <summary>
