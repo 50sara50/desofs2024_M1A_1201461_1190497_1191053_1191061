@@ -37,7 +37,15 @@ namespace StreamingPlatform
                         options.TimestampFormat = builder.Configuration.GetValue<string>("Logging:Console:FormatterOptions:TimestampFormat");
                         options.UseUtcTimestamp = builder.Configuration.GetValue<bool>("Logging:Console:FormatterOptions:UseUtcTimestamp");
                     });
-
+            
+            //Add Cors
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll",
+                    builder => { builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader(); });
+            });
+            
+            
             var databaseConnectionString = builder.Configuration.GetConnectionString("StreamingServiceDB");
             builder.Services.AddControllers().AddJsonOptions(
              options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
@@ -115,6 +123,9 @@ namespace StreamingPlatform
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+            
+            // Add CORS middleware
+            app.UseCors("AllowAll");
 
             // ASVS.7.4.1
             app.UseMiddleware<ExceptionHandlerMiddleware>();
