@@ -7,7 +7,7 @@ import { map, Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class PlanService {
-  public Url = 'https://localhost:7255/api/plan';
+  public Url = 'https://localhost:32774/api/plan';
 
   constructor(
     private httpClient: HttpClient,

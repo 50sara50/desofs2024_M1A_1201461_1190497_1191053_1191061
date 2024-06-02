@@ -5,12 +5,13 @@ import { LoginResponseContract } from '../model/response/LoginResponseContract';
 import { catchError, shareReplay, tap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import * as moment from 'moment';
+import { NewUserContract } from '../model/contract/NewUserContract';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  private Url = 'https://localhost:7255/Auth/';
+  private Url = 'https://localhost:32774/Auth/';
 
   constructor(private httpClient: HttpClient) {}
 
@@ -54,5 +55,10 @@ export class AuthService {
     }
     const expiresAt = JSON.parse(expiration);
     return moment(expiresAt);
+  }
+
+  public register(newUser: NewUserContract) {
+    const requestUrl = this.Url + 'register';
+    return this.httpClient.post(requestUrl, newUser).pipe(shareReplay());
   }
 }

@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -14,9 +14,10 @@ import { UiComponentsRoutes } from './ui-components.routing';
 import { AppBadgeComponent } from './badge/badge.component';
 import { AppChipsComponent } from './personal-data/personal-data.component';
 import { AppListsComponent } from './playlists/playlists.component';
-import {PlanComponent} from './plans/plans.component';
+import { PlanComponent } from './plans/plans.component';
 import { AppTooltipsComponent } from './tooltips/tooltips.component';
-import { MatNativeDateModule } from '@angular/material/core';
+import { MatNativeDateModule, MatOptionModule } from '@angular/material/core';
+import { MatSelectModule } from '@angular/material/select';
 
 @NgModule({
   imports: [
@@ -34,7 +35,7 @@ import { MatNativeDateModule } from '@angular/material/core';
     AppListsComponent,
     // AppMenuComponent,
     AppTooltipsComponent,
-    PlanComponent
+    PlanComponent,
   ],
 })
 export class UicomponentsModule {}
