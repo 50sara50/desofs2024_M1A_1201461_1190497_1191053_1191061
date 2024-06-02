@@ -1,9 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Plan } from '../domain/Plan';
 import { PlanService } from '../../../services/plan.service';
-import { HTTP_INTERCEPTORS } from '@angular/common/http';
-import { AuthInterceptor } from 'src/app/interceptors/authInterceptor';
-
 @Component({
   selector: 'app-menu',
   templateUrl: './plans.component.html',
