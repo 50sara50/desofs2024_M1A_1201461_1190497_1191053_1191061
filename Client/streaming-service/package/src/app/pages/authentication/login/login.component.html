@@ -1,47 +1,46 @@
 <div class="blank-layout-container justify-content-center align-items-center bg-light-primary">
-  <div
-    class="position-relative row w-100 h-100 bg-gredient justify-content-center"
-  >
+  <div class="position-relative row w-100 h-100 bg-gredient justify-content-center">
     <div class="col-lg-4 d-flex align-items-center">
       <mat-card class="cardWithShadow boxed-auth">
         <mat-card-content class="p-32">
           <div class="text-center">
             <a>
-              <img
-                src="./assets/images/logos/logo-no-background.svg"
-                class="logo"
-                alt="logo"
-              />
+              <img src="./assets/images/logos/logo-no-background.svg" class="logo" alt="logo" />
             </a>
           </div>
 
-          <form class="m-t-30">
-            <mat-label class="mat-subtitle-2 f-s-14 f-w-600 m-b-12 d-block"
-              >Username</mat-label
-            >
+          <form class="m-t-30" #loginForm="ngForm" (ngSubmit)="login(username, password)">
+            <mat-label class="mat-subtitle-2 f-s-14 f-w-600 m-b-12 d-block">Username</mat-label>
             <mat-form-field appearance="outline" class="w-100" color="primary">
-              <input matInput />
+              <input [(ngModel)]="username" matInput name="username" required #usernameInput="ngModel" />
+              <!-- Display error message if username field is empty -->
+              <mat-error
+                *ngIf="usernameInput.invalid && (usernameInput.dirty || usernameInput.touched) && usernameInput.errors?.['required']">
+                Username is required
+              </mat-error>
             </mat-form-field>
             <!-- password -->
-            <mat-label class="mat-subtitle-2 f-s-14 f-w-600 m-b-12 d-block"
-              >Password</mat-label
-            >
+            <mat-label class=" mat-subtitle-2 f-s-14 f-w-600 m-b-12 d-block">Password</mat-label>
             <mat-form-field appearance="outline" class="w-100" color="primary">
-              <input matInput type="password" />
+              <input [(ngModel)]="password" matInput type="password" name="password" required
+                #passwordInput="ngModel" />
+              <!-- Display error message if password field is empty -->
+              <mat-error
+                *ngIf="passwordInput.invalid && (passwordInput.dirty || passwordInput.touched) && passwordInput.errors?.['required']">
+                Password is required
+              </mat-error>
             </mat-form-field>
-            <a [routerLink]="['/']" mat-flat-button color="primary" class="w-100">
+
+            <!-- Disable submit button if username or password is empty -->
+            <button mat-flat-button color="primary" class="w-100" [disabled]="!loginForm?.valid">
               Sign In
-            </a>
-            <!-- input -->
+            </button>
           </form>
-          <span class="d-block f-w-500 text-center m-t-24"
-            >New to our platform?
-            <a
-              [routerLink]="['/authentication/register']"
-              class="text-decoration-none text-primary f-w-500 f-s-14"
-            >
-              Create an account</a
-            >
+
+
+          <span class="d-block f-w-500 text-center m-t-24">New to our platform?
+            <a [routerLink]="['/authentication/register']" class="text-decoration-none text-primary f-w-500 f-s-14">
+              Create an account</a>
           </span>
         </mat-card-content>
       </mat-card>
