@@ -29,7 +29,10 @@ export class HeaderComponent {
     private router: Router
   ) {}
   public logout(): void {
-    this.authService.logout();
-    this.router.navigate(['/logout']);
+    this.authService.logout().subscribe({
+      next: () => {
+        this.router.navigate(['/logout']);
+      },
+    });
   }
 }

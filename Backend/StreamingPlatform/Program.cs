@@ -43,7 +43,14 @@ namespace StreamingPlatform
             {
                 options.AddPolicy(
                     "AllowAll",
-                    builder => { builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader(); });
+                    builder =>
+                    {
+                        builder.
+                                AllowAnyMethod().
+                                AllowAnyHeader().
+                                AllowCredentials().
+                                SetIsOriginAllowed(hostName => true);
+                    });
             });
 
             var databaseConnectionString = builder.Configuration.GetConnectionString("StreamingServiceDB");
@@ -89,6 +96,18 @@ namespace StreamingPlatform
             })
                     .AddJwtBearer(options =>
                     {
+                        options.Events = new JwtBearerEvents
+                        {
+                            OnMessageReceived = context =>
+                            {
+                                if (context.Request.Cookies.ContainsKey("userBearerToken"))
+                                {
+                                    context.Token = context.Request.Cookies["userBearerToken"];
+                                }
+
+                                return Task.CompletedTask;
+                            },
+                        };
                         options.SaveToken = true;
                         options.RequireHttpsMetadata = false;
                         options.TokenValidationParameters = new TokenValidationParameters

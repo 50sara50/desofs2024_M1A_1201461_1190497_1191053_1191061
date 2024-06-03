@@ -1,1 +1,20 @@
 /* You can add global styles to this file, and also import other style files */
+.mat-mdc-slide-toggle {
+    --mdc-switch-selected-handle-color: #1d1de6;
+    --mdc-switch-selected-pressed-handle-color: #1d1de6;
+    --mdc-switch-selected-pressed-state-layer-color: #1d1de6;
+    --mdc-switch-selected-hover-state-layer-color: #1d1de6;
+    --mdc-switch-selected-hover-handle-color: #1d1de6;
+    --mdc-switch-selected-focus-state-layer-color: #1d1de6;
+    --mdc-switch-selected-focus-handle-color: #1d1de6;
+    --mdc-switch-selected-track-color: #e0e0e0;
+    --mdc-switch-selected-pressed-track-color: #e0e0e0;
+    --mdc-switch-selected-hover-track-color: #e0e0e0;
+    --mdc-switch-selected-focus-track-color: #e0e0e0;
+
+}
+
+.custom-slide-toggle {
+    width: 100%;
+  }
+  
