@@ -70,7 +70,7 @@ public class AuthController : ControllerBase
                 SameSite = SameSiteMode.None,
             };
             this.Response.Cookies.Append("userBearerToken", userToken.token, cookieOptions);
-            this.Response.Cookies.Append("expiresAt", userToken.expirationDate.ToString());
+            this.Response.Cookies.Append("expiresAt", userToken.expirationDate.ToString(), cookieOptions);
             return this.Ok(userToken);
         }
         catch (ServiceBaseException ex)
