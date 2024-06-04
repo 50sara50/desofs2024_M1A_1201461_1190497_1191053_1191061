@@ -131,10 +131,11 @@ public class AuthController : ControllerBase
             HttpOnly = true,
             Secure = true,
             SameSite = SameSiteMode.None,
+            Path = "/",
         };
 
-        this.Response.Cookies.Append("userBearerToken", string.Empty, cookieOptions);
-        this.Response.Cookies.Append("expiresAt", string.Empty, cookieOptions);
+        this.Response.Cookies.Append("__Host-userBearerToken", string.Empty, cookieOptions);
+        this.Response.Cookies.Append("__Host-expiresAt", string.Empty, cookieOptions);
 
         return this.Ok();
     }
