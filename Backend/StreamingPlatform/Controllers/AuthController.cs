@@ -68,9 +68,11 @@ public class AuthController : ControllerBase
                 IsEssential = true,
                 Expires = userToken.expirationDate,
                 SameSite = SameSiteMode.None,
+                Path = "/",
+
             };
-            this.Response.Cookies.Append("userBearerToken", userToken.token, cookieOptions);
-            this.Response.Cookies.Append("expiresAt", userToken.expirationDate.ToString(), cookieOptions);
+            this.Response.Cookies.Append("__Host-userBearerToken", userToken.token, cookieOptions);
+            this.Response.Cookies.Append("__Host-expiresAt", userToken.expirationDate.ToString(), cookieOptions);
             return this.Ok(userToken);
         }
         catch (ServiceBaseException ex)

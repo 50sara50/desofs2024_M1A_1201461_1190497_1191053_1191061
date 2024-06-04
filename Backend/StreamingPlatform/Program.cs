@@ -100,9 +100,9 @@ namespace StreamingPlatform
                         {
                             OnMessageReceived = context =>
                             {
-                                if (context.Request.Cookies.ContainsKey("userBearerToken"))
+                                if (context.Request.Cookies.ContainsKey("__Host-userBearerToken"))
                                 {
-                                    context.Token = context.Request.Cookies["userBearerToken"];
+                                    context.Token = context.Request.Cookies["__Host-userBearerToken"];
                                 }
 
                                 return Task.CompletedTask;
