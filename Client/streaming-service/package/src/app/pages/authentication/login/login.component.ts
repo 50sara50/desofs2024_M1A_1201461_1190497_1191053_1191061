@@ -12,6 +12,8 @@ import { openSnackBar } from 'src/app/utils/uiActions';
 export class AppSideLoginComponent {
   username: string = '';
   password: string = '';
+  passwordFieldType: string = 'password';
+
   constructor(
     private authService: AuthService,
     private router: Router,
@@ -30,7 +32,16 @@ export class AppSideLoginComponent {
       },
     });
   }
-  handleError(err: HttpErrorResponse) {
+
+  public showPassword() {
+    this.passwordFieldType = 'text';
+  }
+
+  public hidePassword() {
+    this.passwordFieldType = 'password';
+  }
+
+  private handleError(err: HttpErrorResponse) {
     let message = '';
     if (err.status === HttpStatusCode.InternalServerError) {
       message = 'Internal server error';

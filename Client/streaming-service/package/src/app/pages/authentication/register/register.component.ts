@@ -24,6 +24,25 @@ export class AppSideRegisterComponent {
     private snackBar: MatSnackBar
   ) {}
 
+  passwordFieldType: string = 'password';
+  confirmPasswordFieldType: string = 'password';
+
+  public showPassword() {
+    this.passwordFieldType = 'text';
+  }
+
+  public hidePassword() {
+    this.passwordFieldType = 'password';
+  }
+
+  public showConfirmPassword() {
+    this.confirmPasswordFieldType = 'text';
+  }
+
+  public hideConfirmPassword() {
+    this.confirmPasswordFieldType = 'password';
+  }
+
   form = new FormGroup(
     {
       uname: new FormControl('', [
