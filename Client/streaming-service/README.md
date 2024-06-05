@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # <a href="https://spike-angular-free.netlify.app/dashboard">Spike Angular Free</a>
 Spike Admin Angular Dashboard
 
@@ -211,3 +212,6 @@ Spike Admin Angular Dashboard
 - <p>Youtube: <a href="https://www.youtube.com/channel/UCdFDlrhIchtxF8EmxejUPGQ">https://www.youtube.com/channel/UCdFDlrhIchtxF8EmxejUPGQ</a></p>
 
 
+=======
+
+>>>>>>> 6ba424d1aa0c25e723023cd012d7318ea841af34
