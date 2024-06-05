@@ -17,6 +17,9 @@ import { AuthenticationRoutes } from './authentication.routing';
 import { AppSideLoginComponent } from './login/login.component';
 import { AppSideRegisterComponent } from './register/register.component';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { PasswordStrengthComponent } from '../extra/password-stength-meter/password-strength.component';
+import { MatSelectModule } from '@angular/material/select';
+import { MatOptionModule } from '@angular/material/core';
 
 @NgModule({
   imports: [
@@ -31,6 +34,9 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
     ReactiveFormsModule,
     TablerIconsModule.pick(TablerIcons),
     MatSlideToggleModule,
+    PasswordStrengthComponent,
+    MatSelectModule,
+    MatOptionModule,
   ],
   declarations: [AppSideLoginComponent, AppSideRegisterComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],

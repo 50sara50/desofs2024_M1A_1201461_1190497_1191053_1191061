@@ -12,6 +12,7 @@ import { Router } from '@angular/router';
 import { NewUserContract } from 'src/app/model/contract/NewUserContract';
 import { AuthService } from 'src/app/services/auth.service';
 import { openSnackBar } from 'src/app/utils/uiActions';
+import { PasswordStrengthComponent } from '../../extra/password-stength-meter/password-strength.component';
 
 @Component({
   selector: 'app-register',
@@ -23,13 +24,18 @@ export class AppSideRegisterComponent {
     private AuthService: AuthService,
     private snackBar: MatSnackBar
   ) {}
-
+  password: string = '';
   passwordFieldType: string = 'password';
   confirmPasswordFieldType: string = 'password';
+  strongPassword = false;
 
   public tooglePasswordFieldType() {
     this.passwordFieldType =
       this.passwordFieldType === 'password' ? 'text' : 'password';
+  }
+
+  onPasswordStrengthChanged(event: any) {
+    this.strongPassword = event;
   }
 
   public toogleConfirmPasswordFieldType() {
@@ -63,7 +69,7 @@ export class AppSideRegisterComponent {
         Validators.min(10),
         Validators.max(99),
       ]),
-      isArtist: new FormControl(false), // Initialize as false
+      isArtist: new FormControl(false, [Validators.required]), // Initialize as false
     },
     {
       validators: [this.passwordMatchValidation()],
