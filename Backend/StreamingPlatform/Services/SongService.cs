@@ -102,7 +102,7 @@ namespace StreamingPlatform.Services
             string validatedFileName = $"{sanitizedFilename}";
             string fileName = Path.Combine(userDirectory, validatedFileName);
             await File.WriteAllBytesAsync(fileName, fileData);
-            string fileExtension = Path.GetExtension(fileName);
+            string fileExtension = music.ContentType;
             FileType fileType = FileTypeMapper.ExtensionToFilePath(fileExtension) ?? throw new InvalidOperationException("Invalid file type.");
             Song song = new(songId, songDto.Title, user, album, fileName, fileType);
             IGenericRepository<Song> songRepository = this.unitOfWork.Repository<Song>();

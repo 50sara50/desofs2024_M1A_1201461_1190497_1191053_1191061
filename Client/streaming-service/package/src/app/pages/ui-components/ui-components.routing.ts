@@ -4,7 +4,7 @@ import { Routes } from '@angular/router';
 import { AppBadgeComponent } from './badge/badge.component';
 import { AppChipsComponent } from './personal-data/personal-data.component';
 import { AppListsComponent } from './playlists/playlists.component';
-import { AppMenuComponent } from './plans/plans.component';
+import {PlanComponent} from './plans/plans.component';
 import { AppTooltipsComponent } from './tooltips/tooltips.component';
 
 export const UiComponentsRoutes: Routes = [
@@ -25,7 +25,7 @@ export const UiComponentsRoutes: Routes = [
       },
       {
         path: 'menu',
-        component: AppMenuComponent,
+        component: PlanComponent,
       },
       {
         path: 'tooltips',

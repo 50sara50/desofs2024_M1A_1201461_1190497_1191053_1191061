@@ -32,11 +32,26 @@ namespace StreamingPlatform
 
             // LOGGING
             builder.Logging.ClearProviders().AddConsole(options =>
+            {
+                options.IncludeScopes = builder.Configuration.GetValue<bool>("Logging:Console:IncludeScopes");
+                options.TimestampFormat = builder.Configuration.GetValue<string>("Logging:Console:FormatterOptions:TimestampFormat");
+                options.UseUtcTimestamp = builder.Configuration.GetValue<bool>("Logging:Console:FormatterOptions:UseUtcTimestamp");
+            });
+
+            //Add Cors
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy(
+                    "AllowAll",
+                    builder =>
                     {
-                        options.IncludeScopes = builder.Configuration.GetValue<bool>("Logging:Console:IncludeScopes");
-                        options.TimestampFormat = builder.Configuration.GetValue<string>("Logging:Console:FormatterOptions:TimestampFormat");
-                        options.UseUtcTimestamp = builder.Configuration.GetValue<bool>("Logging:Console:FormatterOptions:UseUtcTimestamp");
+                        builder.
+                                AllowAnyMethod().
+                                AllowAnyHeader().
+                                AllowCredentials().
+                                SetIsOriginAllowed(hostName => true);
                     });
+            });
 
             var databaseConnectionString = builder.Configuration.GetConnectionString("StreamingServiceDB");
             builder.Services.AddControllers().AddJsonOptions(
@@ -48,6 +63,7 @@ namespace StreamingPlatform
             builder.Services.AddScoped<ISongService, SongService>();
 
             AddOutPutCaching(builder);
+            AddAuthorizationPolicies(builder);
             builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 
             if (builder.Environment.IsDevelopment())
@@ -69,6 +85,7 @@ namespace StreamingPlatform
                 .AddDefaultTokenProviders();
             AddRateLimiting(builder);
             AddOutPutCaching(builder);
+            AddHst(builder);
 
             // Authentication
             builder.Services.AddAuthentication(options =>
@@ -79,6 +96,18 @@ namespace StreamingPlatform
             })
                     .AddJwtBearer(options =>
                     {
+                        options.Events = new JwtBearerEvents
+                        {
+                            OnMessageReceived = context =>
+                            {
+                                if (context.Request.Cookies.ContainsKey("__Host-userBearerToken"))
+                                {
+                                    context.Token = context.Request.Cookies["__Host-userBearerToken"];
+                                }
+
+                                return Task.CompletedTask;
+                            },
+                        };
                         options.SaveToken = true;
                         options.RequireHttpsMetadata = false;
                         options.TokenValidationParameters = new TokenValidationParameters
@@ -116,6 +145,9 @@ namespace StreamingPlatform
                 app.UseSwaggerUI();
             }
 
+            // Add CORS middleware
+            app.UseCors("AllowAll");
+
             // ASVS.7.4.1
             app.UseMiddleware<ExceptionHandlerMiddleware>();
             app.UseInputSanitization();
@@ -124,7 +156,7 @@ namespace StreamingPlatform
             app.UseRateLimiter();
             app.UseOutputCache();
             app.UseHttpsRedirection();
-
+            app.UseHsts();
             app.UseStaticFiles(new StaticFileOptions
             {
                 FileProvider = new PhysicalFileProvider(
@@ -132,14 +164,29 @@ namespace StreamingPlatform
                 RequestPath = "/song",
                 ContentTypeProvider = new FileExtensionContentTypeProvider()
                 {
-                    Mappings = { [".mp3"] = "audio/mpeg", [".wav"] = "audio/wave", [".m4a"] = "audio/mp4", [".txt"] = "text/plain",
- },
+                    Mappings = { [".mp3"] = "audio/mpeg", [".wav"] = "audio/wave", [".m4a"] = "audio/mp4", [".txt"] = "text/plain" },
                 },
                 ServeUnknownFileTypes = false,
             }).UseAuthentication().UseAuthorization();
 
+            //ensures that the browser interprets the content type correctly and does not interpret it as a different mime type
+            app.Use(async (context, next) =>
+            {
+                context.Response.Headers.Append("X-Content-Type-Options", "nosniff");
+                await next();
+            });
+
             app.MapControllers();
             app.Run();
+        }
+
+        private static void AddHst(WebApplicationBuilder builder)
+        {
+            builder.Services.AddHsts(options =>
+            {
+                options.IncludeSubDomains = true;
+                options.MaxAge = TimeSpan.FromDays(365);
+            });
         }
 
         /// <summary>
@@ -200,6 +247,18 @@ namespace StreamingPlatform
                 {
                     builder.With(c => c.HttpContext.Request.Path.ToString().Contains("api/plan"))
                     .Tag("tag-plan");
+                });
+            });
+        }
+
+        private static void AddAuthorizationPolicies(WebApplicationBuilder builder)
+        {
+            builder.Services.AddAuthorization(options =>
+            {
+                options.AddPolicy("DownloadPolicy", policy =>
+                {
+                    policy.RequireAuthenticatedUser();
+                    policy.RequireRole("Admin", "Subscriber", "Artist");
                 });
             });
         }
