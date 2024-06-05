@@ -168,12 +168,7 @@ public class AuthService : IAuthService
         {
             throw new ServiceBaseException("Failed to assign role to user.");
         }
-
-        IGenericRepository<User> userRepository = this.unitOfWork.Repository<User>();
-        userRepository.Create(user);
-        await this.unitOfWork.SaveChangesAsync();
-        var token = GenerateJwtToken(user);
-        var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
+        
         return new GenericResponseDto($"User created successfully!");
     }
 

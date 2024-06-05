@@ -18,6 +18,9 @@ namespace StreamingPlatform.Controllers
     [EnableRateLimiting("fixed-by-user-id-or-ip")]
     public class SongController(ILogger<SongController> logger, ISongService songService, IConfiguration configuration) : ControllerBase
     {
+        /// <summary>
+        /// Creates a new song and stores it in the database.
+        /// </summary>
         [HttpPost]
         [Authorize(Roles = "Artist")]
         [Consumes("multipart/form-data")]
@@ -27,9 +30,6 @@ namespace StreamingPlatform.Controllers
         [ProducesResponseType(typeof(ErrorResponseObject), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ErrorResponseObject), StatusCodes.Status403Forbidden)]
         [ProducesResponseType(typeof(ErrorResponseObject), StatusCodes.Status400BadRequest)]
-        /// <summary>
-        /// Creates a new song and stores it in the database.
-        /// </summary>
         public async Task<IActionResult> CreateSong([FromForm] CreateSongContract songDto, [FromForm] IFormFile music)
         {
             if (music == null || music.Length == 0)
