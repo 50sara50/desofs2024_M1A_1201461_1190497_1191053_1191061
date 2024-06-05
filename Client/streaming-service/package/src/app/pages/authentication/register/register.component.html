@@ -24,7 +24,7 @@
             </mat-form-field>
             <mat-label class="mat-subtitle-2 f-s-14 f-w-600 m-b-12 d-block">Username</mat-label>
             <mat-form-field appearance="outline" class="w-100" color="primary">
-              <input matInput formControlName="uname" />
+              <input matInput formControlName="username" autocomplete="username" />
               <mat-error *ngIf="form.get('uname')?.hasError('required')">
                 Username is required
               </mat-error>
@@ -60,9 +60,9 @@
             </mat-form-field>
             <mat-label class="mat-subtitle-2 f-s-14 f-w-600 m-b-12 d-block">Password</mat-label>
             <mat-form-field appearance="outline" class="w-100" color="primary">
-              <input matInput [type]="passwordFieldType" formControlName="password" />
-              <span matSuffix class="password-toggle" (mousedown)="showPassword()" (mouseup)="hidePassword()"
-                (mouseleave)="hidePassword()" style="cursor: pointer; margin-left: -20px;">
+              <input matInput [type]="passwordFieldType" formControlName="password" autocomplete="new-password" />
+              <span matSuffix class="password-toggle" (click)="tooglePasswordFieldType()"
+                style="cursor: pointer; margin-left: -20px;">
                 <svg *ngIf="passwordFieldType === 'password'" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                   fill="currentColor" class="bi bi-eye-slash" viewBox="0 0 16 16">
                   <path
@@ -97,9 +97,9 @@
             </mat-form-field>
             <mat-label class="mat-subtitle-2 f-s-14 f-w-600 m-b-12 d-block">Confirm Password</mat-label>
             <mat-form-field appearance="outline" class="w-100" color="primary">
-              <input matInput [type]="confirmPasswordFieldType" formControlName="confirmPassword" />
-              <span matSuffix class="confirm-password-toggle" (mousedown)="showConfirmPassword()"
-                (mouseup)="hideConfirmPassword()" (mouseleave)="hideConfirmPassword()"
+              <input matInput [type]="confirmPasswordFieldType" formControlName="confirmPassword"
+                autocomplete="new-password" />
+              <span matSuffix class="confirm-password-toggle" (click)="toogleConfirmPasswordFieldType()"
                 style="cursor: pointer; margin-left: -20px;">
                 <svg *ngIf="confirmPasswordFieldType === 'password'" xmlns="http://www.w3.org/2000/svg" width="24"
                   height="24" fill="currentColor" class="bi bi-eye-slash" viewBox="0 0 16 16">
@@ -130,7 +130,9 @@
                 Artist?
               </mat-slide-toggle>
             </div>
-            <button mat-flat-button color="primary" class="w-100" type="submit">Sign Up</button>
+            <button type="submit" mat-flat-button color="primary" class="w-100"
+              [disabled]="form.invalid">Register</button>
+
           </form>
 
           <span class="d-block f-w-500 text-center m-t-24">

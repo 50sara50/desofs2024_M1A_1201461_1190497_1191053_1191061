@@ -27,25 +27,19 @@ export class AppSideRegisterComponent {
   passwordFieldType: string = 'password';
   confirmPasswordFieldType: string = 'password';
 
-  public showPassword() {
-    this.passwordFieldType = 'text';
+  public tooglePasswordFieldType() {
+    this.passwordFieldType =
+      this.passwordFieldType === 'password' ? 'text' : 'password';
   }
 
-  public hidePassword() {
-    this.passwordFieldType = 'password';
-  }
-
-  public showConfirmPassword() {
-    this.confirmPasswordFieldType = 'text';
-  }
-
-  public hideConfirmPassword() {
-    this.confirmPasswordFieldType = 'password';
+  public toogleConfirmPasswordFieldType() {
+    this.confirmPasswordFieldType =
+      this.confirmPasswordFieldType === 'password' ? 'text' : 'password';
   }
 
   form = new FormGroup(
     {
-      uname: new FormControl('', [
+      username: new FormControl('', [
         Validators.required,
         Validators.maxLength(25),
       ]),
@@ -99,15 +93,16 @@ export class AppSideRegisterComponent {
   }
 
   submit() {
-    const { uname, email, password, age, address, isArtist } = this.form.value;
+    const { name, username, email, password, age, address, isArtist } =
+      this.form.value;
     const userAge = parseInt(age ?? '0');
     const newUser: NewUserContract = {
-      username: uname,
+      username: username,
       email: email,
       password: password,
       age: userAge,
       address: address,
-      name: uname,
+      name: name,
       role: isArtist ? 'Artist' : 'Subscriber',
     };
     this.AuthService.register(newUser).subscribe({

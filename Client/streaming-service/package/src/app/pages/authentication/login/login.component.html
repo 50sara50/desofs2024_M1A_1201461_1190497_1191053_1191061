@@ -12,7 +12,8 @@
           <form class="m-t-30" #loginForm="ngForm" (ngSubmit)="login(username, password)">
             <mat-label class="mat-subtitle-2 f-s-14 f-w-600 m-b-12 d-block">Username</mat-label>
             <mat-form-field appearance="outline" class="w-100" color="primary">
-              <input [(ngModel)]="username" matInput name="username" required #usernameInput="ngModel" />
+              <input [(ngModel)]="username" matInput name="username" required #usernameInput="ngModel"
+                autocomplete="username" />
               <!-- Display error message if username field is empty -->
               <mat-error
                 *ngIf="usernameInput.invalid && (usernameInput.dirty || usernameInput.touched) && usernameInput.errors?.['required']">
@@ -23,7 +24,7 @@
             <mat-label class="mat-subtitle-2 f-s-14 f-w-600 m-b-11 d-block">Password</mat-label>
             <mat-form-field appearance="outline" class="w-100 position-relative" color="primary">
               <input [(ngModel)]="password" matInput [type]="passwordFieldType" name="password" required
-                #passwordInput="ngModel" />
+                #passwordInput="ngModel" autocomplete="current-password" />
               <span matSuffix class="password-toggle" (mousedown)="showPassword()" (mouseup)="hidePassword()"
                 (mouseleave)="hidePassword()" style="cursor: pointer; margin-left: -20px;">
                 <svg *ngIf="passwordFieldType === 'password'" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
