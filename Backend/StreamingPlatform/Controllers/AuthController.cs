@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using StreamingPlatform.Controllers.ResponseMapper;
@@ -11,6 +12,7 @@ namespace StreamingPlatform;
 
 [ApiController]
 [Route("[controller]")]
+[EnableCors("AllowAll")]
 public class AuthController : ControllerBase
 {
     private readonly ILogger<AuthController> _logger;
@@ -59,6 +61,18 @@ public class AuthController : ControllerBase
         {
             var userToken = await this._authService.Login(user);
             this._logger.LogInformation($"User {user.Email} logged in successfully");
+            CookieOptions cookieOptions = new()
+            {
+                HttpOnly = true,
+                Secure = true,
+                IsEssential = true,
+                Expires = userToken.expirationDate,
+                SameSite = SameSiteMode.None,
+                Path = "/",
+
+            };
+            this.Response.Cookies.Append("__Host-userBearerToken", userToken.token, cookieOptions);
+            this.Response.Cookies.Append("__Host-expiresAt", userToken.expirationDate.ToString(), cookieOptions);
             return this.Ok(userToken);
         }
         catch (ServiceBaseException ex)
@@ -102,6 +116,43 @@ public class AuthController : ControllerBase
         {
             ErrorResponseObject errorResponseObject = MapResponse.BadRequest(ex.Message);
             return this.BadRequest(errorResponseObject);
+        }
+    }
+
+    [HttpPost("logout")]
+    [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+
+    public IActionResult Logout()
+    {
+        CookieOptions cookieOptions = new()
+        {
+            Expires = DateTime.UtcNow.AddDays(-1),
+            HttpOnly = true,
+            Secure = true,
+            SameSite = SameSiteMode.None,
+            Path = "/",
+        };
+
+        this.Response.Cookies.Append("__Host-userBearerToken", string.Empty, cookieOptions);
+        this.Response.Cookies.Append("__Host-expiresAt", string.Empty, cookieOptions);
+
+        return this.Ok();
+    }
+
+    [HttpGet]
+    [Route("status")]
+    [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
+    [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
+    public IActionResult GetAuthStatus()
+    {
+        if (this.Request.Cookies.ContainsKey("userBearerToken"))
+        {
+            return this.Ok(new { isAuthenticated = true });
+        }
+        else
+        {
+            return this.Ok(new { isAuthenticated = false });
         }
     }
 }

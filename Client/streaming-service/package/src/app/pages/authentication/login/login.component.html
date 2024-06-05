@@ -1,0 +1,68 @@
+<div class="blank-layout-container justify-content-center align-items-center bg-light-primary">
+  <div class="position-relative row w-100 h-100 bg-gredient justify-content-center">
+    <div class="col-lg-4 d-flex align-items-center">
+      <mat-card class="cardWithShadow boxed-auth">
+        <mat-card-content class="p-32">
+          <div class="text-center">
+            <a>
+              <img src="./assets/images/logos/logo-no-background.svg" class="logo" alt="logo" />
+            </a>
+          </div>
+
+          <form class="m-t-30" #loginForm="ngForm" (ngSubmit)="login(username, password)">
+            <mat-label class="mat-subtitle-2 f-s-14 f-w-600 m-b-12 d-block">Username</mat-label>
+            <mat-form-field appearance="outline" class="w-100" color="primary">
+              <input [(ngModel)]="username" matInput name="username" required #usernameInput="ngModel"
+                autocomplete="username" />
+              <!-- Display error message if username field is empty -->
+              <mat-error
+                *ngIf="usernameInput.invalid && (usernameInput.dirty || usernameInput.touched) && usernameInput.errors?.['required']">
+                Username is required
+              </mat-error>
+            </mat-form-field>
+            <!-- password -->
+            <mat-label class="mat-subtitle-2 f-s-14 f-w-600 m-b-11 d-block">Password</mat-label>
+            <mat-form-field appearance="outline" class="w-100 position-relative" color="primary">
+              <input [(ngModel)]="password" matInput [type]="passwordFieldType" name="password" required
+                #passwordInput="ngModel" autocomplete="current-password" />
+              <span matSuffix class="password-toggle" (mousedown)="showPassword()" (mouseup)="hidePassword()"
+                (mouseleave)="hidePassword()" style="cursor: pointer; margin-left: -20px;">
+                <svg *ngIf="passwordFieldType === 'password'" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                  fill="currentColor" class="bi bi-eye-slash" viewBox="0 0 16 16">
+                  <path
+                    d="M13.359 11.238C15.06 9.72 16 8 16 8s-3-5.5-8-5.5a7 7 0 0 0-2.79.588l.77.771A6 6 0 0 1 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755q-.247.248-.517.486z" />
+                  <path
+                    d="M11.297 9.176a3.5 3.5 0 0 0-4.474-4.474l.823.823a2.5 2.5 0 0 1 2.829 2.829zm-2.943 1.299.822.822a3.5 3.5 0 0 1-4.474-4.474l.823.823a2.5 2.5 0 0 0 2.829 2.829" />
+                  <path
+                    d="M3.35 5.47q-.27.24-.518.487A13 13 0 0 0 1.172 8l.195.288c.335.48.83 1.12 1.465 1.755C4.121 11.332 5.881 12.5 8 12.5c.716 0 1.39-.133 2.02-.36l.77.772A7 7 0 0 1 8 13.5C3 13.5 0 8 0 8s.939-1.721 2.641-3.238l.708.709zm10.296 8.884-12-12 .708-.708 12 12z" />
+                </svg>
+                <svg *ngIf="passwordFieldType === 'text'" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                  fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">
+                  <path
+                    d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z" />
+                  <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0" />
+                </svg>
+              </span>
+              <!-- Display error message if password field is empty -->
+              <mat-error
+                *ngIf="passwordInput.invalid && (passwordInput.dirty || passwordInput.touched) && passwordInput.errors?.['required']">
+                Password is required
+              </mat-error>
+            </mat-form-field>
+
+            <!-- Disable submit button if username or password is empty -->
+            <button mat-flat-button color="primary" class="w-100" [disabled]="!loginForm?.valid">
+              Sign In
+            </button>
+          </form>
+
+
+          <span class="d-block f-w-500 text-center m-t-24">New to our platform?
+            <a [routerLink]="['/authentication/register']" class="text-decoration-none text-primary f-w-500 f-s-14">
+              Create an account</a>
+          </span>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>

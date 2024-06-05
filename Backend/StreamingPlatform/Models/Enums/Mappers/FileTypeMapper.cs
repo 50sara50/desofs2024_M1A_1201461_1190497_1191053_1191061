@@ -4,10 +4,10 @@
     {
         private static readonly Dictionary<string, FileType> FileTypeMapperValue = new()
         {
-            { ".mp3", FileType.MP3 },
-            { ".m4a", FileType.M4A },
-            { ".wav", FileType.WAV },
-            { ".txt", FileType.TXT },
+            { "audio/mpeg", FileType.MP3 },
+            { "audio/x-m4a", FileType.M4A },
+            { "audio/wav", FileType.WAV },
+            { "text/plain", FileType.TXT }, // Adding the .txt MIME type
         };
 
         public static FileType? ExtensionToFilePath(string fileExtension)

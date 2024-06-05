@@ -38,6 +38,21 @@ namespace StreamingPlatform
                 options.UseUtcTimestamp = builder.Configuration.GetValue<bool>("Logging:Console:FormatterOptions:UseUtcTimestamp");
             });
 
+            //Add Cors
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy(
+                    "AllowAll",
+                    builder =>
+                    {
+                        builder.
+                                AllowAnyMethod().
+                                AllowAnyHeader().
+                                AllowCredentials().
+                                SetIsOriginAllowed(hostName => true);
+                    });
+            });
+
             var databaseConnectionString = builder.Configuration.GetConnectionString("StreamingServiceDB");
             builder.Services.AddControllers().AddJsonOptions(
              options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
@@ -48,6 +63,7 @@ namespace StreamingPlatform
             builder.Services.AddScoped<ISongService, SongService>();
 
             AddOutPutCaching(builder);
+            AddAuthorizationPolicies(builder);
             builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 
             if (builder.Environment.IsDevelopment())
@@ -80,6 +96,18 @@ namespace StreamingPlatform
             })
                     .AddJwtBearer(options =>
                     {
+                        options.Events = new JwtBearerEvents
+                        {
+                            OnMessageReceived = context =>
+                            {
+                                if (context.Request.Cookies.ContainsKey("__Host-userBearerToken"))
+                                {
+                                    context.Token = context.Request.Cookies["__Host-userBearerToken"];
+                                }
+
+                                return Task.CompletedTask;
+                            },
+                        };
                         options.SaveToken = true;
                         options.RequireHttpsMetadata = false;
                         options.TokenValidationParameters = new TokenValidationParameters
@@ -117,9 +145,12 @@ namespace StreamingPlatform
                 app.UseSwaggerUI();
             }
 
+            // Add CORS middleware
+            app.UseCors("AllowAll");
+
             // ASVS.7.4.1
             app.UseMiddleware<ExceptionHandlerMiddleware>();
-            //app.UseInputSanitization();
+            app.UseInputSanitization();
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseRateLimiter();
@@ -216,6 +247,18 @@ namespace StreamingPlatform
                 {
                     builder.With(c => c.HttpContext.Request.Path.ToString().Contains("api/plan"))
                     .Tag("tag-plan");
+                });
+            });
+        }
+
+        private static void AddAuthorizationPolicies(WebApplicationBuilder builder)
+        {
+            builder.Services.AddAuthorization(options =>
+            {
+                options.AddPolicy("DownloadPolicy", policy =>
+                {
+                    policy.RequireAuthenticatedUser();
+                    policy.RequireRole("Admin", "Subscriber", "Artist");
                 });
             });
         }

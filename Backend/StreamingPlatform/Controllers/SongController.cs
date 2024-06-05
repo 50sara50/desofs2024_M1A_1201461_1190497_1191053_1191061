@@ -2,6 +2,7 @@
 using System.Net.Mime;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using StreamingPlatform.Controllers.ResponseMapper;
 using StreamingPlatform.Controllers.Responses;
 using StreamingPlatform.Dtos.Contract;
@@ -14,15 +15,17 @@ namespace StreamingPlatform.Controllers
 {
     [ApiController]
     [Route("api/song")]
+    [EnableRateLimiting("fixed-by-user-id-or-ip")]
     public class SongController(ILogger<SongController> logger, ISongService songService, IConfiguration configuration) : ControllerBase
     {
         [HttpPost]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Artist")]
         [Consumes("multipart/form-data")]
         [ProducesResponseType(typeof(SongResponseDto), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponseObject), StatusCodes.Status415UnsupportedMediaType)]
         [ProducesResponseType(typeof(ErrorResponseObject), StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(typeof(ErrorResponseObject), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ErrorResponseObject), StatusCodes.Status403Forbidden)]
         [ProducesResponseType(typeof(ErrorResponseObject), StatusCodes.Status400BadRequest)]
         /// <summary>
         /// Creates a new song and stores it in the database.
@@ -37,7 +40,7 @@ namespace StreamingPlatform.Controllers
             }
 
             // get the file extension
-            string extension = Path.GetExtension(music.FileName);
+            string extension = music.ContentType;
 
             FileType? fileType = FileTypeMapper.ExtensionToFilePath(extension);
             if (fileType == null)
@@ -91,13 +94,12 @@ namespace StreamingPlatform.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Policy = "DownloadPolicy")]
         [Produces("application/json")]
         [ProducesResponseType(typeof(File), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponseObject), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorResponseObject), StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(typeof(ErrorResponseObject), StatusCodes.Status401Unauthorized)]
-
         public async Task<IActionResult> DownloadSong([FromQuery][Required] string songName, [FromQuery][Required] string artistName, [FromQuery] string? albumName)
         {
             // ensure that at least song name and artist name are provided

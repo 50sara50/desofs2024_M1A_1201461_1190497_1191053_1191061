@@ -131,13 +131,14 @@ namespace StreamingPlatform.Services
             if (isAdmin)
             {
                 plans = await genericRepository.GetAllRecordsAsync();
+                return plans.Select(p => new PlanResponse(p.PlanName, p.MonthlyFee, p.NumberOfMinutes, p.Status));
             }
             else
             {
                 plans = await genericRepository.GetRecordsAsync(p => p.Status == PlanStatus.Active);
+                return plans.Select(p => new PlanResponse(p.PlanName, p.MonthlyFee, p.NumberOfMinutes));
             }
 
-            return plans.Select(p => new PlanResponse(p.PlanName, p.MonthlyFee, p.NumberOfMinutes, p.Status));
         }
     }
 }
