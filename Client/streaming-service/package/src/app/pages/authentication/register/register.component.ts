@@ -16,6 +16,7 @@ import { openSnackBar } from 'src/app/utils/uiActions';
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
+  styleUrls: ['./register.component.scss'],
 })
 export class AppSideRegisterComponent {
   constructor(
@@ -23,13 +24,18 @@ export class AppSideRegisterComponent {
     private AuthService: AuthService,
     private snackBar: MatSnackBar
   ) {}
-
+  password: string = '';
   passwordFieldType: string = 'password';
   confirmPasswordFieldType: string = 'password';
+  strongPassword = false;
 
   public tooglePasswordFieldType() {
     this.passwordFieldType =
       this.passwordFieldType === 'password' ? 'text' : 'password';
+  }
+
+  onPasswordStrengthChanged(event: any) {
+    this.strongPassword = event;
   }
 
   public toogleConfirmPasswordFieldType() {
@@ -63,7 +69,7 @@ export class AppSideRegisterComponent {
         Validators.min(10),
         Validators.max(99),
       ]),
-      isArtist: new FormControl(false), // Initialize as false
+      isArtist: new FormControl(false, [Validators.required]), // Initialize as false
     },
     {
       validators: [this.passwordMatchValidation()],
@@ -125,5 +131,20 @@ export class AppSideRegisterComponent {
 
   handleError() {
     openSnackBar('Error registering user', 'Close', 2000, this.snackBar);
+  }
+
+  private get hasPasswordError() {
+    const passwordControl = this.form.get('password');
+    return (
+      passwordControl?.touched &&
+      (passwordControl?.hasError('minlength') ||
+        passwordControl?.hasError('maxlength') ||
+        passwordControl?.hasError('pattern'))
+    );
+  }
+
+  // Add a class based on the error condition in your template
+  getClasses() {
+    return { 'strength-container': true, 'has-error': this.hasPasswordError };
   }
 }
