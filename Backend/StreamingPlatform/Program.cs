@@ -61,6 +61,7 @@ namespace StreamingPlatform
             builder.Services.AddScoped<IPlanService, PlanService>();
             builder.Services.AddScoped<IPlaylistService, PlaylistService>();
             builder.Services.AddScoped<ISongService, SongService>();
+            builder.Services.AddScoped<IAuthService, AuthService>();
 
             AddOutPutCaching(builder);
             AddAuthorizationPolicies(builder);
@@ -69,8 +70,8 @@ namespace StreamingPlatform
             if (builder.Environment.IsDevelopment())
             {
                 builder.Services
-                    .AddDbContext<StreamingDbContext>(options => options.UseSqlServer(databaseConnectionString))
-                    .AddDbContext<AuthDbContext>(options => options.UseSqlServer(databaseConnectionString));
+                    .AddDbContext<StreamingDbContext>(options => options.UseInMemoryDatabase("DB"))
+                    .AddDbContext<AuthDbContext>(options => options.UseInMemoryDatabase("DB"));
             }
             else
             {
@@ -122,13 +123,7 @@ namespace StreamingPlatform
 #pragma warning restore CS8604
                         };
                     });
-
-            builder.Services.AddScoped<IAuthService, AuthService>();
-
-            // Add services to the container.
-            builder.Services.AddScoped<IPlanService, PlanService>();
-            builder.Services.AddScoped<ISongService, SongService>();
-            builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
+            
             string encryptionKey = builder.Configuration.GetValue<string>("Keys:SecureDataKey") ?? throw new InvalidOperationException("SecureDataKey is not set in the configuration file.");
             SecureDataEncryptionHelper.SetEncryptionKey(encryptionKey);
 

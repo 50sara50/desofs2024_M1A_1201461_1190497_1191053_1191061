@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using StreamingPlatform.Dtos.Contract;
 using StreamingPlatform.Services.Interfaces;
@@ -44,6 +45,7 @@ namespace StreamingPlatform.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost("CreatePlaylist")]
+        [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -79,6 +81,7 @@ namespace StreamingPlatform.Controllers
         /// <param name="contract"></param>
         /// <returns></returns>
         [HttpPatch("AddSongToPlaylist")]
+        [Authorize]
         public async Task<PlaylistResponseDto> AddSong([FromBody] AddSongToPlaylistContract contract)
         {
             try
@@ -99,6 +102,7 @@ namespace StreamingPlatform.Controllers
         /// <returns></returns>
         /// <exception cref="NotImplementedException"></exception>
         [HttpGet("GetUserPlaylists")]
+        [Authorize]
         public async Task<IActionResult> GetUserPlaylists([FromQuery] string userId)
         {
             try

@@ -12,7 +12,6 @@ import { Router } from '@angular/router';
 import { NewUserContract } from 'src/app/model/contract/NewUserContract';
 import { AuthService } from 'src/app/services/auth.service';
 import { openSnackBar } from 'src/app/utils/uiActions';
-import { PasswordStrengthComponent } from '../../extra/password-stength-meter/password-strength.component';
 
 @Component({
   selector: 'app-register',

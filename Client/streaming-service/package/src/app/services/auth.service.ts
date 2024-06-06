@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { LoginResponseContract } from '../model/response/LoginResponseContract';
 import { shareReplay } from 'rxjs/operators';
-import * as moment from 'moment';
 import { NewUserContract } from '../model/contract/NewUserContract';
 
 @Injectable({
@@ -27,16 +26,7 @@ export class AuthService {
   public isAuthenticated() {
     return this.httpClient.get(this.Url + 'status').pipe(shareReplay());
   }
-
-  public getExpiration() {
-    const expiration = localStorage.getItem('expiresAt');
-    if (!expiration) {
-      return null;
-    }
-    const expiresAt = JSON.parse(expiration);
-    return moment(expiresAt);
-  }
-
+  
   public register(newUser: NewUserContract) {
     const requestUrl = this.Url + 'register';
     return this.httpClient.post(requestUrl, newUser).pipe(shareReplay());
