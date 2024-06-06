@@ -1,0 +1,11 @@
+﻿version: '3.8'
+
+services:
+  myapp:
+    image: streaming
+    build:
+        dockerfile: ./Dockerfile
+    ports:
+      - "8080:8080"   
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development

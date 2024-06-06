@@ -4,10 +4,13 @@ using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using StreamingPlatform.Configurations.Mapper;
 using StreamingPlatform.Configurations.Models;
+using StreamingPlatform.Controllers.Extensions;
 using StreamingPlatform.Controllers.ResponseMapper;
 using StreamingPlatform.Controllers.Responses;
 using StreamingPlatform.Dao;
@@ -16,6 +19,7 @@ using StreamingPlatform.Dao.Repositories;
 using StreamingPlatform.Models;
 using StreamingPlatform.Services;
 using StreamingPlatform.Services.Interfaces;
+using StreamingPlatform.Utils;
 using ExceptionHandlerMiddleware = StreamingPlatform.Controllers.Middleware.ExceptionHandlerMiddleware;
 
 namespace StreamingPlatform
@@ -28,30 +32,46 @@ namespace StreamingPlatform
 
             // LOGGING
             builder.Logging.ClearProviders().AddConsole(options =>
+            {
+                options.IncludeScopes = builder.Configuration.GetValue<bool>("Logging:Console:IncludeScopes");
+                options.TimestampFormat = builder.Configuration.GetValue<string>("Logging:Console:FormatterOptions:TimestampFormat");
+                options.UseUtcTimestamp = builder.Configuration.GetValue<bool>("Logging:Console:FormatterOptions:UseUtcTimestamp");
+            });
+
+            //Add Cors
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy(
+                    "AllowAll",
+                    builder =>
                     {
-                        options.IncludeScopes = builder.Configuration.GetValue<bool>("Logging:Console:IncludeScopes");
-                        options.TimestampFormat = builder.Configuration.GetValue<string>("Logging:Console:FormatterOptions:TimestampFormat");
-                        options.UseUtcTimestamp = builder.Configuration.GetValue<bool>("Logging:Console:FormatterOptions:UseUtcTimestamp");
+                        builder.
+                                AllowAnyMethod().
+                                AllowAnyHeader().
+                                AllowCredentials().
+                                SetIsOriginAllowed(hostName => true);
                     });
-                
+            });
+
             var databaseConnectionString = builder.Configuration.GetConnectionString("StreamingServiceDB");
-            
             builder.Services.AddControllers().AddJsonOptions(
              options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
-            
+
             // Add services to the container.
             builder.Services.AddScoped<IPlanService, PlanService>();
             builder.Services.AddScoped<IPlaylistService, PlaylistService>();
             builder.Services.AddScoped<ISongService, SongService>();
+            builder.Services.AddScoped<IAuthService, AuthService>();
 
             AddOutPutCaching(builder);
+            AddAuthorizationPolicies(builder);
             builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 
             if (builder.Environment.IsDevelopment())
             {
                 builder.Services
-                    .AddDbContext<StreamingDbContext>(options => options.UseInMemoryDatabase("StreamingDB"))
-                    .AddDbContext<AuthDbContext>(options => options.UseInMemoryDatabase("StreamingDB"));
+                    .AddDbContext<StreamingDbContext>(options => options.UseInMemoryDatabase("DB"))
+                    .AddDbContext<AuthDbContext>(options => options.UseInMemoryDatabase("DB"));
             }
             else
             {
@@ -65,6 +85,8 @@ namespace StreamingPlatform
                 .AddEntityFrameworkStores<AuthDbContext>()
                 .AddDefaultTokenProviders();
             AddRateLimiting(builder);
+            AddOutPutCaching(builder);
+            AddHst(builder);
 
             // Authentication
             builder.Services.AddAuthentication(options =>
@@ -75,6 +97,18 @@ namespace StreamingPlatform
             })
                     .AddJwtBearer(options =>
                     {
+                        options.Events = new JwtBearerEvents
+                        {
+                            OnMessageReceived = context =>
+                            {
+                                if (context.Request.Cookies.ContainsKey("__Host-userBearerToken"))
+                                {
+                                    context.Token = context.Request.Cookies["__Host-userBearerToken"];
+                                }
+
+                                return Task.CompletedTask;
+                            },
+                        };
                         options.SaveToken = true;
                         options.RequireHttpsMetadata = false;
                         options.TokenValidationParameters = new TokenValidationParameters
@@ -90,7 +124,8 @@ namespace StreamingPlatform
                         };
                     });
 
-            builder.Services.AddScoped<IAuthService, AuthService>();
+            string encryptionKey = builder.Configuration.GetValue<string>("Keys:SecureDataKey") ?? throw new InvalidOperationException("SecureDataKey is not set in the configuration file.");
+            SecureDataEncryptionHelper.SetEncryptionKey(encryptionKey);
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
@@ -105,16 +140,53 @@ namespace StreamingPlatform
                 app.UseSwaggerUI();
             }
 
+            // Add CORS middleware
+            app.UseCors("AllowAll");
+
             // ASVS.7.4.1
             app.UseMiddleware<ExceptionHandlerMiddleware>();
+            app.UseInputSanitization();
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseRateLimiter();
             app.UseOutputCache();
             app.UseHttpsRedirection();
+            app.UseHsts();
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(
+                Path.Combine(builder.Environment.WebRootPath, "Songs")),
+                RequestPath = "/song",
+                ContentTypeProvider = new FileExtensionContentTypeProvider()
+                {
+                    Mappings = { [".mp3"] = "audio/mpeg", [".wav"] = "audio/wave", [".m4a"] = "audio/mp4", [".txt"] = "text/plain" },
+                },
+                ServeUnknownFileTypes = false,
+            }).UseAuthentication().UseAuthorization();
+
+            app.Use(async (context, next) =>
+            {
+                context.Response.OnStarting(
+                    _ =>
+                {
+                    context.Response.Headers.Append("X-Content-Type-Options", "nosniff");
+                    context.Response.Headers.Append("Referrer-Policy", "strict-origin-when-cross-origin");
+                    return Task.CompletedTask;
+                }, context);
+                await next();
+            });
 
             app.MapControllers();
             app.Run();
+        }
+
+        private static void AddHst(WebApplicationBuilder builder)
+        {
+            builder.Services.AddHsts(options =>
+            {
+                options.IncludeSubDomains = true;
+                options.MaxAge = TimeSpan.FromDays(182);
+            });
         }
 
         /// <summary>
@@ -175,6 +247,18 @@ namespace StreamingPlatform
                 {
                     builder.With(c => c.HttpContext.Request.Path.ToString().Contains("api/plan"))
                     .Tag("tag-plan");
+                });
+            });
+        }
+
+        private static void AddAuthorizationPolicies(WebApplicationBuilder builder)
+        {
+            builder.Services.AddAuthorization(options =>
+            {
+                options.AddPolicy("DownloadPolicy", policy =>
+                {
+                    policy.RequireAuthenticatedUser();
+                    policy.RequireRole("Admin", "Subscriber", "Artist");
                 });
             });
         }

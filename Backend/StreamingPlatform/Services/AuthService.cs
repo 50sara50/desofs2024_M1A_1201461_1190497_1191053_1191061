@@ -8,6 +8,8 @@ using System.Security.Cryptography;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
+using StreamingPlatform.Dao.Interfaces;
+using StreamingPlatform.Dao.Repositories;
 using StreamingPlatform.Dtos.Contract;
 using StreamingPlatform.Dtos.Response;
 using StreamingPlatform.Models;
@@ -24,11 +26,14 @@ public class AuthService : IAuthService
 
     private readonly RoleManager<IdentityRole> _roleManager;
 
-    public AuthService(IConfiguration configuration, UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
+    private readonly IUnitOfWork unitOfWork;
+
+    public AuthService(IConfiguration configuration, UserManager<User> userManager, RoleManager<IdentityRole> roleManager, IUnitOfWork unitOfWork)
     {
         _configuration = configuration;
         _userManager = userManager;
         _roleManager = roleManager;
+        this.unitOfWork = unitOfWork;
     }
 
     private async Task CreateRole(Role role)
@@ -101,7 +106,7 @@ public class AuthService : IAuthService
                     {
                         var parts = line.Split(":");
                         var suffix = parts[0];
-                        var hash = sha1.Substring(0,5) + suffix;
+                        var hash = sha1.Substring(0, 5) + suffix;
                         if (sha1.Equals(hash, StringComparison.OrdinalIgnoreCase))
                         {
                             return new GenericResponseDto("Password has been breached. Maybe choose a different password.");
