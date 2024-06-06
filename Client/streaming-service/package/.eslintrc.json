@@ -36,7 +36,8 @@
         "@typescript-eslint/no-unused-vars": "warn",
         "no-empty": "warn",
         "no-useless-escape": "warn",
-        "@typescript-eslint/ban-ts-comment":"off"
+        "@typescript-eslint/ban-ts-comment":"off",
+        "no-var": "warn"
       }
     },
     {
