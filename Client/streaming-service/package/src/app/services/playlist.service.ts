@@ -8,7 +8,7 @@ import { Observable, map } from "rxjs";
 })
 
 export class PlaylistService {
-    public Url = 'https://localhost:32774/Playlist'
+    public Url = 'https://localhost:7255/Playlist'
 
     constructor(
         private httpClient: HttpClient,
