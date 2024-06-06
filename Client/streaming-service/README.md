@@ -1,27 +1,217 @@
-# StreamingService
+<<<<<<< HEAD
+# <a href="https://spike-angular-free.netlify.app/dashboard">Spike Angular Free</a>
+Spike Admin Angular Dashboard
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.3.5.
+<!-- Main image of Template -->
+<a target="_blank" href="https://www.wrappixel.com/templates/spike-free-angular-admin-template/">
+  <img src="https://www.wrappixel.com/wp-content/uploads/2023/10/Spike-Admin-Angular-WrapPixel-Preview-1.jpg" />
+</a>
 
-## Development server
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+# Compare with Premium Version 🌓
 
-## Code scaffolding
+<table>
+<thead>
+<tr>
+<th>Spike Free Angular Admin Version</th>
+<th>Spike Angular Admin Version</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>
+    <a href="https://spike-angular-free.netlify.app/dashboard">Live Preview</a>
+  </td>
+  <td>
+  <a href="https://spike-angular-pro-main.netlify.app/dashboards/dashboard1">Live Preview</a>
+  </td>
+</tr>
+<tr>
+  <td>
+      <a href="https://www.wrappixel.com/templates/spike-free-angular-admin-template/">Download Now</a>
+  </td>
+  <td>
+    <a href="https://www.wrappixel.com/templates/spike-angular-admin-template/">Purchase Now</a>
+  </td>
+</tr>
+<tr>
+  <td>
+  1 Basic Dashboard
+  </td>
+  <td>
+  2+ Stunning Dashboards
+  </td>
+</tr>
+<tr>
+  <td>
+  -
+  </td>
+  <td>
+  Dashboard Figma Files
+  </td>
+</tr>
+<tr>
+  <td>
+  Angular 17 Version
+  </td>
+  <td>
+  Angular 17 Version
+  </td>
+</tr>
+<tr>
+  <td>
+  Fully Responsive Pages
+  </td>
+  <td>
+  Fully Responsive Pages
+  </td>
+</tr>
+<tr>
+  <td>
+  10+ Pages Template
+  </td>
+  <td>
+  80+ Page Templates
+  </td>
+</tr>
+<tr>
+  <td>
+  5+ UI Components
+  </td>
+  <td>
+  50+ UI Components
+  </td>
+</tr>
+<tr>
+  <td>
+  No Documentation
+  </td>
+  <td>
+  Documentation Provided
+  </td>
+</tr>
+<tr>
+  <td>
+  Easy To Customize
+  </td>
+  <td>
+  Easy To Customize
+  </td>
+</tr>
+<tr>
+  <td>
+  -
+  </td>
+  <td>
+  Right-to-Left(RTL) Verion
+  </td>
+</tr>
+<tr>
+  <td>
+  -
+  </td>
+  <td>
+  10+ Integrated Plugins
+  </td>
+</tr>
+<tr>
+  <td>
+  -
+  </td>
+  <td>
+  12+ Ready to Use App
+  </td>
+</tr>
+<tr>
+  <td>
+  -
+  </td>
+  <td>
+  1 Year Premium Support
+  </td>
+</tr>
+</tbody>
+</table>
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+# Upgrade to Premium version
 
-## Build
+<a target="_blank" href="https://www.wrappixel.com/templates/spike-angular-admin-template/">
+  <img src="https://www.wrappixel.com/wp-content/uploads/edd/2023/12/spike.jpg" alt="">
+</a>
+<p>
+  Checkout our premium version of Spike Admin Angular Dashboard Template for lots more features and ready to use page templates.<br>
+  <a href="https://spike-angular-pro-main.netlify.app/dashboards/dashboard1">Check Live Preview</a> | <a href="https://www.wrappixel.com/templates/spike-angular-admin-template/">Download</a>
+</p>
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+<!-- Versions of Template -->
+# Versions
+<table>
+<thead>
+<tr>
+<th>Bootstrap</th>
+<th>Next Js</th>
+<th>Nuxt</th>
+<th>Vue Js</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+  <a href="https://www.wrappixel.com/templates/spike-bootstrap-admin-dashboard/" width="150px">
+    <img src="https://www.wrappixel.com/wp-content/uploads/edd/2023/09/spike-bootstrap-admin-dashboard-prev-img.jpg" alt="" style="max-width:150px;">
+  </a>
+</td>
+<td>
+  <a href="https://www.wrappixel.com/templates/spike-nextjs-admin-template/" rel="nofollow" width="150px">
+    <img src="https://www.wrappixel.com/wp-content/uploads/edd/2023/09/spike-nextjs-admin-dashboard-prev-img.jpg" alt="" style="max-width:150px;">
+  </a>
+</td>
+<td>
+  <a href="https://www.wrappixel.com/templates/spike-nuxtjs-admin-template/" rel="nofollow" width="150px">
+    <img src="https://www.wrappixel.com/wp-content/uploads/edd/2023/09/spike-nuxtjs-admin-dashboard-prev-img.jpg" alt="" style="max-width:150px;">
+  </a>
+</td>
+<td>
+  <a href="https://www.wrappixel.com/templates/spike-vuejs-admin-dashboard/" rel="nofollow" width="150px">
+    <img src="https://www.wrappixel.com/wp-content/uploads/edd/2023/09/spike-vuejs-admin-dashboard-prev-img.jpg" alt="" style="max-width:150px;">
+  </a>
+</td>
+</td>
+  
+</tr>
+</tbody>
+</table>
 
-## Running unit tests
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
 
-## Running end-to-end tests
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
 
-## Further help
+<!-- Useful Links of Template -->
+# Useful Links
+- <p><a href="https://www.wrappixel.com/">Admin Theme</a> from Wrappixel</p>
+- <p><a href="https://www.wrappixel.com/templates/spike-bootstrap-admin-dashboard/">Bootstrap Themes</a> from Wrappixel</p>
+- <p><a href="https://www.wrappixel.com/templates/spike-free-bootstrap-admin/">Free Bootstrap Admin Templates</a> from Wrappixel</p>
+- <p><a href="https://www.wrappixel.com/templates/spike-nextjs-admin-template/">NextJs Bootstrap Template</a> from Wrappixel</p>
+- <p><a href="https://www.wrappixel.com/templates/spike-vuejs-admin-dashboard/">Vuejs Templates</a> from Wrappixel</p>
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+
+<!-- Licensing of Template -->
+# Licensing
+- <p>Copyright 2024 Wrappixel <a href="https://www.wrappixel.com/">https://wrappixel.com/</a></p>
+- <p>Licensed under MIT <a href="https://www.wrappixel.com/license/">https://wrappixel.com/license/</a></p>
+
+
+<!-- Social Media of Adminmart -->
+# Social Media 👭🏼
+- <p>Facebook: <a href="https://www.facebook.com/wrappixel">https://www.facebook.com/wrappixel</a></p>
+- <p>Linkedin: <a href="https://www.linkedin.com/company/wrappixel/">https://www.linkedin.com/company/wrappixel/</a></p>
+- <p>Github: <a href="https://github.com/wrappixel">https://github.com/wrappixel</a></p>
+- <p>Twitter: <a href="https://twitter.com/wrappixel">https://twitter.com/wrappixel</a></p>
+- <p>Medium: <a href="https://medium.com/wrappixel">https://medium.com/wrappixel</a></p>
+- <p>Discord: <a href="https://discord.com/invite/eMzE8F6Wqs">https://discord.com/invite/eMzE8F6Wqs</a></p>
+- <p>Youtube: <a href="https://www.youtube.com/channel/UCdFDlrhIchtxF8EmxejUPGQ">https://www.youtube.com/channel/UCdFDlrhIchtxF8EmxejUPGQ</a></p>
+
+
+=======
+
+>>>>>>> 6ba424d1aa0c25e723023cd012d7318ea841af34

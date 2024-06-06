@@ -16,9 +16,11 @@ namespace StreamingPlatform.Models
             this.Age = 0;
             this.Address = string.Empty;
             this.CreateOn = DateTime.Now;
+            this.Albums = [];
+            this.Songs = [];
         }
 
-        public User(string username, string email, string name, int age, string address, string pepper)
+        public User(string username, string email, string name, int age, string address)
         {
             this.Id = Guid.NewGuid().ToString();
             this.UserName = username;
@@ -27,6 +29,21 @@ namespace StreamingPlatform.Models
             this.Age = age;
             this.Address = address;
             this.CreateOn = DateTime.Now;
+            this.Albums = [];
+            this.Songs = [];
+        }
+
+        public User(string id, string username, string email, string name, int age, string address)
+        {
+            this.Id = id;
+            this.UserName = username;
+            this.Email = email;
+            this.Name = name;
+            this.Age = age;
+            this.Address = address;
+            this.CreateOn = DateTime.Now;
+            this.Albums = [];
+            this.Songs = [];
         }
 
         /// <summary>
@@ -59,5 +76,29 @@ namespace StreamingPlatform.Models
         /// The user's registration date.
         /// </summary>
         public DateTime CreateOn { get; set; }
+
+        public ICollection<Song> Songs { get; set; }
+
+        public ICollection<Album> Albums { get; set; }
+
+        public void AddSong(Song song)
+        {
+            if (this.Songs.Contains(song))
+            {
+                throw new Exception($"This song has already been added to the user '${this.Name}'");
+            }
+
+            this.Songs.Add(song);
+        }
+
+        public void AddAlbum(Album album)
+        {
+            if (this.Albums.Contains(album))
+            {
+                throw new Exception($"This album has already been added to the user '${this.Name}'");
+            }
+
+            this.Albums.Add(album);
+        }
     }
 }

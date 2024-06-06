@@ -1,0 +1,24 @@
+<mat-card class="cardWithShadow theme-card">
+  <mat-card-header>
+    <mat-card-title class="m-b-0">Playlists</mat-card-title>
+  </mat-card-header>
+  <mat-card-content class="b-t-1">
+    <div class="row m-t-20">
+      <div class="col-sm-6 col-lg-4" *ngFor="let playlist of playlists">
+        <mat-card class="b-1 shadow-none">
+          <mat-card-header>
+            <mat-card-title>{{ playlist.title }}</mat-card-title>
+          </mat-card-header>
+          <mat-card-content class="b-t-1">
+            <mat-list  *ngFor="let song of playlist.songs">
+              <mat-list-item>
+                <span matListItemTitle class="f-s-16 f-w-600">{{song}}</span>
+                <span matListItemLine class="mat-body-1">Artist Name</span>
+              </mat-list-item>
+            </mat-list>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>
