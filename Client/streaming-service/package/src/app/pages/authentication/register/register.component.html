@@ -58,9 +58,16 @@
               </mat-error>
 
             </mat-form-field>
-            <mat-form-field floatLabel="always" appearance="outline" class="w-100" color="primary">
+            <mat-form-field floatLabel="always" appearance="outline" class="w-100" color="primary"
+              style="display: flex; flex-direction: column;">
               <mat-label class="mat-subtitle-2 f-s-14 f-w-600 m-b-12 d-block">Password</mat-label>
-
+              <mat-error *ngIf="form.get('password')?.hasError('required')">
+                Password is required
+              </mat-error>
+              <mat-error
+                *ngIf="!form.get('password')?.hasError('minlength') && !form.get('password')?.hasError('maxlength') && form.get('password')?.hasError('pattern')">
+                Password must include an uppercase, lowercase, special character, and a number.
+              </mat-error>
               <input matInput [type]="passwordFieldType" formControlName="password" autocomplete="new-password"
                 [(ngModel)]="password" required />
               <span matSuffix class="password-toggle" (click)="tooglePasswordFieldType()"
@@ -81,22 +88,15 @@
                   <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0" />
                 </svg>
               </span>
-              <mat-error *ngIf="form.get('password')?.hasError('required')">
-                Password is required
-              </mat-error>
-              <mat-error
-                *ngIf="!form.get('password')?.hasError('minlength') && !form.get('password')?.hasError('maxlength') && form.get('password')?.hasError('pattern')">
-                Password must contain at least one
-                uppercase letter, one lowercase letter, one number, and one special
-                character
-              </mat-error>
+
             </mat-form-field>
+
+
             <!-- Password strength meter -->
-            <div style="position: relative; margin-bottom: 16px;">
+            <div [class]="getClasses()">
 
               <password-strength [passwordToCheck]="form.get('password')?.value ?? ''"
                 (passwordStrength)=" onPasswordStrengthChanged ($event)"></password-strength>
-              <password-strength-meter [password]="password" enableFeedback />
             </div>
 
             <mat-form-field floatLabel="always" appearance="outline" class="w-100" color="primary">

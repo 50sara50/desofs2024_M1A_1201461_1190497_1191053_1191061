@@ -1,0 +1,10 @@
+.strength-container {  /* Add a class to the container */
+    position: relative;
+    margin-bottom: 16px;
+    z-index: 2;
+  }
+  
+  .strength-container.has-error {  /* New class for error condition */
+    margin-top: 18px;
+  }
+  

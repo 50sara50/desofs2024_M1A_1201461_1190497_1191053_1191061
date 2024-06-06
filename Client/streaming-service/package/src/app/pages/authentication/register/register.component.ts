@@ -17,6 +17,7 @@ import { PasswordStrengthComponent } from '../../extra/password-stength-meter/pa
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
+  styleUrls: ['./register.component.scss'],
 })
 export class AppSideRegisterComponent {
   constructor(
@@ -131,5 +132,20 @@ export class AppSideRegisterComponent {
 
   handleError() {
     openSnackBar('Error registering user', 'Close', 2000, this.snackBar);
+  }
+
+  private get hasPasswordError() {
+    const passwordControl = this.form.get('password');
+    return (
+      passwordControl?.touched &&
+      (passwordControl?.hasError('minlength') ||
+        passwordControl?.hasError('maxlength') ||
+        passwordControl?.hasError('pattern'))
+    );
+  }
+
+  // Add a class based on the error condition in your template
+  getClasses() {
+    return { 'strength-container': true, 'has-error': this.hasPasswordError };
   }
 }
