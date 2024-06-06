@@ -9,7 +9,7 @@ import { NewUserContract } from '../model/contract/NewUserContract';
   providedIn: 'root',
 })
 export class AuthService {
-  private Url = 'https://localhost:32774/Auth/';
+  private Url = 'https://localhost:7255/Auth/';
 
   constructor(private httpClient: HttpClient) {}
 
