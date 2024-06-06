@@ -123,7 +123,7 @@ namespace StreamingPlatform
 #pragma warning restore CS8604
                         };
                     });
-            
+
             string encryptionKey = builder.Configuration.GetValue<string>("Keys:SecureDataKey") ?? throw new InvalidOperationException("SecureDataKey is not set in the configuration file.");
             SecureDataEncryptionHelper.SetEncryptionKey(encryptionKey);
 
@@ -164,10 +164,15 @@ namespace StreamingPlatform
                 ServeUnknownFileTypes = false,
             }).UseAuthentication().UseAuthorization();
 
-            //ensures that the browser interprets the content type correctly and does not interpret it as a different mime type
             app.Use(async (context, next) =>
             {
-                context.Response.Headers.Append("X-Content-Type-Options", "nosniff");
+                context.Response.OnStarting(
+                    _ =>
+                {
+                    context.Response.Headers.Append("X-Content-Type-Options", "nosniff");
+                    context.Response.Headers.Append("Referrer-Policy", "strict-origin-when-cross-origin");
+                    return Task.CompletedTask;
+                }, context);
                 await next();
             });
 
@@ -180,7 +185,7 @@ namespace StreamingPlatform
             builder.Services.AddHsts(options =>
             {
                 options.IncludeSubDomains = true;
-                options.MaxAge = TimeSpan.FromDays(365);
+                options.MaxAge = TimeSpan.FromDays(182);
             });
         }
 
