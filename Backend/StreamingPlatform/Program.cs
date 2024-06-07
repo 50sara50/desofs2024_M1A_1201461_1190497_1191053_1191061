@@ -37,21 +37,7 @@ namespace StreamingPlatform
                 options.TimestampFormat = builder.Configuration.GetValue<string>("Logging:Console:FormatterOptions:TimestampFormat");
                 options.UseUtcTimestamp = builder.Configuration.GetValue<bool>("Logging:Console:FormatterOptions:UseUtcTimestamp");
             });
-
-            //Add Cors
-            builder.Services.AddCors(options =>
-            {
-                options.AddPolicy(
-                    "AllowAll",
-                    builder =>
-                    {
-                        builder.
-                                AllowAnyMethod().
-                                AllowAnyHeader().
-                                AllowCredentials().
-                                SetIsOriginAllowed(hostName => true);
-                    });
-            });
+            AddCors(builder);
 
             var databaseConnectionString = builder.Configuration.GetConnectionString("StreamingServiceDB");
             builder.Services.AddControllers().AddJsonOptions(
@@ -141,7 +127,7 @@ namespace StreamingPlatform
             }
 
             // Add CORS middleware
-            app.UseCors("AllowAll");
+            app.UseCors("CorsPolicy");
 
             // ASVS.7.4.1
             app.UseMiddleware<ExceptionHandlerMiddleware>();
@@ -168,16 +154,35 @@ namespace StreamingPlatform
             {
                 context.Response.OnStarting(
                     _ =>
-                {
-                    context.Response.Headers.Append("X-Content-Type-Options", "nosniff");
-                    context.Response.Headers.Append("Referrer-Policy", "strict-origin-when-cross-origin");
-                    return Task.CompletedTask;
-                }, context);
+                    {
+                        context.Response.Headers.Append("X-Content-Type-Options", "nosniff");
+                        context.Response.Headers.Append("Referrer-Policy", "strict-origin-when-cross-origin");
+                        return Task.CompletedTask;
+                    }, context);
                 await next();
             });
 
             app.MapControllers();
             app.Run();
+        }
+
+        private static void AddCors(WebApplicationBuilder builder)
+        {
+            //Add Cors
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy(
+                    "CorsPolicy",
+                    builder =>
+                    {
+                        builder.
+                                WithOrigins("http://localhost:4200", "https://localhost:4200").
+                                AllowAnyMethod().
+                                AllowAnyHeader().
+                                AllowCredentials();
+                    });
+
+            });
         }
 
         private static void AddHst(WebApplicationBuilder builder)
