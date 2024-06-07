@@ -69,7 +69,7 @@ export class AppSideRegisterComponent {
         Validators.min(10),
         Validators.max(99),
       ]),
-      isArtist: new FormControl(false, [Validators.required]), // Initialize as false
+      isArtist: new FormControl('false', [Validators.required]), // Initialize as false
     },
     {
       validators: [this.passwordMatchValidation()],
@@ -101,6 +101,8 @@ export class AppSideRegisterComponent {
   submit() {
     const { name, username, email, password, age, address, isArtist } =
       this.form.value;
+    const userIsAnArtist = Boolean(JSON.parse(isArtist?.toString() ?? 'false'));
+
     const userAge = parseInt(age ?? '0');
     const newUser: NewUserContract = {
       username: username,
@@ -109,8 +111,10 @@ export class AppSideRegisterComponent {
       age: userAge,
       address: address,
       name: name,
-      role: isArtist ? 'Artist' : 'Subscriber',
+      role: userIsAnArtist === true ? 'Artist' : 'Subscriber',
     };
+
+    console.log('newUser: ', JSON.stringify(newUser));
     this.AuthService.register(newUser).subscribe({
       next: (response) => {
         if (response) {
@@ -120,12 +124,6 @@ export class AppSideRegisterComponent {
       error: () => {
         this.handleError();
       },
-    });
-  }
-
-  toggleArtist() {
-    this.form.patchValue({
-      isArtist: !this.form.value.isArtist,
     });
   }
 
