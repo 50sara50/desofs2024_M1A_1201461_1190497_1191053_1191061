@@ -12,4 +12,6 @@ public interface IAuthService
     public Task<GenericResponseDto> PasswordBreached(string password);
     
     public Task<GenericResponseDto> ChangePassword(ChangePasswordContract changePassword);
+    
+    public Task<GenericResponseDto> GetUserId(string email);
 }

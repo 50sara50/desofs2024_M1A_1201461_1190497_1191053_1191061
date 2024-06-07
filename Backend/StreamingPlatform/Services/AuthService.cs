@@ -139,6 +139,12 @@ public class AuthService : IAuthService
         return new GenericResponseDto("Successfully changed password!");
     }
 
+    public async Task<GenericResponseDto> GetUserId(string email)
+    {
+        var user = await _userManager.FindByEmailAsync(email) ?? throw new ServiceBaseException("User does not exist");
+        return new GenericResponseDto(user.Id);
+    }
+
     public async Task<GenericResponseDto> Register(NewUserContract newUser)
     {
         var userExists = await _userManager.FindByEmailAsync(newUser.Email);

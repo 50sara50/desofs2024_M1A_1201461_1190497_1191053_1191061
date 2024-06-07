@@ -155,4 +155,23 @@ public class AuthController : ControllerBase
             return this.Ok(new { isAuthenticated = false });
         }
     }
+
+    [HttpGet]
+    [Authorize]
+    [Route("user-id")]
+    [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+    [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
+    public async Task<IActionResult> GetUserId([FromQuery]string email)
+    {
+        try
+        {
+            var result = await this._authService.GetUserId(email);
+            return this.Ok(result);
+        }
+        catch (ServiceBaseException ex)
+        {
+            ErrorResponseObject errorResponseObject = MapResponse.BadRequest(ex.Message);
+            return this.BadRequest(errorResponseObject);
+        }
+    }
 }
