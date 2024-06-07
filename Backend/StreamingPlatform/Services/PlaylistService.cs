@@ -1,9 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Identity;
-using StreamingPlatform.Dao;
 using StreamingPlatform.Dao.Interfaces;
-using StreamingPlatform.Dao.Repositories;
-using StreamingPlatform.Dtos;
 using StreamingPlatform.Dtos.Contract;
 using StreamingPlatform.Models;
 using StreamingPlatform.Services.Exceptions;
@@ -25,12 +22,12 @@ namespace StreamingPlatform
         {
             //verify if user exists
             var user = await this.userManager.FindByIdAsync(newPlaylistContract.UserId) ?? throw new ServiceBaseException("Invalid user id.");
-            
+
             IGenericRepository<Playlist> repository = this.unitOfWork.Repository<Playlist>();
-            Playlist newPlaylist = new (Guid.NewGuid(), newPlaylistContract.Title, new Guid(user.Id));
+            Playlist newPlaylist = new(Guid.NewGuid(), newPlaylistContract.Title, new Guid(user.Id));
             repository.Create(newPlaylist);
             await this.unitOfWork.SaveChangesAsync();
-            
+
             //TODO: create mapper
             return new PlaylistResponseDto(newPlaylist.Id.ToString(), newPlaylist.Title, newPlaylist.UserId.ToString(), new List<string>());
         }
@@ -56,15 +53,15 @@ namespace StreamingPlatform
         {
             IGenericRepository<Playlist> repository = this.unitOfWork.Repository<Playlist>();
             IGenericRepository<Song> songRepository = this.unitOfWork.Repository<Song>();
-            
+
             //verify if the song exists
             var song = await songRepository.GetRecordByIdAsync(dto.SongId) ??
                        throw new ServiceBaseException("There is no song with the specified id.");
-            
+
             //verify if playlist exists
             var playlist = await repository.GetRecordByIdAsync(new Guid(dto.PlaylistId)) ??
                            throw new ServiceBaseException("There is no playlist with the specified id.");
-            
+
             //add song to playlist
             playlist.SongPlaylists.Add(new SongPlaylist(song.Id, song, playlist.Id, playlist));
             await this.unitOfWork.SaveChangesAsync();
@@ -74,7 +71,7 @@ namespace StreamingPlatform
             {
                 songsInPlaylist.Add(s.ToString());
             }
-            
+
             return new PlaylistResponseDto(playlist.Id.ToString(), playlist.Title, playlist.UserId.ToString(), songsInPlaylist);
         }
 
@@ -86,11 +83,11 @@ namespace StreamingPlatform
         {
             //verify if user exists
             var user = await this.userManager.FindByIdAsync(userId) ?? throw new ServiceBaseException("Invalid user id.");
-            
+
             IGenericRepository<Playlist> repository = this.unitOfWork.Repository<Playlist>();
-            var playlists = await repository.GetRecordsAsync(p => p.UserId.ToString().Equals(userId)) 
+            var playlists = await repository.GetRecordsAsync(p => p.UserId.ToString().Equals(userId))
                 ?? throw new Exception("That user doe not have any playlists.");
-            
+
             //TODO: create mapper
             var results = new List<PlaylistResponseDto>();
             foreach (var playlist in playlists)

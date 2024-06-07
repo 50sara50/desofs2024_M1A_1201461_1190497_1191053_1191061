@@ -1,15 +1,10 @@
-﻿using System.ComponentModel;
-using System.Diagnostics;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq.Expressions;
-using System.Runtime.Intrinsics.Arm;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using StreamingPlatform.Dao.Interfaces;
-using StreamingPlatform.Dao.Repositories;
 using StreamingPlatform.Dtos.Contract;
 using StreamingPlatform.Dtos.Response;
 using StreamingPlatform.Models;
@@ -44,26 +39,6 @@ public class AuthService : IAuthService
         }
     }
 
-    private JwtSecurityToken GenerateJwtToken(User user)
-    {
-        var userClaims = _userManager.GetClaimsAsync(user).Result;
-
-        var claims = new List<Claim>()
-        {
-            new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
-            new Claim(JwtRegisteredClaimNames.Email, user.Email),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-        }.Union(userClaims);
-
-        var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
-        var signinCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
-
-        return new JwtSecurityToken(
-            issuer: _configuration["Jwt:Issuer"],
-            claims: claims,
-            expires: DateTime.Now.AddMinutes(30),
-            signingCredentials: signinCredentials);
-    }
 
     /// <summary>
     /// Checks if password has been breached.
@@ -130,7 +105,7 @@ public class AuthService : IAuthService
         {
             throw new ServiceBaseException("User does not exist");
         }
-        
+
         var result = await _userManager.ChangePasswordAsync(user, changePassword.OldPassword, changePassword.NewPassword);
         if (!result.Succeeded)
         {
@@ -168,7 +143,7 @@ public class AuthService : IAuthService
         {
             throw new ServiceBaseException("Failed to assign role to user.");
         }
-        
+
         return new GenericResponseDto($"User created successfully!");
     }
 
@@ -190,7 +165,8 @@ public class AuthService : IAuthService
         var authClaims = new List<Claim>
         {
             new Claim(ClaimTypes.Name, user.UserName),
-            new Claim(JwtRegisteredClaimNames.Jti, user.Id)
+            new Claim(JwtRegisteredClaimNames.Jti, user.Id),
+            new(ClaimTypes.NameIdentifier, user.Id),
         };
 
         authClaims.AddRange(userRoles.Select(userRole => new Claim(ClaimTypes.Role, userRole)));
