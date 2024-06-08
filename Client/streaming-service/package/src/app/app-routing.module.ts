@@ -2,17 +2,27 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { BlankComponent } from './layouts/blank/blank.component';
 import { FullComponent } from './layouts/full/full.component';
+import { authenticationGuard } from './services/auth-guard.service';
 
 const routes: Routes = [
   {
     path: '',
+    redirectTo: '/authentication/login',
+    pathMatch: 'full',
+  },
+  {
+    path: 'authentication',
+    component: BlankComponent,
+    loadChildren: () =>
+      import('./pages/authentication/authentication.module').then(
+        (m) => m.AuthenticationModule
+      ),
+  },
+  {
+    path: 'app',
     component: FullComponent,
+    canActivate: [authenticationGuard],
     children: [
-      {
-        path: '',
-        redirectTo: '/dashboard',
-        pathMatch: 'full',
-      },
       {
         path: 'dashboard',
         loadChildren: () =>
@@ -33,19 +43,6 @@ const routes: Routes = [
       {
         path: 'logout',
         redirectTo: '/authentication/login',
-      },
-    ],
-  },
-  {
-    path: '',
-    component: BlankComponent,
-    children: [
-      {
-        path: 'authentication',
-        loadChildren: () =>
-          import('./pages/authentication/authentication.module').then(
-            (m) => m.AuthenticationModule
-          ),
       },
     ],
   },

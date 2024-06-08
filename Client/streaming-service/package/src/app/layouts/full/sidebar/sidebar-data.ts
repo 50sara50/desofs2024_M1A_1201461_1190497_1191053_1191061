@@ -7,7 +7,7 @@ export const navItems: NavItem[] = [
   {
     displayName: 'Dashboard',
     iconName: 'layout-dashboard',
-    route: '/dashboard',
+    route: '/app/dashboard',
   },
   {
     navCap: 'Ui Components',
@@ -15,11 +15,11 @@ export const navItems: NavItem[] = [
   {
     displayName: 'Playlists',
     iconName: 'list',
-    route: '/ui-components/playlists',
+    route: '/app/ui-components/playlists',
   },
   {
     displayName: 'Plans',
     iconName: 'layout-navbar-expand',
-    route: '/ui-components/plans',
-   }
+    route: '/app/ui-components/plans',
+  },
 ];
