@@ -12,7 +12,7 @@ This project was develop by Davide Clemente, Sara Borges, Beatriz Borges and Sim
 Domain Model:
 ![Domain Model](Diagramas/domain_model.svg)
 
-Monolitjic Diagram:
+Monolithic Diagram:
 
 ![Monolithic Diagram](Diagramas/monolithic_diagram.svg)
 
