@@ -16,6 +16,7 @@ import { openSnackBar } from 'src/app/utils/uiActions';
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
+  styleUrls: ['./register.component.scss'],
 })
 export class AppSideRegisterComponent {
   constructor(
@@ -23,13 +24,18 @@ export class AppSideRegisterComponent {
     private AuthService: AuthService,
     private snackBar: MatSnackBar
   ) {}
-
+  password: string = '';
   passwordFieldType: string = 'password';
   confirmPasswordFieldType: string = 'password';
+  strongPassword = false;
 
   public tooglePasswordFieldType() {
     this.passwordFieldType =
       this.passwordFieldType === 'password' ? 'text' : 'password';
+  }
+
+  onPasswordStrengthChanged(event: any) {
+    this.strongPassword = event;
   }
 
   public toogleConfirmPasswordFieldType() {
@@ -63,7 +69,7 @@ export class AppSideRegisterComponent {
         Validators.min(10),
         Validators.max(99),
       ]),
-      isArtist: new FormControl(false), // Initialize as false
+      isArtist: new FormControl('false', [Validators.required]), // Initialize as false
     },
     {
       validators: [this.passwordMatchValidation()],
@@ -95,6 +101,8 @@ export class AppSideRegisterComponent {
   submit() {
     const { name, username, email, password, age, address, isArtist } =
       this.form.value;
+    const userIsAnArtist = Boolean(JSON.parse(isArtist?.toString() ?? 'false'));
+
     const userAge = parseInt(age ?? '0');
     const newUser: NewUserContract = {
       username: username,
@@ -103,8 +111,10 @@ export class AppSideRegisterComponent {
       age: userAge,
       address: address,
       name: name,
-      role: isArtist ? 'Artist' : 'Subscriber',
+      role: userIsAnArtist === true ? 'Artist' : 'Subscriber',
     };
+
+    console.log('newUser: ', JSON.stringify(newUser));
     this.AuthService.register(newUser).subscribe({
       next: (response) => {
         if (response) {
@@ -117,13 +127,22 @@ export class AppSideRegisterComponent {
     });
   }
 
-  toggleArtist() {
-    this.form.patchValue({
-      isArtist: !this.form.value.isArtist,
-    });
-  }
-
   handleError() {
     openSnackBar('Error registering user', 'Close', 2000, this.snackBar);
+  }
+
+  private get hasPasswordError() {
+    const passwordControl = this.form.get('password');
+    return (
+      passwordControl?.touched &&
+      (passwordControl?.hasError('minlength') ||
+        passwordControl?.hasError('maxlength') ||
+        passwordControl?.hasError('pattern'))
+    );
+  }
+
+  // Add a class based on the error condition in your template
+  getClasses() {
+    return { 'strength-container': true, 'has-error': this.hasPasswordError };
   }
 }

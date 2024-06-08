@@ -37,21 +37,7 @@ namespace StreamingPlatform
                 options.TimestampFormat = builder.Configuration.GetValue<string>("Logging:Console:FormatterOptions:TimestampFormat");
                 options.UseUtcTimestamp = builder.Configuration.GetValue<bool>("Logging:Console:FormatterOptions:UseUtcTimestamp");
             });
-
-            //Add Cors
-            builder.Services.AddCors(options =>
-            {
-                options.AddPolicy(
-                    "AllowAll",
-                    builder =>
-                    {
-                        builder.
-                                AllowAnyMethod().
-                                AllowAnyHeader().
-                                AllowCredentials().
-                                SetIsOriginAllowed(hostName => true);
-                    });
-            });
+            AddCors(builder);
 
             var databaseConnectionString = builder.Configuration.GetConnectionString("StreamingServiceDB");
             builder.Services.AddControllers().AddJsonOptions(
@@ -123,7 +109,7 @@ namespace StreamingPlatform
 #pragma warning restore CS8604
                         };
                     });
-            
+
             string encryptionKey = builder.Configuration.GetValue<string>("Keys:SecureDataKey") ?? throw new InvalidOperationException("SecureDataKey is not set in the configuration file.");
             SecureDataEncryptionHelper.SetEncryptionKey(encryptionKey);
 
@@ -141,7 +127,7 @@ namespace StreamingPlatform
             }
 
             // Add CORS middleware
-            app.UseCors("AllowAll");
+            app.UseCors("CorsPolicy");
 
             // ASVS.7.4.1
             app.UseMiddleware<ExceptionHandlerMiddleware>();
@@ -164,10 +150,15 @@ namespace StreamingPlatform
                 ServeUnknownFileTypes = false,
             }).UseAuthentication().UseAuthorization();
 
-            //ensures that the browser interprets the content type correctly and does not interpret it as a different mime type
             app.Use(async (context, next) =>
             {
-                context.Response.Headers.Append("X-Content-Type-Options", "nosniff");
+                context.Response.OnStarting(
+                    _ =>
+                    {
+                        context.Response.Headers.Append("X-Content-Type-Options", "nosniff");
+                        context.Response.Headers.Append("Referrer-Policy", "strict-origin-when-cross-origin");
+                        return Task.CompletedTask;
+                    }, context);
                 await next();
             });
 
@@ -175,12 +166,31 @@ namespace StreamingPlatform
             app.Run();
         }
 
+        private static void AddCors(WebApplicationBuilder builder)
+        {
+            //Add Cors
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy(
+                    "CorsPolicy",
+                    builder =>
+                    {
+                        builder.
+                                WithOrigins("http://localhost:4200", "https://localhost:4200").
+                                AllowAnyMethod().
+                                AllowAnyHeader().
+                                AllowCredentials();
+                    });
+
+            });
+        }
+
         private static void AddHst(WebApplicationBuilder builder)
         {
             builder.Services.AddHsts(options =>
             {
                 options.IncludeSubDomains = true;
-                options.MaxAge = TimeSpan.FromDays(365);
+                options.MaxAge = TimeSpan.FromDays(182);
             });
         }
 

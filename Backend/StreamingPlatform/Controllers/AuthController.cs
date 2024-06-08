@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using StreamingPlatform.Controllers.ResponseMapper;
@@ -12,7 +11,6 @@ namespace StreamingPlatform;
 
 [ApiController]
 [Route("[controller]")]
-[EnableCors("AllowAll")]
 public class AuthController : ControllerBase
 {
     private readonly ILogger<AuthController> _logger;
@@ -146,13 +144,7 @@ public class AuthController : ControllerBase
     [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult GetAuthStatus()
     {
-        if (this.Request.Cookies.ContainsKey("userBearerToken"))
-        {
-            return this.Ok(new { isAuthenticated = true });
-        }
-        else
-        {
-            return this.Ok(new { isAuthenticated = false });
-        }
+       bool isAuthenticated = this.User.Identity?.IsAuthenticated ?? false;
+       return this.Ok(new { isAuthenticated });
     }
 }
