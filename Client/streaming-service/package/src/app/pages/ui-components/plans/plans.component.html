@@ -3,24 +3,9 @@
     <mat-card-title class="m-b-0">Plans</mat-card-title>
   </mat-card-header>
   <mat-card-content class="b-t-1">
-    <!--    <form (ngSubmit)="createPlan()">-->
-    <!--      <div class="form-group">-->
-    <!--        <label for="planName">Plan Name:</label>-->
-    <!--        <input type="text" id="planName" [(ngModel)]="plan.planName" name="planName" required>-->
-    <!--      </div>-->
-    <!--      <div class="form-group">-->
-    <!--        <label for="monthlyFee">Monthly Fee:</label>-->
-    <!--        <input type="number" id="monthlyFee" [(ngModel)]="plan.monthlyFee" name="monthlyFee" required>-->
-    <!--      </div>-->
-    <!--      <div class="form-group">-->
-    <!--        <label for="numberOfMinutes">Number Of Minutes:</label>-->
-    <!--        <input type="number" id="numberOfMinutes" [(ngModel)]="plan.numberOfMinutes" name="numberOfMinutes" required>-->
-    <!--      </div>-->
-    <!--      <button type="submit" mat-raised-button color="primary">Add Plan</button>-->
-    <!--    </form>-->
     <div class="row m-t-20">
       <div class="col-sm-6 col-lg-4" *ngFor="let plan of plans">
-        <mat-card class="b-1 shadow-none">
+        <mat-card class="b-1 shadow-none plan-card" (mouseenter)="showButton = true" (mouseleave)="showButton = false">
           <mat-card-header>
             <mat-card-title>{{ plan.planName }}</mat-card-title>
           </mat-card-header>
@@ -29,8 +14,9 @@
             <p>Number Of Minutes: {{ plan.numberOfMinutes }}</p>
             <p *ngIf="plan.status">Status:
               <span [style.color]="plan.status === 'Inactive' ? 'red' : 'green'"
-                [style.font-weight]="'bold'">{{plan.status}}</span>
+                    [style.font-weight]="'bold'">{{plan.status}}</span>
             </p>
+            <a mat-raised-button color="primary" class="w-100" (click)="createSubscription(plan.planName)">Subscribe plan</a>
           </mat-card-content>
         </mat-card>
       </div>
