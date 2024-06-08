@@ -62,6 +62,7 @@ namespace StreamingPlatform
             builder.Services.AddScoped<IPlaylistService, PlaylistService>();
             builder.Services.AddScoped<ISongService, SongService>();
             builder.Services.AddScoped<IAuthService, AuthService>();
+            builder.Services.AddScoped<ISubscriptionService, SubscriptionService>();
 
             AddOutPutCaching(builder);
             AddAuthorizationPolicies(builder);

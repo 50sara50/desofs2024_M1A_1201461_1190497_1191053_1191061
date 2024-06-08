@@ -18,6 +18,7 @@ import { PlanComponent } from './plans/plans.component';
 import { AppTooltipsComponent } from './tooltips/tooltips.component';
 import { MatNativeDateModule, MatOptionModule } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
+import {SubscriptionsComponent} from "./subscriptions/subscriptions.component";
 
 @NgModule({
   imports: [
@@ -33,7 +34,7 @@ import { MatSelectModule } from '@angular/material/select';
     AppBadgeComponent,
     AppChipsComponent,
     AppListsComponent,
-    // AppMenuComponent,
+    SubscriptionsComponent,
     AppTooltipsComponent,
     PlanComponent,
   ],

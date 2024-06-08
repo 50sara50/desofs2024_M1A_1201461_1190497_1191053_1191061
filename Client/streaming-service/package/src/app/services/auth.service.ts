@@ -41,4 +41,9 @@ export class AuthService {
     const requestUrl = this.Url + 'register';
     return this.httpClient.post(requestUrl, newUser).pipe(shareReplay());
   }
+
+  public getUserEmail(): string | null {
+    return localStorage.getItem('userEmail');
+  }
+
 }
