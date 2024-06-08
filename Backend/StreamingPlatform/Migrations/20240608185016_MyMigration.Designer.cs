@@ -5,15 +5,15 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using StreamingPlatform;
+using StreamingPlatform.Dao;
 
 #nullable disable
 
 namespace StreamingPlatform.Migrations
 {
-    [DbContext(typeof(AuthDbContext))]
-    [Migration("20240525002522_AuthDbContextTables")]
-    partial class AuthDbContextTables
+    [DbContext(typeof(StreamingDbContext))]
+    [Migration("20240608185016_MyMigration")]
+    partial class MyMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -175,7 +175,35 @@ namespace StreamingPlatform.Migrations
 
                     b.HasIndex("ArtistId");
 
-                    b.ToTable("Album");
+                    b.ToTable("Albums");
+                });
+
+            modelBuilder.Entity("StreamingPlatform.Models.Plan", b =>
+                {
+                    b.Property<Guid>("PlanId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<double>("MonthlyFee")
+                        .HasColumnType("float");
+
+                    b.Property<int>("NumberOfMinutes")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PlanName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.HasKey("PlanId");
+
+                    b.HasIndex("PlanName")
+                        .IsUnique();
+
+                    b.ToTable("Plans");
                 });
 
             modelBuilder.Entity("StreamingPlatform.Models.Playlist", b =>
@@ -242,6 +270,32 @@ namespace StreamingPlatform.Migrations
                     b.HasIndex("PlaylistId");
 
                     b.ToTable("SongPlaylists");
+                });
+
+            modelBuilder.Entity("StreamingPlatform.Models.Subscription", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("PlanId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("RenewDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Subscriptions");
                 });
 
             modelBuilder.Entity("StreamingPlatform.Models.User", b =>
