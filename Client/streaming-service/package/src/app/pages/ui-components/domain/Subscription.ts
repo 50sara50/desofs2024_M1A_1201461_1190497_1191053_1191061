@@ -1,4 +1,6 @@
 export class Subscription {
   planName: string;
-  userEmail: string;
+  createdOn: string;
+  renewDate: string;
+  status: string;
 }

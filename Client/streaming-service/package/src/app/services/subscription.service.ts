@@ -4,6 +4,7 @@ import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {map, Observable} from 'rxjs';
 import {Subscription} from '../pages/ui-components/domain/Subscription';
 import {MessageService} from './message.service';
+import {switchMap} from "rxjs/operators";
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +12,7 @@ import {MessageService} from './message.service';
 export class SubscriptionService {
 
   private apiUrl = 'https://localhost:7255/Subscription'; // Altere para a URL correta da sua API
-
+  private userEmail = 'bea@gmail.com';
   constructor(
     private httpClient: HttpClient,
     private messageService: MessageService
@@ -26,26 +27,15 @@ export class SubscriptionService {
     return this.httpClient.post(this.apiUrl, subscriptionData, {headers}).pipe(map(this.extractData));
   }
 
-
-  createValidPlan(subscriptionData: Subscription): Observable<any> | null {
-    if (!this.validateData(subscriptionData)) return null;
-    return this.createSubscription(subscriptionData);
-  }
-
   public extractData(res: any) {
     return res || {};
   }
 
-  validateData(subscriptionData: Subscription): boolean {
-    if (subscriptionData.planName == null) {
-      this.log("ERROR: Plan Name can't be null.");
-      return false;
-    }
-    if (subscriptionData.userEmail == null) {
-      this.log("ERROR: User Email can't be null.");
-      return false;
-    }
-    return true;
+  getSubscriptions(params: string): Observable<any> {
+    return this.httpClient
+      .get(this.apiUrl + '/GetUserSubscriptions' + `?userEmail=${this.userEmail}`)
+      .pipe(map(this.extractData));
+
   }
 
   log(message: string) {

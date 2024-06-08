@@ -45,25 +45,4 @@ export class PlanComponent implements OnInit {
 
   showButton = false;
 
-  createSubscription(planName: string) {
-    const userEmail = this.authService.getUserEmail();
-
-    if (!userEmail) {
-      console.error('User is not logged in.');
-      return;
-    }
-
-    const subscriptionData: Subscription = {
-      planName: planName,
-      userEmail: userEmail
-    };
-    this.subscriptionService.createSubscription(subscriptionData).subscribe({
-      next: response => {
-        console.log('Subscription created successfully', response);
-      },
-      error: error => {
-        console.error('Error creating subscription', error);
-      }
-    });
-  }
 }

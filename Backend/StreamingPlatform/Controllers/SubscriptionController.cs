@@ -1,6 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using StreamingPlatform.Controllers.ResponseMapper;
 using StreamingPlatform.Controllers.Responses;
 using StreamingPlatform.Dtos.Contracts;
@@ -59,6 +63,33 @@ namespace StreamingPlatform.Controllers
                 logger.LogError($"Error: {e.Message}");
                 ErrorResponseObject errorResponseObject = MapResponse.InternalServerError();
                 return this.StatusCode(StatusCodes.Status500InternalServerError, errorResponseObject);
+            }
+        }
+        
+        [HttpGet("GetUserSubscriptions")]
+        [Authorize]
+        public async Task<IActionResult> GetUserSubscriptions([FromQuery] string userEmail)
+        {
+            try
+            {
+                var results = await subscriptionService.GetSubscriptions(userEmail);
+                logger.LogInformation(@"Success");
+                return this.Ok(results);
+            }
+            catch (ValidationException v)
+            {
+                logger.LogError($"Validation exception: ${v.Message}.");
+                return this.BadRequest(v.Message);
+            }
+            catch (InvalidOperationException i)
+            {
+                logger.LogError($"Invalid operation exceptions: ${i.Message}.");
+                return this.Conflict(i.Message);
+            }
+            catch (Exception e)
+            {
+                logger.LogError($"Exception: ${e.Message}.");
+                return this.StatusCode(StatusCodes.Status500InternalServerError, e.Message);
             }
         }
 

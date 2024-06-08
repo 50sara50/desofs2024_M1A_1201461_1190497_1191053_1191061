@@ -1,4 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using StreamingPlatform.Dao.Interfaces;
 using StreamingPlatform.Dtos.Contracts;
@@ -79,6 +83,39 @@ namespace StreamingPlatform.Services
             SubscriptionResponse subscriptionResponse = new SubscriptionResponse(subscription.Id.ToString(),
                 plan.PlanName, user.Email, subscription.CreatedOn, subscription.RenewDate, subscription.Status);
             return subscriptionResponse;
+        }
+
+        /// <summary>
+        /// Gets user's playlists.
+        /// </summary>
+        /// <returns></returns>
+        public async Task<IEnumerable<SubscriptionResponse>> GetSubscriptions(string userEmail)
+        {
+            //verify if user exists
+            var user = await _userManager.FindByEmailAsync(userEmail);
+            if (user == null)
+            {
+                throw new InvalidOperationException("User doesn't exist");
+            }
+
+            IGenericRepository<Subscription> repository = _unitOfWork.Repository<Subscription>();
+            var subscriptions = await repository.GetRecordsAsync(s => s.UserId.ToString().Equals(user.Id))
+                ?? throw new Exception("That user does not have any subscriptions.");
+            
+            //TODO: create mapper
+            var results = new List<SubscriptionResponse>();
+            foreach (var subscription in subscriptions)
+            {
+                IGenericRepository<Plan> planRepository = _unitOfWork.Repository<Plan>();
+                Plan? plan = await planRepository.GetRecordAsync(p => p.PlanId == subscription.PlanId);
+                if (plan == null)
+                {
+                    throw new InvalidOperationException("Plan doesn't exist");
+                }
+                results.Add(new SubscriptionResponse(subscription.Id.ToString(), plan.PlanName, user.Email, subscription.CreatedOn, subscription.RenewDate, subscription.Status));
+            }
+
+            return results;
         }
     }
 }
