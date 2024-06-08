@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Playlist } from '../domain/Playlist';
 import { PlaylistService } from 'src/app/services/playlist.service';
+import { SongService } from 'src/app/services/song.service';
 
 export interface Section {
   name: string;
@@ -12,22 +13,22 @@ export interface Section {
   templateUrl: './playlists.component.html',
 })
 export class AppListsComponent implements OnInit{
+  userEmail: 'user@example.com';
   playlist: Playlist;
   title: string;
   songs: string[];
 
   playlists: Playlist[];
 
-  constructor(private playlistServcie: PlaylistService) {}
+  constructor(private playlistServcie: PlaylistService, private songService: SongService) {}
   ngOnInit(): void {
     this.getPlaylists();
   }
 
   public getPlaylists(): void{
-    this.playlistServcie.getPlaylists().subscribe((data) => {
-      this.playlists = data;
+    this.playlistServcie.getPlaylists(this.userEmail).subscribe((data) => {
+      return this.playlists = data;
     });
-    console.log(this.playlistServcie.getPlaylists());
   }
 
 }

@@ -20,11 +20,11 @@ export const UiComponentsRoutes: Routes = [
         component: AppChipsComponent,
       },
       {
-        path: 'lists',
+        path: 'playlists',
         component: AppListsComponent,
       },
       {
-        path: 'menu',
+        path: 'plans',
         component: PlanComponent,
       },
       {

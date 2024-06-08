@@ -10,10 +10,12 @@
             <mat-card-title>{{ playlist.title }}</mat-card-title>
           </mat-card-header>
           <mat-card-content class="b-t-1">
-            <mat-list  *ngFor="let song of playlist.songs">
+            <mat-list  *ngFor="let song of playlist.songsInfo">
               <mat-list-item>
-                <span matListItemTitle class="f-s-16 f-w-600">{{song}}</span>
-                <span matListItemLine class="mat-body-1">Artist Name</span>
+                <span matListItemTitle class="f-s-16 f-w-600">{{song.title}}</span>
+                <span matListItemLine class="mat-body-1">{{song.artistId}}</span>
+                <span matListItemLine class="mat-body-1">{{song.albumId}}</span>
+                <span matListItemLine class="mat-body-1">{{song.duration}}</span>
               </mat-list-item>
             </mat-list>
           </mat-card-content>
