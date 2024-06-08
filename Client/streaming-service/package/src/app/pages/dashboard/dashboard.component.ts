@@ -24,6 +24,8 @@ import {
   ApexResponsive,
   NgApexchartsModule,
 } from 'ng-apexcharts';
+import { Playlist } from '../ui-components/domain/Playlist';
+import { PlaylistService } from 'src/app/services/playlist.service';
 
 interface month {
   value: string;
@@ -242,7 +244,9 @@ export class AppDashboardComponent {
     },
   ];
 
-  constructor() {
+  playlist: Playlist;
+
+  constructor(private playlistService: PlaylistService) {
     // sales overview chart
     this.profitExpanceChart = {
       series: [
@@ -416,5 +420,16 @@ export class AppDashboardComponent {
         },
       },
     };
+  }
+
+  ngOnInit(): void {
+    this.getPlaylists();
+  }
+
+  public getPlaylists(): void {
+    this.playlistService.getPlaylists('user@example.com').subscribe((data) => {
+      this.playlist = data[0];
+      return data;
+    });
   }
 }

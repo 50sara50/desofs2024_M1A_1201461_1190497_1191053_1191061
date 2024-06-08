@@ -12,8 +12,8 @@
           <mat-card-content class="b-t-1">
             <mat-list  *ngFor="let song of playlist.songsInfo">
               <mat-list-item>
-                <span matListItemTitle class="f-s-16 f-w-600">{{song.title}}</span>
-                <span matListItemLine class="mat-body-1">{{song.artistId}}</span>
+                <span matListItemTitle class="f-s-16 f-w-600">Title: {{song.title}}</span>
+                <span matListItemLine class="mat-body-1">Artist: {{song.artistId}}</span>
                 <span matListItemLine class="mat-body-1">{{song.albumId}}</span>
                 <span matListItemLine class="mat-body-1">{{song.duration}}</span>
               </mat-list-item>
