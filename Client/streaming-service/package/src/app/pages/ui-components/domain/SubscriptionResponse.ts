@@ -1,4 +1,4 @@
-export class Subscription {
+export class SubscriptionResponse {
   planName: string;
   createdOn: string;
   renewDate: string;

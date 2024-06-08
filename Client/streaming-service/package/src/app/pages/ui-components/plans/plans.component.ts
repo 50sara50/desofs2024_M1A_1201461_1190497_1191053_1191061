@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { Plan } from '../domain/Plan';
 import { PlanService } from '../../../services/plan.service';
 import {SubscriptionService} from "../../../services/subscription.service";
-import {Subscription} from "../domain/Subscription";
 import {AuthService} from "../../../services/auth.service";
 @Component({
   selector: 'app-menu',
@@ -45,4 +44,8 @@ export class PlanComponent implements OnInit {
 
   showButton = false;
 
+  createSubscription(planName: string) {
+    // @ts-ignore
+    this.subscriptionService.createValidSubscription(planName).subscribe();
+  }
 }

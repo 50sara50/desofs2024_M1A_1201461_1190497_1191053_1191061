@@ -6,7 +6,6 @@ import { AppChipsComponent } from './personal-data/personal-data.component';
 import { AppListsComponent } from './playlists/playlists.component';
 import {PlanComponent} from './plans/plans.component';
 import { AppTooltipsComponent } from './tooltips/tooltips.component';
-import {SubscriptionsComponent} from "./subscriptions/subscriptions.component";
 
 export const UiComponentsRoutes: Routes = [
   {
@@ -27,10 +26,6 @@ export const UiComponentsRoutes: Routes = [
       {
         path: 'plans',
         component: PlanComponent,
-      },
-      {
-        path: 'subscriptions',
-        component: SubscriptionsComponent,
       },
       {
         path: 'tooltips',

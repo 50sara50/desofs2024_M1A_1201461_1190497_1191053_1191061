@@ -13,8 +13,14 @@ namespace StreamingPlatform.Services.Interfaces
         /// <param name="subscriptionDto">DTO containing information about the subscription to be created.</param>
         /// <returns>A task that resolves to a DTO containing details of the created subscription.</returns>
         public Task<SubscriptionResponse> CreateSubscription(CreateSubscriptionContract subscriptionDto);
+        /// <summary>
+        /// Creates a new subscription based on the provided details.
+        /// </summary>
+        /// <param name="subscriptionDto">DTO containing information about the subscription to be created.</param>
+        /// <returns>A task that resolves to a DTO containing details of the created subscription.</returns>
+        public Task<SubscriptionResponse> CreateSubscriptionById(CreateSubscriptionContractById subscriptionDto);
         
-        public Task<IEnumerable<SubscriptionResponse>> GetSubscriptions(string userEmail);
+        public Task<IEnumerable<SubscriptionResponse>> GetSubscriptions(string userId);
 
     }
 }

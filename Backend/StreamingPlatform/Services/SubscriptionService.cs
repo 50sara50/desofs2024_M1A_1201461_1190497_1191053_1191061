@@ -12,6 +12,7 @@ using StreamingPlatform.Models;
 using StreamingPlatform.Models.Enums;
 using StreamingPlatform.Services.Exceptions;
 using StreamingPlatform.Services.Interfaces;
+using SubscriptionResponse = StreamingPlatform.Dtos.Responses.SubscriptionResponse;
 
 namespace StreamingPlatform.Services
 {
@@ -84,15 +85,72 @@ namespace StreamingPlatform.Services
                 plan.PlanName, user.Email, subscription.CreatedOn, subscription.RenewDate, subscription.Status);
             return subscriptionResponse;
         }
+        
+        /// <summary>
+        /// Creates a new subscription based on the provided subscription data.
+        /// </summary>
+        /// <param name="subscriptionDto">The data for the subscription to be created.</param>
+        /// <returns>The newly created subscription as a response.</returns>
+        /// <exception cref="InvalidOperationException">Thrown when attempting to create a subscription that already exists.</exception>
+        /// <exception cref="InvalidOperationException">Thrown when attempting to create a subscription with a user that doesn't exist.</exception>
+        /// <exception cref="InvalidOperationException">Thrown when attempting to create a subscription with a plan that doesn't exist.</exception>
+        /// <exception cref="ValidationException">Thrown when input data fails validation.</exception>
+        /// <exception cref="ServiceBaseException">Thrown for unexpected errors during subscription creation.</exception>
+        public async Task<SubscriptionResponse> CreateSubscriptionById(CreateSubscriptionContractById subscriptionDto)
+        {
+            var validationContext = new ValidationContext(subscriptionDto, serviceProvider: null, items: null);
+            var validationResults = new List<ValidationResult>();
+            bool isValid = Validator.TryValidateObject(subscriptionDto, validationContext, validationResults,
+                validateAllProperties: true);
+
+            if (!isValid)
+            {
+                var errorMessages = validationResults.Select(r => r.ErrorMessage);
+                throw new ArgumentException(string.Join(" ", errorMessages));
+            }
+
+            IGenericRepository<Subscription> subscriptionRepository = _unitOfWork.Repository<Subscription>();
+
+            //IGenericRepository<AspNetUsers> userRepository = this.unitOfWork.Repository<User>();
+
+            var user = await _userManager.FindByIdAsync(subscriptionDto.UserId);
+            if (user == null)
+            {
+                throw new InvalidOperationException("User doesn't exist");
+            }
+
+            IGenericRepository<Plan> planRepository = _unitOfWork.Repository<Plan>();
+
+            Plan? plan = await planRepository.GetRecordAsync(p => p.PlanName == subscriptionDto.PlanName);
+            if (plan == null)
+            {
+                throw new InvalidOperationException("Plan doesn't exist");
+            }
+
+            Subscription? existingSubscription =
+                await subscriptionRepository.GetRecordAsync(s => Equals(s.UserId, user.Id));
+            if (existingSubscription != null)
+            {
+                throw new InvalidOperationException("Subscription already exists");
+            }
+
+            Subscription subscription = new(user.Id, plan.PlanId);
+            subscriptionRepository.Create(subscription);
+            await _unitOfWork.SaveChangesAsync();
+
+            SubscriptionResponse subscriptionResponse = new SubscriptionResponse(subscription.Id.ToString(),
+                plan.PlanName, user.Email, subscription.CreatedOn, subscription.RenewDate, subscription.Status);
+            return subscriptionResponse;
+        }
 
         /// <summary>
         /// Gets user's playlists.
         /// </summary>
         /// <returns></returns>
-        public async Task<IEnumerable<SubscriptionResponse>> GetSubscriptions(string userEmail)
+        public async Task<IEnumerable<SubscriptionResponse>> GetSubscriptions(string userId)
         {
             //verify if user exists
-            var user = await _userManager.FindByEmailAsync(userEmail);
+            var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
             {
                 throw new InvalidOperationException("User doesn't exist");

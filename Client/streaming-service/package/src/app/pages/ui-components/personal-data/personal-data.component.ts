@@ -6,7 +6,7 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { SubscriptionService } from '../../../services/subscription.service';
 import {PlanService} from "../../../services/plan.service";
 import {AuthService} from "../../../services/auth.service";
-import {Subscription} from "../domain/Subscription";
+import {SubscriptionResponse} from "../domain/SubscriptionResponse";
 
 @Component({
   selector: 'app-chips',
@@ -15,7 +15,7 @@ import {Subscription} from "../domain/Subscription";
 })
 export class AppChipsComponent {
 
-  subscriptions: Subscription[];
+  subscriptions: SubscriptionResponse[];
   userEmail: 'user@example.com';
   constructor(private subscriptionService: SubscriptionService, private authService: AuthService) {}
 
@@ -25,7 +25,7 @@ export class AppChipsComponent {
 
 
   public getSubscriptions(): void {
-    this.subscriptionService.getSubscriptions(this.userEmail).subscribe((data) => {
+    this.subscriptionService.getSubscriptions().subscribe((data) => {
       this.subscriptions = data;
     });
   }

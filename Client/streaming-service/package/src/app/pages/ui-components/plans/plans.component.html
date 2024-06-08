@@ -1,3 +1,4 @@
+
 <mat-card class="cardWithShadow theme-card">
   <mat-card-header>
     <mat-card-title class="m-b-0">Plans</mat-card-title>
@@ -16,6 +17,7 @@
               <span [style.color]="plan.status === 'Inactive' ? 'red' : 'green'"
                     [style.font-weight]="'bold'">{{plan.status}}</span>
             </p>
+            <a mat-raised-button color="primary" class="w-100" (click)="createSubscription(plan.planName)">Subscribe plan</a>
           </mat-card-content>
         </mat-card>
       </div>
