@@ -24,7 +24,7 @@ export class AppSideLoginComponent {
     this.authService.login(email, password).subscribe({
       next: (response) => {
         if (response && response.token) {
-          this.router.navigate(['/dashboard']);
+          this.router.navigate(['/app/ui-components/playlists']);
         }
       },
       error: (err) => {

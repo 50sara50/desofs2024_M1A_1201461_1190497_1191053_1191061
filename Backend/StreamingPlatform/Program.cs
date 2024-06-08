@@ -57,19 +57,17 @@ namespace StreamingPlatform
             if (builder.Environment.IsDevelopment())
             {
                 builder.Services
-                    .AddDbContext<StreamingDbContext>(options => options.UseInMemoryDatabase("DB"))
-                    .AddDbContext<AuthDbContext>(options => options.UseInMemoryDatabase("DB"));
+                    .AddDbContext<StreamingDbContext>(options => options.UseInMemoryDatabase("DB"));
             }
             else
             {
                 builder.Services
-                    .AddDbContext<StreamingDbContext>(options => options.UseSqlServer(databaseConnectionString))
-                    .AddDbContext<AuthDbContext>(options => options.UseSqlServer(databaseConnectionString));
+                    .AddDbContext<StreamingDbContext>(options => options.UseSqlServer(databaseConnectionString));
             }
 
             // Identity
             builder.Services.AddIdentity<User, IdentityRole>()
-                .AddEntityFrameworkStores<AuthDbContext>()
+                .AddEntityFrameworkStores<StreamingDbContext>()
                 .AddDefaultTokenProviders();
             AddRateLimiting(builder);
             AddOutPutCaching(builder);
