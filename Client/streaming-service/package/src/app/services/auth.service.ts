@@ -36,8 +36,4 @@ export class AuthService {
     return this.httpClient.post(requestUrl, newUser).pipe(shareReplay());
   }
 
-  public getUserEmail(): string | null {
-    return localStorage.getItem('userEmail');
-  }
-
 }
