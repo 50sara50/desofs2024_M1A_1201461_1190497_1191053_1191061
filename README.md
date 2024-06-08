@@ -1,33 +1,47 @@
 # Subscription_Management_API
 
-An academic level 3 RestFull API to manage subscriptions much like Spotify.
+An academic RestFull API to manage subscriptions much like Spotify.
+The project is divided into two main parts: the frontend, which provides the user interface, and the backend, which processes requests and manages the database. The goal is to offer an intuitive and effective application with SSDLC Implementation, Testing and Deployment steps.
 
 ### Contributors
 
-This project was develop together with Sara Borges and Simão Gomes.
+This project was develop by Davide Clemente, Sara Borges, Beatriz Borges and Simão Gomes.
 
 ## Architecture
 
-The project is designed following a microservice style approach, splitting services by domain concepts as well as responsibility concerns.
+Domain Model:
+![Domain Model](Diagramas/domain_model.svg)
 
-![Architecture](Docs/architecture.svg)
+Monolitjic Diagram:
+
+![Monolithic Diagram](Diagramas/monolithic_diagram.svg)
+
+## Features
+- **Plan Visualization**: Access to the different plans available on the platform.
+- **Plan Subscription:** Allows users to subscribe their plans.
+- **Music and Playlist Management:** Create and manage playlists and music.
+- **Music Upload:** Artists can upload and manage their music on the platform.
+- **Administration:** Tools for plan and user management for administrators.
+
+## Technologies Used
+- **Frontend**: Angular
+- **Backend**: .NET Core
+- **Database**: Microsoft SQL Server
+- **Containerization**: Docker
 
 ## Security
-
-We implement Passport Login with JWT authentication that sends user roles along with further requests. Back-end services then check if the user has any of the allowed ones.
-
-## Scalability
-
-We are not yet implementing scalability in our system, although since our implementation follows a micro-service-like architecture, one way to achieve it it’s by using, for example, a combination of Docker + Kubernetes
+Security is a priority in our application. We have implemented various measures to ensure the protection of data and user privacy:
+- **Authentication and Authorization**: We use JWT (JSON Web Tokens) to authenticate and authorize users, ensuring that only authorized users have access to protected resources. As well as aplying strong credential storage policies.
+- **Data Encryption**: All sensitive data is encrypted.
+- **Protection Against CSRF and XSS Attacks**: We have implemented measures to protect against Cross-Site Request Forgery (CSRF) and Cross-Site Scripting (XSS) attacks, ensuring the integrity of interactions with the application.
+- **Monitoring and Logging**: The application is actively monitored, and detailed logs as well as efective error handling are maintained to detect and respond quickly to any suspicious activities or security breaches.
 
 ## HTTP Verbs
 
 We used the HTTP verbs according to REST Principles:
 
 -   GET – Get resource info
--   PUT – Creates/updates resource
 -   PATCH – Partially updates resource
--   DELETE – Delete resource
 -   POST – Resource actions i.e. login + adds resource to collection
 
 ## HTTP Response Codes
@@ -45,28 +59,16 @@ We used different HTTP codes as response:
 -   412 PRECONDITION FAILED
 -   500 INTERNAL SERVER ERROR
 
-## Caching
+  
+# Installation
 
-We implement cache in our system with the library node-cache. Each item saved in the cache has a time-to-live parameter that must be refined to both improve system performance and not miss data changes in external services.
-
-## Other features
-
-The API supports concurrent access, pagination, filtering, hypermedia, synchronous/asynchronous requests (i.e. callback url)
-
-# How to Run
-
+## Prerequisites
+- Node.js
+- .NET Core SDK
+  
+## How to Run
 -   Download Repository
 -   Open with editor of choice (i.e. vs code)
--   Install dependencies on each service with **npm install**
--   Create **.env** file inside API_Gateway_Authentication_Service folder and paste content of **.env.sample** file
--   Start each service with **npm start** (Optionally you could use **npm run dev** to run the projects with **nodemon**)
+-   Install dependencies on frontend service (Client folder) with **npm install**
+-   Start frontend service with **npm start**, and backend (Backend folder) with **dotnet run**
 
-## Users and passwords
-
--   Admin/admin
--   Mario/111
--   Sara/abc
-
-## Open API
-
-[Swagger API Docs](http://localhost:3000/api-docs/)
