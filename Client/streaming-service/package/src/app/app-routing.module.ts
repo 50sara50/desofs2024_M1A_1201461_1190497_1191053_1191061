@@ -44,10 +44,6 @@ const routes: Routes = [
         path: 'logout',
         redirectTo: '/authentication/login',
       },
-      {
-        path: 'personal-data',
-        redirectTo: './pages/ui-components/personal-data',
-      },
     ],
   },
 ];
