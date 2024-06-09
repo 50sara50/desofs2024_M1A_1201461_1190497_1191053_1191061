@@ -17,7 +17,7 @@ namespace StreamingPlatform.Models
         /// The unique identifier of the owner of the subscription.
         /// </summary>
         [Required(ErrorMessage = "User Id is required.")]
-        public string UserId { get; set; }
+        public Guid UserId { get; set; }
         
         /// <summary>
         /// The unique identifier of the plan.
@@ -49,7 +49,7 @@ namespace StreamingPlatform.Models
             this.RenewDate = DateTime.Now.AddYears(1);
         }
 
-        public Subscription(string userId, Guid planId)
+        public Subscription(Guid userId, Guid planId)
         {
             this.Id = Guid.NewGuid();
             this.UserId = userId;

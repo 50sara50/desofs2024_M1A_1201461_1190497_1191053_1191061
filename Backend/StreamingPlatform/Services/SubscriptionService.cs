@@ -77,7 +77,7 @@ namespace StreamingPlatform.Services
                 throw new InvalidOperationException("Subscription already exists");
             }
 
-            Subscription subscription = new(user.Id, plan.PlanId);
+            Subscription subscription = new(new Guid(user.Id), plan.PlanId);
             subscriptionRepository.Create(subscription);
             await _unitOfWork.SaveChangesAsync();
 
@@ -134,7 +134,7 @@ namespace StreamingPlatform.Services
                 throw new InvalidOperationException("Subscription already exists");
             }
 
-            Subscription subscription = new(user.Id, plan.PlanId);
+            Subscription subscription = new(new Guid(user.Id), plan.PlanId);
             subscriptionRepository.Create(subscription);
             await _unitOfWork.SaveChangesAsync();
 
