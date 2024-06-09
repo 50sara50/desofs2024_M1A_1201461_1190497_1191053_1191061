@@ -13,34 +13,34 @@ export interface Section {
   selector: 'app-lists',
   templateUrl: './playlists.component.html',
 })
-export class AppListsComponent implements OnInit{
+export class AppListsComponent implements OnInit {
   userEmail: 'user@example.com';
   playlist: Playlist;
   title: string;
 
   playlists: Playlist[];
 
-  constructor(private playlistServcie: PlaylistService, private songService: SongService) {}
+  constructor(
+    private playListService: PlaylistService,
+    private songService: SongService
+  ) {}
   ngOnInit(): void {
     this.getPlaylists();
   }
 
   public getPlaylists(): void {
-    this.playlistServcie.getPlaylists(this.userEmail).subscribe((data) => {
+    this.playListService.getPlaylists().subscribe((data) => {
       this.playlists = data;
-      this.loadPlaylistSongs();
+      this.playlists.forEach((playlist) => {
+        playlist.songsInfo = [];
+        playlist.songs?.forEach((song) => {
+          this.songService.getSong(song).subscribe((data) => {
+            console.log('Data', data);
+            playlist.songsInfo?.push(data);
+          });
+        });
+      });
       return data;
     });
   }
-
-  public loadPlaylistSongs(): void{
-    this.playlists.forEach((playlist) => {
-      playlist.songs?.forEach((song) => {
-        this.songService.getSong(song).subscribe((data) => {
-          return playlist.songsInfo?.push(data);
-        });
-      })
-    })
-  }
-
 }

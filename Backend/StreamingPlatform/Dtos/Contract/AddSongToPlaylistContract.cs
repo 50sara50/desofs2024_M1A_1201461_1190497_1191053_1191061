@@ -7,13 +7,13 @@ namespace StreamingPlatform.Dtos.Contract
         /// <summary>
         /// The identifier of the playlist.
         /// </summary>
-        [Required (ErrorMessage = "PlaylistId is required.")]
-        public string PlaylistId { get; set; }
+        [Required(ErrorMessage = "PlaylistId is required.")]
+        public Guid PlaylistId { get; set; }
 
         /// <summary>
         /// The identifier of the song to be added.
         /// </summary>
-        [Required (ErrorMessage = "The song id is required.")]
-        public string SongId { get; set; }
+        [Required(ErrorMessage = "The song id is required.")]
+        public Guid SongId { get; set; }
     }
 }

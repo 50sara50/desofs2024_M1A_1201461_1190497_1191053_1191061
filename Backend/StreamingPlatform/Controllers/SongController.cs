@@ -24,7 +24,7 @@ namespace StreamingPlatform.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("GetSongById")]
-        public async Task<IActionResult> GetById([FromQuery] string id)
+        public async Task<IActionResult> GetById([FromQuery] Guid id)
         {
             try
             {
@@ -36,9 +36,9 @@ namespace StreamingPlatform.Controllers
             {
                 logger.LogError($"Exception: ${e.Message}");
                 return this.Conflict(e.Message);
-            }    
+            }
         }
-        
+
         /// <summary>
         /// Creates a new song and stores it in the database.
         /// </summary>
@@ -158,6 +158,6 @@ namespace StreamingPlatform.Controllers
                 return this.StatusCode(StatusCodes.Status500InternalServerError, errorResponseObject);
             }
         }
-        
+
     }
 }

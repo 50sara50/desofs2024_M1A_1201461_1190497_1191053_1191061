@@ -8,7 +8,7 @@
         Task SaveChangesAsync();
 
         void SaveChanges();
-
+        StreamingDbContext GetContext();
         IGenericRepository<TEntity> Repository<TEntity>()
             where TEntity : class;
     }

@@ -38,11 +38,6 @@ namespace StreamingPlatform.Dao
         public DbSet<Album> Albums { get; set; }
 
         /// <summary>
-        /// Set of users in the database.
-        /// </summary>
-        public DbSet<User> Users { get; set; }
-
-        /// <summary>
         /// Set of subscriptions in the database.
         /// </summary>
         public DbSet<Subscription> Subscriptions { get; set; }

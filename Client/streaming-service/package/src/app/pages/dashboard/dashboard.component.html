@@ -14,17 +14,16 @@
           <div class="col-lg-6">
             <mat-card class="b-1 shadow-none">
               <mat-card-header>
-                <mat-card-title>{{playlist}}</mat-card-title>
+                <mat-card-title>{{playlist?.title}}</mat-card-title>
               </mat-card-header>
               <mat-card-content class="b-t-1">
-                <mat-list  *ngFor="let song of playlist.songsInfo">
+                <mat-list *ngFor="let song of playlist?.songsInfo ?? []">
                   <mat-list-item>
                     <span matListItemTitle class="f-s-16 f-w-600">Title: {{song.title}}</span>
-                    <span matListItemLine class="mat-body-1">Artist: {{song.artistId}}</span>
-                    <span matListItemLine class="mat-body-1">{{song.albumId}}</span>
-                    <span matListItemLine class="mat-body-1">{{song.duration}}</span>    
+                    <span matListItemLine class="mat-body-1">Artist: {{song.artist}}</span>
+                    <span matListItemLine class="mat-body-1">{{song.album}}</span>
                   </mat-list-item>
-                  </mat-list>
+                </mat-list>
               </mat-card-content>
             </mat-card>
           </div>

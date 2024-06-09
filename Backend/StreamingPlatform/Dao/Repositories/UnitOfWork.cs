@@ -21,6 +21,10 @@ namespace StreamingPlatform.Dao.Repositories
             GC.SuppressFinalize(this);
         }
 
+        public StreamingDbContext GetContext()
+        {
+            return this.context;
+        }
         /// <summary>
         /// Creates a repository for the given entity.
         /// </summary>
