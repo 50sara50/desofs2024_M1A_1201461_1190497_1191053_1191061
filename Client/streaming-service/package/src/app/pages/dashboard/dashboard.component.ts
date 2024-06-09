@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ViewEncapsulation, ViewChild } from '@angular/core';
+import { Component, ViewEncapsulation, ViewChild, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -24,6 +24,9 @@ import {
   ApexResponsive,
   NgApexchartsModule,
 } from 'ng-apexcharts';
+import { Playlist } from '../ui-components/domain/Playlist';
+import { PlaylistService } from 'src/app/services/playlist.service';
+import { SongService } from 'src/app/services/song.service';
 
 interface month {
   value: string;
@@ -151,7 +154,7 @@ const ELEMENT_DATA: productsData[] = [
     CommonModule,
   ],
 })
-export class AppDashboardComponent {
+export class AppDashboardComponent implements OnInit {
   @ViewChild('chart') chart: ChartComponent = Object.create(null);
 
   public profitExpanceChart!: Partial<profitExpanceChart> | any;
@@ -242,7 +245,12 @@ export class AppDashboardComponent {
     },
   ];
 
-  constructor() {
+  playlist?: Playlist;
+
+  constructor(
+    private playlistService: PlaylistService,
+    private songService: SongService
+  ) {
     // sales overview chart
     this.profitExpanceChart = {
       series: [
@@ -267,7 +275,7 @@ export class AppDashboardComponent {
           horizontal: false,
           columnWidth: '30%',
           borderRadius: 4,
-          endingShape: "rounded",
+          endingShape: 'rounded',
         },
       },
       chart: {
@@ -416,5 +424,26 @@ export class AppDashboardComponent {
         },
       },
     };
+  }
+
+  ngOnInit(): void {
+    this.getPlaylists();
+  }
+
+  public getPlaylists(): void {
+    this.playlistService.getPlaylists().subscribe((data) => {
+      console.log('Data', data);
+      this.playlist = data.find((playlist) => playlist.songs?.length ?? 0 > 0);
+      if (!this.playlist) return;
+      this.playlist.songsInfo = [];
+      this.playlist.songs?.forEach((song) => {
+        this.songService.getSong(song).subscribe((data) => {
+          console.log('Data', data);
+          this.playlist?.songsInfo?.push(data);
+        });
+      });
+
+      return data;
+    });
   }
 }

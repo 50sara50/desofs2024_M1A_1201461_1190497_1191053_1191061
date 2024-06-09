@@ -1,7 +1,7 @@
-import { Song } from "./Song";
+import { Song } from './Song';
 
 export class Playlist {
-    title: string;
-    songs?: string[];
-    songsInfo?: Song[];
+  title: string;
+  songs?: string[];
+  songsInfo?: Song[];
 }

@@ -19,6 +19,34 @@ namespace StreamingPlatform.Controllers
     public class SongController(ILogger<SongController> logger, ISongService songService, IConfiguration configuration) : ControllerBase
     {
         /// <summary>
+        /// Get song by id.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("GetSongById")]
+        public async Task<IActionResult> GetById([FromQuery] Guid id)
+        {
+            try
+            {
+                SongResponseDto songResponseDto = await songService.GetSongById(id);
+                // Generate the download URL
+                string? downloadUrl = this.Url.Action(
+                    nameof(this.DownloadSong),
+                    null,
+                    new { songName = songResponseDto.Title, artistName = songResponseDto.Artist, albumName = songResponseDto.Album },
+                    protocol: this.Request.Scheme);
+                logger.LogInformation($"Song '${songResponseDto.Title}'.");
+                songResponseDto.DownloadUrl = downloadUrl;
+                return this.Ok(songResponseDto);
+            }
+            catch (Exception e)
+            {
+                logger.LogError($"Exception: ${e.Message}");
+                return this.Conflict(e.Message);
+            }
+        }
+
+        /// <summary>
         /// Creates a new song and stores it in the database.
         /// </summary>
         [HttpPost]
@@ -137,5 +165,6 @@ namespace StreamingPlatform.Controllers
                 return this.StatusCode(StatusCodes.Status500InternalServerError, errorResponseObject);
             }
         }
+
     }
 }
