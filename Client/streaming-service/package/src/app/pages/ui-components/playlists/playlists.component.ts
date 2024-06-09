@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { Playlist } from '../domain/Playlist';
 import { PlaylistService } from 'src/app/services/playlist.service';
 import { SongService } from 'src/app/services/song.service';
-import { Song } from '../domain/Song';
 
 export interface Section {
   name: string;
@@ -41,6 +40,20 @@ export class AppListsComponent implements OnInit {
         });
       });
       return data;
+    });
+  }
+
+  public downloadSong(url: string | undefined, songName: string): void {
+    if (!url) return;
+    this.songService.downloadSong(url).subscribe((blob) => {
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${songName}`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
     });
   }
 }

@@ -29,7 +29,14 @@ namespace StreamingPlatform.Controllers
             try
             {
                 SongResponseDto songResponseDto = await songService.GetSongById(id);
+                // Generate the download URL
+                string? downloadUrl = this.Url.Action(
+                    nameof(this.DownloadSong),
+                    null,
+                    new { songName = songResponseDto.Title, artistName = songResponseDto.Artist, albumName = songResponseDto.Album },
+                    protocol: this.Request.Scheme);
                 logger.LogInformation($"Song '${songResponseDto.Title}'.");
+                songResponseDto.DownloadUrl = downloadUrl;
                 return this.Ok(songResponseDto);
             }
             catch (Exception e)

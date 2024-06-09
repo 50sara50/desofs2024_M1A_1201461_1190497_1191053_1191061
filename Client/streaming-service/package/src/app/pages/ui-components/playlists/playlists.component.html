@@ -11,10 +11,17 @@
           </mat-card-header>
           <mat-card-content class="b-t-1">
             <mat-list *ngFor="let song of playlist.songsInfo">
-              <mat-list-item>
+              <mat-list-item style="height: 120px;">
                 <span matListItemTitle class="f-s-16 f-w-600">Title: {{song.title}}</span>
                 <span matListItemLine class="mat-body-1">Artist: {{song.artist}}</span>
                 <span matListItemLine class="mat-body-1">{{song.album}}</span>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="24"
+                  height="24" (click)="downloadSong(song.downloadUrl, song.title)" style="cursor: pointer;">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 17l-4 4m0 0l-4-4m4 4V3">
+                  </path>
+                </svg>
+
+
               </mat-list-item>
             </mat-list>
           </mat-card-content>
