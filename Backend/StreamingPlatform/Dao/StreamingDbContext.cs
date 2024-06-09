@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using StreamingPlatform.Dao.Helper;
 using StreamingPlatform.Models;
 
@@ -8,8 +9,9 @@ namespace StreamingPlatform.Dao
     /// Class that represents the database context.
     /// </summary>
     /// <param name="options"></param>
-    public class StreamingDbContext(DbContextOptions<StreamingDbContext> options) : DbContext(options)
+    public class StreamingDbContext(DbContextOptions<StreamingDbContext> options) : IdentityDbContext<User>(options)
     {
+
         /// <summary>
         /// Set of users in the database.
         /// </summary>
@@ -36,11 +38,6 @@ namespace StreamingPlatform.Dao
         public DbSet<Album> Albums { get; set; }
 
         /// <summary>
-        /// Set of users in the database.
-        /// </summary>
-        public DbSet<User> Users { get; set; }
-
-        /// <summary>
         /// Set of subscriptions in the database.
         /// </summary>
         public DbSet<Subscription> Subscriptions { get; set; }
@@ -62,6 +59,8 @@ namespace StreamingPlatform.Dao
                 .HasOne(sp => sp.Playlist)
                 .WithMany(p => p.SongPlaylists)
                 .HasForeignKey(sp => sp.PlaylistId);
+            base.OnModelCreating(modelBuilder);
+
         }
     }
 }

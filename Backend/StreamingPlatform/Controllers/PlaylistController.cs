@@ -1,6 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using StreamingPlatform.Controllers.ResponseMapper;
+using StreamingPlatform.Controllers.Responses;
 using StreamingPlatform.Dtos.Contract;
 using StreamingPlatform.Services.Interfaces;
 
@@ -15,7 +17,7 @@ namespace StreamingPlatform.Controllers
     {
 
         [HttpGet("GetPlaylistById")]
-        public async Task<IActionResult> GetById([FromQuery] string id)
+        public async Task<IActionResult> GetById([FromQuery] Guid id)
         {
             try
             {
@@ -23,15 +25,11 @@ namespace StreamingPlatform.Controllers
                 logger.LogInformation(
                     $"Playlist '${playlistResponseDto.Title}' added on user's '${playlistResponseDto.UserId}' account.");
                 return this.Ok(playlistResponseDto);
-            } catch (ValidationException v)
-            {
-                logger.LogError($"Validation exception: ${v.Message}.");
-                return this.BadRequest(v.Message);
             }
             catch (InvalidOperationException i)
             {
                 logger.LogError($"Invalid operation exceptions: ${i.Message}.");
-                return this.Conflict(i.Message);
+                return this.BadRequest(i.Message);
             }
             catch (Exception e)
             {
@@ -39,7 +37,7 @@ namespace StreamingPlatform.Controllers
                 return this.StatusCode(StatusCodes.Status500InternalServerError, e.Message);
             }
         }
-        
+
         /// <summary>
         /// Add new playlist
         /// </summary>
@@ -82,16 +80,18 @@ namespace StreamingPlatform.Controllers
         /// <returns></returns>
         [HttpPatch("AddSongToPlaylist")]
         [Authorize]
-        public async Task<PlaylistResponseDto> AddSong([FromBody] AddSongToPlaylistContract contract)
+        public async Task<IActionResult> AddSong([FromBody] AddSongToPlaylistContract contract)
         {
             try
             {
-                throw new NotImplementedException();
+                PlaylistResponseDto result = await playlistService.AddSongToPlaylist(contract);
+                logger.LogInformation($"Song added to playlist.");
+                return this.Ok(result);
             }
-            catch (Exception e)
+            catch (InvalidOperationException e)
             {
-                Console.WriteLine(e);
-                throw;
+                ErrorResponseObject errorResponseObject = MapResponse.BadRequest(e.Message);
+                return this.BadRequest(errorResponseObject);
             }
         }
 

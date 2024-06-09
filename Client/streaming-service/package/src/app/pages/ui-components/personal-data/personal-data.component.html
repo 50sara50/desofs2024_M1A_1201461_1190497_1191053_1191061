@@ -5,36 +5,28 @@
   <mat-card-content class="b-t-1">
     <div class="row">
       <div class="col-lg-6">
-        <!-- ------------------------------------------------------------------------- -->
-        <!-- basic -->
-        <!-- ------------------------------------------------------------------------- -->
-
         <mat-card class="b-1 shadow-none">
           <mat-card-header>
             <mat-card-title>My Subscription</mat-card-title>
           </mat-card-header>
           <mat-card-content class="b-t-1">
-            <mat-card class="b-1 shadow-none">
-              <mat-card-header>
-                <mat-card-title>Silver Plan</mat-card-title>
-              </mat-card-header>
-              <mat-card-content class="b-t-1">
-                <mat-card-title>Details:</mat-card-title>
-                <mat-list>
-                  <mat-list-item>
-                    <mat-icon matListItemIcon>folder</mat-icon>
-                    <h4>Max streaming minutes: 1000 minutes per month</h4>
-                  </mat-list-item>
-                  <mat-list-item>
-                    <mat-icon matListItemIcon>folder</mat-icon>
-                    <h4>Monthly fee: 8,99€</h4>
-                  </mat-list-item>
-                </mat-list>
-              </mat-card-content>
-            </mat-card>
+            <div class="row m-t-20">
+              <div class="col-sm-6 col-lg-4" *ngFor="let subscription of subscriptions">
+                <mat-card-header>
+                  <mat-card-title>{{ subscription.planName }}</mat-card-title>
+                </mat-card-header>
+                <mat-card-content class="b-t-1">
+                  <p>Created On: <span class="date">{{ subscription.createdOn | date: 'dd-MM-yyyy' }}</span></p>
+                  <p>Renew Date: <span class="date">{{ subscription.renewDate | date: 'dd-MM-yyyy' }}</span></p>
+                  <p *ngIf="subscription.status">Status:
+                    <span [style.color]="subscription.status === 'Inactive' ? 'red' : 'green'"
+                          [style.font-weight]="'bold'">{{subscription.status}}</span>
+                  </p>
+                </mat-card-content>
+              </div>
+            </div>
           </mat-card-content>
         </mat-card>
-      </div>
 
       <div class="col-lg-6">
         <!-- ------------------------------------------------------------------------- -->

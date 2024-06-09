@@ -16,7 +16,7 @@ public sealed class AuthControllerTest
     private Mock<ILogger<AuthController>> _loggerMock;
     private Mock<IAuthService> _authServiceMock;
     private ControllerContext _controllerContext;
-    
+
 
     [TestInitialize]
     public void Setup()
@@ -81,6 +81,13 @@ public sealed class AuthControllerTest
     [TestMethod]
     public async Task ShouldLoginSuccessfully()
     {
+
+        Mock<HttpContext> _httpContextMock = new();
+        Mock<HttpResponse> _httpResponseMock = new();
+        _httpContextMock.Setup(c => c.Response).Returns(_httpResponseMock.Object);
+        _httpResponseMock.Setup(r => r.Cookies).Returns(new Mock<IResponseCookies>().Object);
+
+
         // Arrange
         var user = new UserLoginContract()
         {
@@ -92,10 +99,29 @@ public sealed class AuthControllerTest
 
         _authServiceMock.Setup(x => x.Login(user))
             .Returns(Task.FromResult(response));
-        var controller = new AuthController(_loggerMock.Object, _authServiceMock.Object);
+
+        ControllerContext controllerContext = new()
+        {
+            HttpContext = _httpContextMock.Object
+        };
+        var controller = new AuthController(_loggerMock.Object, _authServiceMock.Object)
+        {
+            ControllerContext = controllerContext
+        };
         var result = await controller.Login(user);
         Assert.IsInstanceOfType(result, typeof(OkObjectResult));
         Assert.AreEqual(StatusCodes.Status200OK, ((OkObjectResult)result).StatusCode);
         Assert.AreEqual(response, ((OkObjectResult)result).Value);
+        _httpResponseMock.Verify(r => r.Cookies.Append(
+           "__Host-userBearerToken",
+           response.token,
+           It.Is<CookieOptions>(c => c.HttpOnly && c.Secure && c.IsEssential && c.Expires == response.expirationDate && c.SameSite == SameSiteMode.None && c.Path == "/")
+       ), Times.Once);
+
+        _httpResponseMock.Verify(r => r.Cookies.Append(
+            "__Host-expiresAt",
+            response.expirationDate.ToString(),
+            It.Is<CookieOptions>(c => c.HttpOnly && c.Secure && c.IsEssential && c.Expires == response.expirationDate && c.SameSite == SameSiteMode.None && c.Path == "/")
+        ), Times.Once);
     }
 }

@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using StreamingPlatform.Controllers.ResponseMapper;
@@ -7,12 +6,12 @@ using StreamingPlatform.Controllers.Responses;
 using StreamingPlatform.Dtos.Contract;
 using StreamingPlatform.Dtos.Response;
 using StreamingPlatform.Services.Exceptions;
+using System.Security.Claims;
 
 namespace StreamingPlatform;
 
 [ApiController]
 [Route("[controller]")]
-[EnableCors("AllowAll")]
 public class AuthController : ControllerBase
 {
     private readonly ILogger<AuthController> _logger;
@@ -146,13 +145,33 @@ public class AuthController : ControllerBase
     [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult GetAuthStatus()
     {
-        if (this.Request.Cookies.ContainsKey("userBearerToken"))
+        bool isAuthenticated = this.User.Identity?.IsAuthenticated ?? false;
+        return this.Ok(new { isAuthenticated });
+    }
+
+    [HttpGet]
+    [Authorize]
+    [Route("user-id")]
+    [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+    [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
+    public  IActionResult GetUserId()
+    {
+        try
         {
-            return this.Ok(new { isAuthenticated = true });
+            string? id = this.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+            if(id == null)
+            {
+                ErrorResponseObject errorResponseObject = MapResponse.BadRequest("User not found");
+                return this.BadRequest(errorResponseObject);
+            }
+
+            GenericResponseDto userId = new(id);
+            return this.Ok(userId);
         }
-        else
+        catch (ServiceBaseException ex)
         {
-            return this.Ok(new { isAuthenticated = false });
+            ErrorResponseObject errorResponseObject = MapResponse.BadRequest(ex.Message);
+            return this.BadRequest(errorResponseObject);
         }
     }
 }

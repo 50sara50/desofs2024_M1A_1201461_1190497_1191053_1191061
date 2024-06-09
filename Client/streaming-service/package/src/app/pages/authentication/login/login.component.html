@@ -10,7 +10,7 @@
           </div>
 
           <form class="m-t-30" #loginForm="ngForm" (ngSubmit)="login(username, password)">
-            <mat-label class="mat-subtitle-2 f-s-14 f-w-600 m-b-12 d-block">Username</mat-label>
+            <mat-label class="mat-subtitle-2 f-s-14 f-w-600 m-b-12 d-block">Email</mat-label>
             <mat-form-field appearance="outline" class="w-100" color="primary">
               <input [(ngModel)]="username" matInput name="username" required #usernameInput="ngModel"
                 autocomplete="username" />
@@ -58,8 +58,8 @@
 
 
           <span class="d-block f-w-500 text-center m-t-24">New to our platform?
-            <a [routerLink]="['/authentication/register']" class="text-decoration-none text-primary f-w-500 f-s-14">
-              Create an account</a>
+            <a [routerLink]="['../register']" class="text-decoration-none text-primary f-w-500 f-s-14">
+              Subscribe a plan!</a>
           </span>
         </mat-card-content>
       </mat-card>

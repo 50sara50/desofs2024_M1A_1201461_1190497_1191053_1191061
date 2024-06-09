@@ -2,6 +2,7 @@
 using System.Linq.Expressions;
 using nClam;
 using StreamingPlatform.Dao.Interfaces;
+using StreamingPlatform.Dao.Repositories;
 using StreamingPlatform.Dtos.Contract;
 using StreamingPlatform.Dtos.Response;
 using StreamingPlatform.Models;
@@ -18,10 +19,10 @@ namespace StreamingPlatform.Services
 
         private readonly IConfiguration configuration = configuration;
 
-        public async Task<SongResponseDto> GetSongById(string id)
+        public async Task<SongResponseDto> GetSongById(Guid id)
         {
-            IGenericRepository<Song> repository = this.unitOfWork.Repository<Song>();
-            Song? song = await repository.GetRecordByIdAsync(new Guid(id));
+            SongRepository songRepository = new(this.unitOfWork.GetContext());
+            Song? song = await songRepository.GetSongByIdWithUserAndAlbumData(id);
             return song == null
                 ? throw new InvalidOperationException("Song does not exist.")
                 : new SongResponseDto(song.Title, song.Artist?.Name, song.Album?.Title);
