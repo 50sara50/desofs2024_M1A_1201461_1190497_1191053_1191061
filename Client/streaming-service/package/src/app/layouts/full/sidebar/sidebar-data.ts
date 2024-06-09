@@ -2,16 +2,24 @@ import { NavItem } from './nav-item/nav-item';
 
 export const navItems: NavItem[] = [
   {
-    navCap: 'Menu',
+    navCap: 'Home',
+  },
+  {
+    displayName: 'Dashboard',
+    iconName: 'layout-dashboard',
+    route: '/app/dashboard',
+  },
+  {
+    navCap: 'Ui Components',
   },
   {
     displayName: 'Playlists',
     iconName: 'list',
-    route: '/ui-components/playlists',
+    route: '/app/ui-components/playlists',
   },
   {
     displayName: 'Plans',
     iconName: 'layout-navbar-expand',
-    route: '/ui-components/plans',
-   }
+    route: '/app/ui-components/plans',
+  },
 ];
